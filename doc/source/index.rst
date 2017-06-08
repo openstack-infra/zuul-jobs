@@ -3,6 +3,8 @@
 .. toctree::
    :maxdepth: 2
 
+   roles
+
 Indices and tables
 ==================
 
