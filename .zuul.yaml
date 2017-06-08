@@ -1,21 +1,39 @@
 - job:
     name: unittests
     parent: base
+    description: |
+      Perform setup common to all unit test jobs.
+
+      This performs basic host and general project setup tasks common
+      to all types of unit test jobs.
     pre-run: unittests/pre
 
 - job:
     name: unittests-python
     parent: unittests
+    description: |
+      Perform setup common to python unit test jobs.
+
+      This performs basic host and general project setup tasks common
+      to all python unit test jobs.
     run: unittests/python
 
 - job:
     name: python27
     parent: unittests-python
+    description: |
+      Run unit tests for a Python project under cPython version 2.7.
+
+      Uses tox with the "py27" environment.
     vars:
       zuul_python_version: 27
 
 - job:
     name: python35
     parent: unittests-python
+    description: |
+      Run unit tests for a Python project under cPython version 3.5.
+
+      Uses tox with the "py35" environment.
     vars:
       zuul_python_version: 35
