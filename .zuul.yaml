@@ -1,0 +1,21 @@
+- job:
+    name: unittests
+    parent: base
+    pre-run: unittests/pre
+
+- job:
+    name: unittests-python
+    parent: unittests
+    run: unittests/python
+
+- job:
+    name: python27
+    parent: unittests-python
+    vars:
+      zuul_python_version: 27
+
+- job:
+    name: python35
+    parent: unittests-python
+    vars:
+      zuul_python_version: 35

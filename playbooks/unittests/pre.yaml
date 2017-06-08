@@ -1,0 +1,4 @@
+hosts: all
+roles:
+  - extra-test-setup
+  - revoke-sudo
