@@ -1,3 +1,6 @@
+*.pyc
+*~
+
 # Unit test / coverage reports
 .coverage
 .tox
