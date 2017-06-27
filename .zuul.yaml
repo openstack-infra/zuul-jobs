@@ -6,34 +6,110 @@
 
       This performs basic host and general project setup tasks common
       to all types of unit test jobs.
-    pre-run: unittests/pre
+    roles:
+      - zuul: openstack-infra/zuul-jobs
+    pre-run: playbooks/unittests/pre
 
 - job:
-    name: unittests-python
+    name: zuul-tox
     parent: unittests
     description: |
-      Perform setup common to python unit test jobs.
+      Base job containing setup and teardown for tox-based test jobs.
 
       This performs basic host and general project setup tasks common
-      to all python unit test jobs.
-    run: unittests/python
+      to all tox unit test jobs.
+
+      Responds to two variables:
+
+      tox_environment
+        the environment to pass on the command line
+
+      tox_command_line
+        an optional command line
+    run: playbooks/tox/run
+    pre-run: playbooks/tox/pre
+    post-run: playbooks/tox/post
 
 - job:
-    name: python27
-    parent: unittests-python
+    name: zuul-tox-py27
+    parent: zuul-tox
     description: |
       Run unit tests for a Python project under cPython version 2.7.
 
       Uses tox with the "py27" environment.
     vars:
-      zuul_python_version: 27
+      tox_environment: py27
 
 - job:
-    name: python35
-    parent: unittests-python
+    name: zuul-tox-py34
+    parent: zuul-tox
+    description: |
+      Run unit tests for a Python project under cPython version 3.4.
+
+      Uses tox with the "py34" environment.
+    vars:
+      tox_environment: py34
+
+- job:
+    name: zuul-tox-py35
+    parent: zuul-tox
     description: |
       Run unit tests for a Python project under cPython version 3.5.
 
       Uses tox with the "py35" environment.
     vars:
-      zuul_python_version: 35
+      tox_environment: py35
+
+- job:
+    name: zuul-tox-docs
+    parent: zuul-tox
+    # NOTE: This is not the OpenStack docs job, this is a job to run a tox
+    #       environment called "docs". OpenStack will want a different job
+    #       in openstack-infra/zuul-jobs
+    description: |
+      Run documentation unit tests.
+
+      Uses tox with the "docs" environment.
+    vars:
+      tox_environment: docs
+    post-run: playbooks/tox/docs-post
+
+- job:
+    name: zuul-tox-linters
+    parent: zuul-tox
+    description: |
+      Runs code linting tests.
+
+      Uses tox with the "linters" environment.
+    run: playbooks/tox/linters
+
+- job:
+    name: zuul-tox-cover
+    parent: zuul-tox
+    voting: false
+    description: |
+      Run code coverage tests.
+
+      Uses tox with the "cover" environment.
+    vars:
+      tox_environment: cover
+
+- job:
+    name: zuul-tox-tarball
+    parent: zuul-tox
+    voting: false
+    description: |
+      Generate a python source tarball and a binary wheel
+
+      Uses tox with the "venv" environment.
+    vars:
+      tox_environment: venv
+    run: playbooks/tox/tarball
+    post-run: playbooks/tox/tarball-post
+
+- project:
+    name: openstack-infra/zuul-jobs
+    check:
+      jobs:
+        - zuul-tox-linters
+        - tox-linters

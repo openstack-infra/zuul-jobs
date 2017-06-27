@@ -1,5 +1,11 @@
-hosts: all
-roles:
-  - extra-test-setup
-  - run-bindep
-  - revoke-sudo
+- hosts: all
+  # We're gathering facts here so that we can emit things in the debug-ansible
+  # role. Don't copy-pasta this. Zuul runs ansible with gathering = explicit
+  gather_facts: true
+  gather_subset:
+    - "!all"
+  roles:
+    - debug-ansible
+    - bindep
+    - test-setup
+    - zuul-revoke-sudo

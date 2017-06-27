@@ -1,0 +1,5 @@
+- name: Write out all ansible variables/facts known for the host
+  delegate_to: localhost
+  template:
+    dest: "{{ zuul.executor.log_root }}/ansible-hostvars.{{ inventory_hostname }}.yaml"
+    src: templates/ansible-hostvars.j2

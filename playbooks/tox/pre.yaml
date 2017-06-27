@@ -1,0 +1,4 @@
+- hosts: all
+  tasks:
+    - name: Ensure tox is installed
+      shell: type tox || pip install --user tox
