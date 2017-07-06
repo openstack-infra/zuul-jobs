@@ -112,4 +112,3 @@
     check:
       jobs:
         - zuul-tox-linters
-        - tox-linters
