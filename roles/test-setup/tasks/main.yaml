@@ -1,12 +1,12 @@
 - name: Check if project's tools/test-setup.sh exists
   stat:
-    path: "src/{{ zuul.project.canonical_name }}/tools/test-setup.sh"
+    path: "{{ zuul_work_dir }}/tools/test-setup.sh"
   register: p
 
 - name: Run tools/test-setup.sh
   shell: tools/test-setup.sh
   args:
-    chdir: "src/{{ zuul.project.canonical_name }}"
+    chdir: "{{ zuul_work_dir }}"
   when:
     - p.stat.exists
     - p.stat.executable

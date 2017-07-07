@@ -1,7 +1,7 @@
 ---
 - name: Install distro packages from bindep
   args:
-    chdir: "src/{{ zuul.project.canonical_name }}"
+    chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
   shell: |
     # set a default path to the preinstalled bindep entrypoint

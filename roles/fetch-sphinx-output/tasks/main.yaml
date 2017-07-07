@@ -2,5 +2,5 @@
   synchronize:
     dest: "{{ zuul.executor.log_root }}"
     mode: pull
-    src: "src/{{ zuul.project.canonical_name }}/doc/build/html"
+    src: "{{ zuul_work_dir }}/doc/build/html"
   no_log: true

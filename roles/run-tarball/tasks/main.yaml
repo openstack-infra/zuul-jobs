@@ -1,6 +1,6 @@
 - name: Build a tarball
   args:
-    chdir: "src/{{ zuul.project.canonical_name }}"
+    chdir: "{{ zuul_work_dir }}"
   shell: |
     #!/bin/bash -xe
 

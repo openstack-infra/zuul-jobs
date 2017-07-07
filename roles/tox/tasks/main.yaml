@@ -1,6 +1,6 @@
 - name: Run tox
   args:
-    chdir: "src/{{ zuul.project.canonical_name }}"
+    chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
   shell: |
     # If a bundle file is present, call tox with the jenkins version of
