@@ -1,5 +1,17 @@
-- name: Write out all ansible variables/facts known for the host
+- name: Write out all ansible variables/facts known for each host
   delegate_to: localhost
   template:
     dest: "{{ zuul.executor.log_root }}/ansible-hostvars.{{ inventory_hostname }}.yaml"
     src: templates/ansible-hostvars.j2
+
+- name: Collect information about zuul worker
+  zuul_debug_info:
+    image_manifest: "{{ zuul_image_manifest|default(omit) }}"
+    traceroute_host: "{{ zuul_traceroute_host|default(omit) }}"
+  register: zdi
+
+- name: Write out all zuul information for each host
+  delegate_to: localhost
+  template:
+    dest: "{{ zuul.executor.log_root }}/zuul-info.{{ inventory_hostname }}.txt"
+    src: templates/zuul-info.j2

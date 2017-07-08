@@ -6,10 +6,14 @@
   gather_subset:
     - "!all"
   roles:
-    - debug-ansible
+    - role: debug-ansible
+      # TODO(mordred) When we have site-local variables, these should go there
+      zuul_traceroute_host: git.openstack.org
+      zuul_image_manifest: /etc/dib-builddate.txt
     - role: bindep
       bindep_profile: test
       bindep_dir: "{{ zuul_work_dir }}"
+      # TODO(mordred) When we have site-local variables, these should go there
       bindep_command: /usr/bindep-env/bin/bindep
       bindep_fallback: /usr/local/jenkins/common_data/bindep-fallback.txt
     - test-setup
