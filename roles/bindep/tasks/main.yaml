@@ -1,12 +1,24 @@
 ---
+- stat:
+    path: "{{ bindep_command }}"
+  register: bindep_command_stat
+  failed_when: false
+
+- set_fact:
+    bindep_found_command: "{{ bindep_command }}"
+  when: bindep_command_stat is defined
+
+- include: install.yaml
+  when: bindep_command_stat is not defined
+
 - name: Install distro packages from bindep
   args:
     chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
+  environment:
+    BINDEP: "{{ bindep_command }}"
+    PACKAGES: "{{ bindep_file }}"
   shell: |
-    # set a default path to the preinstalled bindep entrypoint
-    export BINDEP=${BINDEP:-/usr/bindep-env/bin/bindep}
-
     function is_fedora {
         [ -f /usr/bin/yum ] && cat /etc/*release | grep -q -e "Fedora"
     }

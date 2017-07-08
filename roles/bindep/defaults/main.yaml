@@ -1,2 +1,4 @@
 ---
 zuul_work_dir: "src/{{ zuul.project.canonical_name }}"
+bindep_command: /usr/bindep-env/bin/bindep
+bindep_file: ""
