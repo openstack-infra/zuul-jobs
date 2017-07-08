@@ -1,11 +1,16 @@
 - hosts: all
   # We're gathering facts here so that we can emit things in the debug-ansible
-  # role. Don't copy-pasta this. Zuul runs ansible with gathering = explicit
+  # role. We also need facts in bindep.
+  # Don't copy-pasta this. Zuul runs ansible with gathering = explicit
   gather_facts: true
   gather_subset:
     - "!all"
   roles:
     - debug-ansible
-    - bindep
+    - role: bindep
+      bindep_profile: test
+      bindep_dir: "{{ zuul_work_dir }}"
+      bindep_command: /usr/bindep-env/bin/bindep
+      bindep_fallback: /usr/local/jenkins/common_data/bindep-fallback.txt
     - test-setup
     - revoke-sudo

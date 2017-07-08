@@ -1,0 +1,30 @@
+- name: Look for bindep.txt
+  stat:
+    path: "{{ bindep_dir }}/bindep.txt"
+  register: bindep_file_stat
+
+- set_fact:
+    bindep_file: "{{ bindep_file_stat.stat.path }}"
+  when: bindep_file_stat.stat.exists
+
+- name: Look for other-requirements.txt
+  stat:
+    path: "{{ bindep_dir }}/other-requirements.txt"
+  register: bindep_other_file_stat
+  when: not bindep_file_stat.stat.exists
+
+- set_fact:
+    bindep_file: "{{ bindep_other_file_stat.stat.path }}"
+  when: not bindep_other_file_stat|skipped and  bindep_other_file_stat.stat.exists
+
+- name: Look for bindep fallback file
+  stat:
+    path: "{{ bindep_fallback }}"
+  register: bindep_fallback_file_stat
+  when: bindep_fallback is defined
+        and not bindep_other_file_stat|skipped
+        and not bindep_other_file_stat.stat.exists
+
+- set_fact:
+    bindep_file: "{{ bindep_fallback_file_stat.stat.path }}"
+  when: not bindep_fallback_file_stat|skipped and  bindep_fallback_file_stat.stat.exists

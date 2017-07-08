@@ -1,80 +1,77 @@
 ---
-- stat:
+- name: Look for bindep command
+  stat:
     path: "{{ bindep_command }}"
+  when: bindep_command is defined
   register: bindep_command_stat
-  failed_when: false
+
+- name: Check for system bindep
+  args:
+    executable: /bin/bash
+  shell: type -p bindep
+  ignore_errors: yes
+  register: bindep_command_type
+  when: bindep_command is not defined or not bindep_command_stat.stat.exists
 
 - set_fact:
-    bindep_found_command: "{{ bindep_command }}"
-  when: bindep_command_stat is defined
+    bindep_command: "{{ bindep_command_type.stdout }}"
+  when: bindep_command_type|succeeded and not bindep_command_type|skipped
 
 - include: install.yaml
-  when: bindep_command_stat is not defined
+  when: bindep_command is not defined
 
+- include: find.yaml
+  when: bindep_file is not defined
+
+- set_fact:
+    bindep_run: "{{ bindep_command }} -b -f {{ bindep_file }} {{ bindep_profile }}"
+  when: bindep_file is defined
+
+# Retry to check that all requested packages are obtained. Sometimes there are
+# transient repo issues. This is left as a shell section on purpose rather
+# than using ansible package modules because bindep produces a list of packages
+# that we feed directly to the package managers.
 - name: Install distro packages from bindep
   args:
-    chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
+  become: yes
+  when: bindep_file is defined
+  register: result
+  until: result|succeeded
+  retries: 3
+  delay: 5
   environment:
-    BINDEP: "{{ bindep_command }}"
-    PACKAGES: "{{ bindep_file }}"
+    DEBIAN_FRONTEND: noninteractive
+    PATH: /usr/sbin:/sbin:{{ ansible_env.PATH }}
   shell: |
-    function is_fedora {
-        [ -f /usr/bin/yum ] && cat /etc/*release | grep -q -e "Fedora"
-    }
-
-    YUM=yum
-    if is_fedora; then
-        YUM=dnf
-    fi
-
-    # figure out which bindep list to use
-    if [ -n "$PACKAGES" ] ; then
-        # already set in the calling environment
-        :
-    elif [ -e bindep.txt ] ; then
-        # project has its own bindep list
-        export PACKAGES=bindep.txt
-    elif [ -e other-requirements.txt ] ; then
-        # project has its own bindep list
-        export PACKAGES=other-requirements.txt
-    else
-        # use the bindep fallback list preinstalled on the worker
-        export PACKAGES=/usr/local/jenkins/common_data/bindep-fallback.txt
-    fi
-
-    # an install loop, retrying to check that all requested packages are
-    # obtained
-    try=0
     # Install test profile using bindep
-    until $BINDEP -b -f $PACKAGES test; do
-        if [ $try -gt 2 ] ; then
-            set +x
-            echo -e "\nERROR: These requested packages were not installed:\n" \
-                "\n`$BINDEP -b -f $PACKAGES test`\n" 1>&2
-            set -x
-            exit 1
-        fi
+    case {{ ansible_pkg_mgr }} in
+      apt)
+        apt-get -qq update
+        apt-get -q --option "Dpkg::Options::=--force-confold" --assume-yes \
+            install $({{ bindep_run }})
+        ;;
+      portage)
+        emerge -uDNq --jobs=4 @world
+        emerge -q --jobs=4 $({{ bindep_run }})
+        ;;
+      zypper)
+        zypper --non-interactive install $({{ bindep_run }})
+        ;;
+      dnf|yum)
+        {{ ansible_pkg_mgr }} install -y $({{ bindep_run }})
+        ;;
+      *)
+        echo "Unsupported package manager"
+        exit 1
+        ;;
+    esac
+    if {{ bindep_run }}; then
+        exit 0
+    else
+        exit 1
+    fi
 
-        # do not abort inside the loop, we check for the desired outcome
-        set +e
-        if apt-get -v >/dev/null 2>&1 ; then
-            sudo apt-get -qq update
-            sudo PATH=/usr/sbin:/sbin:$PATH DEBIAN_FRONTEND=noninteractive \
-                apt-get -q --option "Dpkg::Options::=--force-confold" \
-                --assume-yes install `$BINDEP -b -f $PACKAGES test`
-        elif emerge --version >/dev/null 2>&1 ; then
-            sudo emerge -uDNq --jobs=4 @world
-            sudo PATH=/usr/sbin:/sbin:$PATH emerge -q --jobs=4 \
-                `$BINDEP -b -f $PACKAGES test`
-        elif zypper --version >/dev/null 2>&1 ; then
-            sudo PATH=/usr/sbin:/sbin:$PATH zypper --non-interactive install \
-                `$BINDEP -b -f $PACKAGES test`
-        else
-            sudo PATH=/usr/sbin:/sbin:$PATH $YUM install -y \
-                `$BINDEP -b -f $PACKAGES test`
-        fi
-        set -e
-
-        try=$(( $try+1 ))
-    done
+- fail:
+    msg: "The packages from the {{ bindep_file }} were not installed"
+  when: bindep_file is defined and result|failed
