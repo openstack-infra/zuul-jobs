@@ -6,7 +6,7 @@
   gather_subset:
     - "!all"
   roles:
-    - role: debug-ansible
+    - role: validate-host
       # TODO(mordred) When we have site-local variables, these should go there
       zuul_traceroute_host: git.openstack.org
       zuul_image_manifest: /etc/dib-builddate.txt
