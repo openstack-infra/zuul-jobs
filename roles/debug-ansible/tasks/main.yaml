@@ -1,7 +1,17 @@
+- set_fact:
+    zuul_info_dir: "{{ zuul.executor.log_root }}/zuul-info"
+
+- name: Ensure Zuul Ansible directory exists
+  delegate_to: localhost
+  run_once: true
+  file:
+    path: "{{ zuul_info_dir }}"
+    state: directory
+
 - name: Write out all ansible variables/facts known for each host
   delegate_to: localhost
   template:
-    dest: "{{ zuul.executor.log_root }}/ansible-hostvars.{{ inventory_hostname }}.yaml"
+    dest: "{{ zuul_info_dir }}/ansible-hostvars.{{ inventory_hostname }}.yaml"
     src: templates/ansible-hostvars.j2
 
 - name: Collect information about zuul worker
@@ -13,5 +23,5 @@
 - name: Write out all zuul information for each host
   delegate_to: localhost
   template:
-    dest: "{{ zuul.executor.log_root }}/zuul-info.{{ inventory_hostname }}.txt"
+    dest: "{{ zuul_info_dir }}/zuul-info.{{ inventory_hostname }}.txt"
     src: templates/zuul-info.j2
