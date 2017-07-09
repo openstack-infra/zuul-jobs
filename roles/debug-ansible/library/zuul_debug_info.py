@@ -53,21 +53,29 @@ def main():
     if image_manifest and os.path.exists(image_manifest):
         ret['image_manifest'] = open(image_manifest, 'r').read()
     if traceroute_host:
+        passed = False
         try:
-            ret['traceroute'] = run_command(
+            ret['traceroute_v6'] = run_command(
                 'traceroute6 -n {host}'.format(host=traceroute_host))
+            passed = True
         except subprocess.CalledProcessError:
-            try:
-                ret['traceroute'] = run_command(
-                    'traceroute -n {host}'.format(host=traceroute_host))
-            except subprocess.CalledProcessError:
-                pass
+            pass
+        try:
+            ret['traceroute_v4'] = run_command(
+                'traceroute -n {host}'.format(host=traceroute_host))
+            passed = True
+        except subprocess.CalledProcessError:
+            pass
+        if not passed:
+            module.fail_json(
+                msg="No viable v4 or v6 route found to {traceroute_host}."
+                    " The build node is assumed to be invalid.".format(
+                        traceroute_host=traceroute_host))
+
     for key, command in command_map.items():
         try:
             ret[key] = run_command(command)
         except subprocess.CalledProcessError:
-            # TODO(mordred) Make some of these fail so that we get the equiv
-            # of "does this host work"
             pass
 
     module.exit_json(changed=False, _zuul_nolog_return=True, **ret)
