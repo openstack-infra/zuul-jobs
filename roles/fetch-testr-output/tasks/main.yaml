@@ -1,0 +1,10 @@
+- name: Collect test-results
+  synchronize:
+    dest: "{{ zuul.executor.log_root }}"
+    mode: pull
+    rsync_opts:
+      - "--ignore-missing-args"
+    src: "{{ zuul_work_dir }}/{{ item }}"
+  with_items:
+    - "*testr_results.html.gz"
+    - "*testrepository.subunit.gz"

@@ -1,12 +1,3 @@
 - hosts: all
-  tasks:
-    - name: Collect test-results
-      synchronize:
-        dest: "{{ zuul.executor.log_root }}"
-        mode: pull
-        rsync_opts:
-          - "--ignore-missing-args"
-        src: "src/{{ zuul.project.canonical_name }}/{{ item }}"
-      with_items:
-        - "*testr_results.html.gz"
-        - "*testrepository.subunit.gz"
+  roles:
+    - fetch-testr-output

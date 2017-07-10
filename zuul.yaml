@@ -9,6 +9,7 @@
     roles:
       - zuul: openstack-infra/zuul-jobs
     pre-run: playbooks/unittests/pre
+    post-run: playbooks/unittests/post
 
 - job:
     name: tox
