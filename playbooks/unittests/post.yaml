@@ -1,5 +1,5 @@
 - hosts: all
-  tasks::
+  tasks:
     - name: Collect test-results
       synchronize:
         dest: "{{ zuul.executor.log_root }}"
