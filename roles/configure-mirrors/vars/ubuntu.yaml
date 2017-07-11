@@ -1,0 +1,2 @@
+wheel_mirror: "http://{{ mirror_host }}/wheel/{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}-{{ ansible_architecture | lower }}"
+package_mirror: "http://{{ mirror_host }}/ubuntu"

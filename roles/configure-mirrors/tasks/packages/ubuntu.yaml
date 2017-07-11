@@ -1,0 +1,17 @@
+- name: Install /etc/apt/sources.list
+  become: yes
+  template:
+    dest: /etc/apt/sources.list
+    group: root
+    mode: 0644
+    owner: root
+    src: etc/apt/sources.list.j2
+
+- name: Install /etc/apt/apt.conf.d/99unauthenticated
+  become: yes
+  copy:
+    dest: /etc/apt/apt.conf.d/99unauthenticated
+    group: root
+    mode: 0644
+    owner: root
+    src: etc/apt/apt.conf.d/99unauthenticated
