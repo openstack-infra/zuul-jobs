@@ -25,53 +25,6 @@
 
 - set_fact:
     bindep_run: "{{ bindep_command }} -b -f {{ bindep_file }} {{ bindep_profile }}"
-  when: bindep_file is defined
 
-# Retry to check that all requested packages are obtained. Sometimes there are
-# transient repo issues. This is left as a shell section on purpose rather
-# than using ansible package modules because bindep produces a list of packages
-# that we feed directly to the package managers.
-- name: Install distro packages from bindep
-  args:
-    executable: /bin/bash
-  become: yes
+- include: packages.yaml
   when: bindep_file is defined
-  register: result
-  until: result|succeeded
-  retries: 3
-  delay: 5
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-    PATH: /usr/sbin:/sbin:{{ ansible_env.PATH }}
-  shell: |
-    # Install test profile using bindep
-    case {{ ansible_pkg_mgr }} in
-      apt)
-        apt-get -qq update
-        apt-get -q --option "Dpkg::Options::=--force-confold" --assume-yes \
-            install $({{ bindep_run }})
-        ;;
-      portage)
-        emerge -uDNq --jobs=4 @world
-        emerge -q --jobs=4 $({{ bindep_run }})
-        ;;
-      zypper)
-        zypper --non-interactive install $({{ bindep_run }})
-        ;;
-      dnf|yum)
-        {{ ansible_pkg_mgr }} install -y $({{ bindep_run }})
-        ;;
-      *)
-        echo "Unsupported package manager"
-        exit 1
-        ;;
-    esac
-    if {{ bindep_run }}; then
-        exit 0
-    else
-        exit 1
-    fi
-
-- fail:
-    msg: "The packages from the {{ bindep_file }} were not installed"
-  when: bindep_file is defined and result|failed

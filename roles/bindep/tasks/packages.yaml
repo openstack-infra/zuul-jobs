@@ -1,0 +1,20 @@
+- name: Get list of packages to install from bindep
+  shell: "{{ bindep_run }}"
+  register: bindep_output
+  failed_when: false
+
+- name: Install distro packages from bindep
+  package:
+    name: "{{ bindep_output.stdout_lines }}"
+    state: present
+  become: yes
+
+- name: Check that packages are installed
+  shell: "{{ bindep_run }}"
+  register: bindep_final_check
+  # Ignore errors then fail later so that we can give a better error message
+  failed_when: false
+
+- fail:
+    msg: "bindep failed to install from {{ bindep_file}} - {{ bindep_final_check.stdout }}"
+  when: bindep_final_check|failed
