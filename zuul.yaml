@@ -124,5 +124,6 @@
     name: openstack-infra/zuul-jobs
     check:
       jobs:
+        - openstack-doc-build
         - tox-linters
         - tox-py35-on-zuul

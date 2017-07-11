@@ -6,7 +6,6 @@ file to produce a list of required distro packages that do not exist and
 then install the missing packages.
 
 Role Variables
---------------
 
 bindep_dir
   The directory to look for bindep files in. Defaults to current directory.
