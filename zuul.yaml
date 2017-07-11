@@ -108,22 +108,9 @@
     run: playbooks/tox/tarball
     post-run: playbooks/tox/tarball-post
 
-- job:
-    name: tox-py35-on-zuul
-    parent: tox-py35
-    description: |
-      Run zuul's py35 unittests on patches to zuul-jobs
-    vars:
-      zuul_work_dir: "src/git.openstack.org/openstack-infra/zuul"
-    required-projects:
-      - name: openstack-infra/zuul
-        override-branch: feature/zuulv3
-
-
 - project:
     name: openstack-infra/zuul-jobs
     check:
       jobs:
         - openstack-doc-build
         - tox-linters
-        - tox-py35-on-zuul
