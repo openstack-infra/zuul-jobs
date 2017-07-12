@@ -112,5 +112,4 @@
     name: openstack-infra/zuul-jobs
     check:
       jobs:
-        - openstack-doc-build
         - tox-linters
