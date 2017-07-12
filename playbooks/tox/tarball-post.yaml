@@ -5,6 +5,7 @@
         dest: "{{ zuul.executor.src_root }}/tarballs"
         mode: pull
         src: "src/{{ zuul.project.canonical_name }}/dist/{{ item }}"
+        verify_host: true
       with_items:
         - "*.tar.gz"
         - "*.whl"

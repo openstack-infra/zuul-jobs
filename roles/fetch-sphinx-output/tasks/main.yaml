@@ -3,4 +3,5 @@
     dest: "{{ zuul.executor.log_root }}"
     mode: pull
     src: "{{ zuul_work_dir }}/doc/build/html"
+    verify_host: true
   no_log: true

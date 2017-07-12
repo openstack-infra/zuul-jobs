@@ -19,4 +19,5 @@
         dest: "{{ zuul.executor.log_root }}/tox"
         mode: pull
         src: "{{ item.path }}/log/"
+        verify_host: true
       with_items: "{{ result.files }}"
