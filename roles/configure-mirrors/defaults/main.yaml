@@ -1,0 +1,2 @@
+mirror_host: mirror.example.org
+pypi_mirror: "http://{{ mirror_host }}/pypi/simple"

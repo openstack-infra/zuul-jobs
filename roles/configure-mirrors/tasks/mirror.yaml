@@ -1,0 +1,27 @@
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_distribution | lower }}.yaml"
+
+- name: Install /etc/pip.conf configuration
+  become: yes
+  template:
+    dest: /etc/pip.conf
+    group: root
+    mode: 0644
+    owner: root
+    src: etc/pip.conf.j2
+
+- name: Install .pydistutils.cfg configuration in homedir
+  template:
+    dest: ~/.pydistutils.cfg
+    mode: 0644
+    src: .pydistutils.cfg.j2
+
+- name: Setup distro specific packaging mirrors.
+  include: "packages/{{ ansible_distribution | lower }}.yaml"
+
+# Make sure OS does not have a stale package cache.
+- name: Update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
