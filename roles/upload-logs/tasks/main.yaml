@@ -19,4 +19,18 @@
   synchronize:
     src: "{{ zuul.executor.log_root }}/"
     dest: "{{zuul_logserver_root}}/{{ log_path }}/"
+    rsync_opts:
+    - "--exclude=job-output.txt"
   no_log: true
+
+# After this point there are no more logs
+- name: gzip console log
+  delegate_to: localhost
+  archive:
+    path: "{{ zuul.executor.log_root }}/job-output.txt"
+
+- name: Upload console log
+  synchronize:
+    src: "{{ zuul.executor.log_root }}/job-output.txt.gz"
+    dest: "{{zuul_logserver_root}}/{{ log_path }}/job-output.txt.gz"
+    verify_host: true
