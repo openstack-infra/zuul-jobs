@@ -1,0 +1,20 @@
+- name: Create Temp SSH key
+  command: ssh-keygen -t rsa -b 1024 -N '' -f {{ zuul_temp_ssh_key }}
+  delegate_to: localhost
+
+- name: Distribute it to all nodes
+  authorized_key:
+    user: "{{ ansible_ssh_user }}"
+    state: present
+    key: "{{ lookup('file', zuul_temp_ssh_key + '.pub') }}"
+
+- name: Remove all keys from local agent
+  command: ssh-add -D
+  delegate_to: localhost
+
+- name: Add back temp key
+  command: ssh-add {{ zuul_temp_ssh_key }}
+  delegate_to: localhost
+
+- name: Verify we can still SSH to all nodes
+  ping:
