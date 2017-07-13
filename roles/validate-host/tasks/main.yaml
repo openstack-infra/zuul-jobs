@@ -8,11 +8,15 @@
     path: "{{ zuul_info_dir }}"
     state: directory
 
+- name: Collect information about the host
+  setup:
+  register: setupinfo
+
 - name: Write out all ansible variables/facts known for each host
   delegate_to: localhost
   template:
-    dest: "{{ zuul_info_dir }}/ansible-hostvars.{{ inventory_hostname }}.yaml"
-    src: templates/ansible-hostvars.j2
+    dest: "{{ zuul_info_dir }}/host-info.{{ inventory_hostname }}.yaml"
+    src: templates/host-info.j2
 
 - name: Collect information about zuul worker
   zuul_debug_info:
