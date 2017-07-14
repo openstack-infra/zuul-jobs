@@ -9,7 +9,7 @@
     # resulting environment at the end so that we have a record of exactly
     # what packages we ended up testing.
 
-    venv={{ tox_environment }}
+    venv={{ tox_envlist }}
 
     if [[ -z "$venv" ]]; then
         echo "Usage: $?"

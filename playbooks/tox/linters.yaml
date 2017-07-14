@@ -5,10 +5,10 @@
         chdir: "src/{{ zuul.project.canonical_name }}"
       register: envlist
     - set_fact:
-        tox_environment: 'pep8'
+        tox_envlist: 'pep8'
       when: envlist.stdout.find('pep8') != -1
     - set_fact:
-        tox_environment: 'linters'
+        tox_envlist: 'linters'
       when: envlist.stdout.find('linters') != -1
   roles:
     - tox

@@ -22,8 +22,8 @@
 
       Responds to two variables:
 
-      tox_environment
-        the environment to pass on the command line
+      tox_envlist
+        work against specified environments (ALL selects all)
 
       tox_command_line
         an optional command line
@@ -39,7 +39,7 @@
 
       Uses tox with the "py27" environment.
     vars:
-      tox_environment: py27
+      tox_envlist: py27
 
 - job:
     name: tox-py34
@@ -49,7 +49,7 @@
 
       Uses tox with the "py34" environment.
     vars:
-      tox_environment: py34
+      tox_envlist: py34
 
 - job:
     name: tox-py35
@@ -59,7 +59,7 @@
 
       Uses tox with the "py35" environment.
     vars:
-      tox_environment: py35
+      tox_envlist: py35
 
 - job:
     name: tox-docs
@@ -72,7 +72,7 @@
 
       Uses tox with the "docs" environment.
     vars:
-      tox_environment: docs
+      tox_envlist: docs
     post-run: playbooks/tox/docs-post
 
 - job:
@@ -93,7 +93,7 @@
 
       Uses tox with the "cover" environment.
     vars:
-      tox_environment: cover
+      tox_envlist: cover
 
 - job:
     name: tox-tarball
@@ -104,7 +104,7 @@
 
       Uses tox with the "venv" environment.
     vars:
-      tox_environment: venv
+      tox_envlist: venv
     run: playbooks/tox/tarball
     post-run: playbooks/tox/tarball-post
 

@@ -18,7 +18,7 @@
     # License for the specific language governing permissions and limitations
     # under the License.
 
-    venv={{ tox_environment }}
+    venv={{ tox_envlist }}
 
     export UPPER_CONSTRAINTS_FILE=$(pwd)/upper-constraints.txt
 
