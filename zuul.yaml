@@ -20,10 +20,13 @@
       This performs basic host and general project setup tasks common
       to all tox unit test jobs.
 
-      Responds to two variables:
+      Responds to three variables:
 
       tox_envlist
         work against specified environments (ALL selects all)
+
+      tox_environment
+        list of environmental variables to pass to bash shell
 
       tox_command_line
         an optional command line

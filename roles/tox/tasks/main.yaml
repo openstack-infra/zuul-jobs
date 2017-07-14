@@ -2,6 +2,7 @@
   args:
     chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
+  environment: "{{ tox_environment | default(omit) }}"
   shell: |
     # If a bundle file is present, call tox with the jenkins version of
     # the test environment so it is used.  Otherwise, use the normal
