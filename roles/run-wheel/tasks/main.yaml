@@ -20,8 +20,6 @@
 
     venv={{ tox_envlist }}
 
-    export UPPER_CONSTRAINTS_FILE=$(pwd)/upper-constraints.txt
-
     rm -f dist/*.whl
     tox -e$venv pip install wheel
     tox -e$venv python setup.py bdist_wheel
