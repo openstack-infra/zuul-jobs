@@ -10,7 +10,7 @@
 
 - name: Create log directories
   file:
-    path: "{{zuul_logserver_root}}{{ log_path }}"
+    path: "{{zuul_logserver_root}}/{{ log_path }}"
     state: directory
     recurse: yes
     mode: 0775
@@ -18,5 +18,5 @@
 - name: Upload logs to log server
   synchronize:
     src: "{{ zuul.executor.log_root }}/"
-    dest: "{{zuul_logserver_root}}{{ log_path }}/"
+    dest: "{{zuul_logserver_root}}/{{ log_path }}/"
   no_log: true
