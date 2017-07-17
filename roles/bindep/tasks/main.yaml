@@ -8,12 +8,13 @@
 - name: Check for system bindep
   args:
     executable: /bin/bash
-  shell: type -p bindep
+  command: type -p bindep
   ignore_errors: yes
   register: bindep_command_type
   when: bindep_command is not defined or not bindep_command_stat.stat.exists
 
-- set_fact:
+- name: Define bindep_command fact
+  set_fact:
     bindep_command: "{{ bindep_command_type.stdout }}"
   when: bindep_command_type|succeeded and not bindep_command_type|skipped
 
@@ -23,7 +24,8 @@
 - include: find.yaml
   when: bindep_file is not defined
 
-- set_fact:
+- name: Define bindep_command fact
+  set_fact:
     bindep_run: "{{ bindep_command }} -b -f {{ bindep_file }} {{ bindep_profile }}"
 
 - include: packages.yaml

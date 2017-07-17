@@ -3,7 +3,8 @@
     path: "{{ bindep_dir }}/bindep.txt"
   register: bindep_file_stat
 
-- set_fact:
+- name: Define bindep_file fact
+  set_fact:
     bindep_file: "{{ bindep_file_stat.stat.path }}"
   when: bindep_file_stat.stat.exists
 
@@ -13,7 +14,8 @@
   register: bindep_other_file_stat
   when: not bindep_file_stat.stat.exists
 
-- set_fact:
+- name: Define bindep_file fact
+  set_fact:
     bindep_file: "{{ bindep_other_file_stat.stat.path }}"
   when: not bindep_other_file_stat|skipped and  bindep_other_file_stat.stat.exists
 
@@ -25,6 +27,7 @@
         and not bindep_other_file_stat|skipped
         and not bindep_other_file_stat.stat.exists
 
-- set_fact:
+- name: Define bindep_file fact
+  set_fact:
     bindep_file: "{{ bindep_fallback_file_stat.stat.path }}"
   when: not bindep_fallback_file_stat|skipped and  bindep_fallback_file_stat.stat.exists
