@@ -1,14 +1,20 @@
 - hosts: all
   pre_tasks:
-    - shell: tox -l
+    - name: Register tox environment list
+      command: tox -l
       args:
         chdir: "src/{{ zuul.project.canonical_name }}"
       register: envlist
-    - set_fact:
+
+    - name: Define tox_envlist fact for pep8
+      set_fact:
         tox_envlist: 'pep8'
       when: envlist.stdout.find('pep8') != -1
-    - set_fact:
+
+    - name: Define tox_envlist fact for linters
+      set_fact:
         tox_envlist: 'linters'
       when: envlist.stdout.find('linters') != -1
+
   roles:
     - tox

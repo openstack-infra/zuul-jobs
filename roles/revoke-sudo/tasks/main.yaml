@@ -5,4 +5,4 @@
     state: absent
 
 - name: Prove that general sudo access is actually revoked.
-  shell: ! sudo -n true
+  command: ! sudo -n true

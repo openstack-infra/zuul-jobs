@@ -1,4 +1,5 @@
-- set_fact:
+- name: Define zuul_info_dir fact
+  set_fact:
     zuul_info_dir: "{{ zuul.executor.log_root }}/zuul-info"
 
 - name: Ensure Zuul Ansible directory exists
