@@ -1,3 +1,27 @@
+# TODO: further parameterize the base job and roles so that it can
+# include log publishing and nodeset defaults once Zuul supports
+# site-local variables.
+- job:
+    name: base
+    description: |
+      A sample base job.
+
+      Zuul installations should override this job using the project
+      "shadow" functionality.
+
+      All jobs ultimately inherit from this.  It runs a pre-playbook
+      which copies all of the job's prepared git repos on to all of
+      the nodes in the nodeset and sets the default timeout value.
+
+      Zuul installations should add a log publishing post playbook to
+      this job, and may wish to supply a default nodeset and adjust
+      the timeout values.
+    pre-run: playbooks/base/pre
+    post-run: playbooks/base/post-ssh
+    roles:
+      - zuul: openstack-infra/zuul-jobs
+    timeout: 1800
+
 - job:
     name: unittests
     parent: base
