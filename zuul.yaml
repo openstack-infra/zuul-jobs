@@ -85,7 +85,18 @@
       Runs code linting tests.
 
       Uses tox with the "linters" environment.
-    run: playbooks/tox/linters
+    vars:
+      tox_envlist: linters
+
+- job:
+    name: tox-pep8
+    parent: tox
+    description: |
+      Runs code pep8 tests.
+
+      Uses tox with the "pep8" environment.
+    vars:
+      tox_envlist: pep8
 
 - job:
     name: tox-cover
