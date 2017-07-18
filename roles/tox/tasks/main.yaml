@@ -39,7 +39,6 @@
             $bin_path/testr last --subunit > ./testrepository.subunit
         fi
         /usr/os-testr-env/bin/subunit2html ./testrepository.subunit testr_results.html
-        gzip -9 ./testrepository.subunit
         gzip -9 ./testr_results.html
 
         rancount=$($bin_path/testr last | sed -ne 's/Ran \([0-9]\+\).*tests in.*/\1/p')
