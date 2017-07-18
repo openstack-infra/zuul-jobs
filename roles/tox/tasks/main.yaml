@@ -51,19 +51,6 @@
         fi
     }
 
-    function check_sudo_usage {
-        sudo $script_path/jenkins-sudo-grep.sh post
-        sudoresult=$?
-
-        if [ $sudoresult -ne "0" ]; then
-            echo
-            echo "This test has failed because it attempted to execute commands"
-            echo "with sudo.  See above for the exact commands used."
-            echo
-            exit 1
-        fi
-    }
-
     function check_oom {
         $script_path/jenkins-oom-grep.sh post
         oomresult=$?
@@ -108,7 +95,6 @@
 
     freeze_venv
     process_testr_artifacts
-    check_sudo_usage
     check_oom
     check_nose_html
 
