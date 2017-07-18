@@ -1,3 +1,8 @@
+- name: Require tox_envlist variable - {{ tox_envlist }}
+  fail:
+    msg: "tox_envlist is required for this role"
+  when: tox_envlist is not defined
+
 - name: Run tox
   args:
     chdir: "{{ zuul_work_dir }}"
@@ -9,13 +14,6 @@
     # (non-bundle) test environment.
 
     venv={{ tox_envlist }}
-
-    if [[ -z "$venv" ]]; then
-        echo "Usage: $?"
-        echo
-        echo "VENV: The tox environment to run (eg 'python27')"
-        exit 1
-    fi
 
     function process_testr_artifacts {
         if [ ! -d ".testrepository" ] ; then
