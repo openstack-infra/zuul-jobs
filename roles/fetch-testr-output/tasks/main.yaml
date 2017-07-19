@@ -1,3 +1,14 @@
+- name: Register subunit file
+  stat:
+    path: "{{ zuul_work_dir }}/testrepository.subunit"
+  register: p
+
+- name: Compress subunit file to archive to logs server
+  archive:
+    path: "{{ p.stat.path }}"
+  when:
+    - p.stat.exists
+
 - name: Collect test-results
   synchronize:
     dest: "{{ zuul.executor.log_root }}"
