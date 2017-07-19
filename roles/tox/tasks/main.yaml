@@ -6,9 +6,7 @@
   shell: |
     # If a bundle file is present, call tox with the jenkins version of
     # the test environment so it is used.  Otherwise, use the normal
-    # (non-bundle) test environment.  Also, run pbr freeze on the
-    # resulting environment at the end so that we have a record of exactly
-    # what packages we ended up testing.
+    # (non-bundle) test environment.
 
     venv={{ tox_envlist }}
 
@@ -18,15 +16,6 @@
         echo "VENV: The tox environment to run (eg 'python27')"
         exit 1
     fi
-
-    function freeze_venv {
-        [ -e $bin_path/pbr ] && freezecmd=pbr || freezecmd=pip
-
-        echo "Begin $freezecmd freeze output from test virtualenv:"
-        echo "======================================================================"
-        ${bin_path}/${freezecmd} freeze | sort -f
-        echo "======================================================================"
-    }
 
     function process_testr_artifacts {
         if [ ! -d ".testrepository" ] ; then
@@ -93,7 +82,6 @@
     tox -vv -e$venv
     result=$?
 
-    freeze_venv
     process_testr_artifacts
     check_oom
     check_nose_html
