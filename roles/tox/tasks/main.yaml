@@ -39,19 +39,8 @@
             $bin_path/testr last --subunit > ./testrepository.subunit
         fi
         /usr/os-testr-env/bin/subunit2html ./testrepository.subunit testr_results.html
-        SUBUNIT_SIZE=$(du -k ./testrepository.subunit | awk '{print $1}')
         gzip -9 ./testrepository.subunit
         gzip -9 ./testr_results.html
-
-        if [[ "$SUBUNIT_SIZE" -gt 50000 ]]; then
-            echo
-            echo "testrepository.subunit was > 50 MB of uncompressed data!!!"
-            echo "Something is causing tests for this project to log significant amounts"
-            echo "of data. This may be writers to python logging, stdout, or stderr."
-            echo "Failing this test as a result"
-            echo
-            exit 1
-        fi
 
         rancount=$($bin_path/testr last | sed -ne 's/Ran \([0-9]\+\).*tests in.*/\1/p')
         if [ -z "$rancount" ] || [ "$rancount" -eq "0" ] ; then
