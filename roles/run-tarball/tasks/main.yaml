@@ -20,8 +20,6 @@
 
     venv={{ tox_envlist }}
 
-    export UPPER_CONSTRAINTS_FILE=$(pwd)/upper-constraints.txt
-
     rm -f dist/*.tar.gz
     tox -e$venv python setup.py sdist
 
