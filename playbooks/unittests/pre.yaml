@@ -1,10 +1,4 @@
 - hosts: all
-  # We're gathering facts here so that we can emit things in the debug-ansible
-  # role. We also need facts in bindep.
-  # Don't copy-pasta this. Zuul runs ansible with gathering = explicit
-  gather_facts: true
-  gather_subset:
-    - "!all"
   roles:
     - role: configure-mirrors
       # TODO(mordred) When we have site-local variables, these should go there
