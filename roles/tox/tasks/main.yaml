@@ -38,20 +38,6 @@
         fi
     }
 
-    function check_oom {
-        $script_path/jenkins-oom-grep.sh post
-        oomresult=$?
-
-        if [ $oomresult -ne "0" ]; then
-            echo
-            echo "This test has failed because it attempted to exceed configured"
-            echo "memory limits and was killed prior to completion.  See above"
-            echo "for related kernel messages."
-            echo
-            exit 1
-        fi
-    }
-
     function check_nose_html {
         htmlreport=$(find . -name $NOSE_HTML_OUT_FILE)
         if [ -f "$htmlreport" ]; then
@@ -81,7 +67,6 @@
     result=$?
 
     process_testr_artifacts
-    check_oom
     check_nose_html
 
     # Rename tox .log files to .log.txt so that Apache serves them as
