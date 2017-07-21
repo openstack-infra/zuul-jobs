@@ -1,6 +1,7 @@
 - name: Create Temp SSH key
   command: ssh-keygen -t rsa -b 1024 -N '' -f {{ zuul_temp_ssh_key }}
   delegate_to: localhost
+  run_once: true
 
 - name: Distribute it to all nodes
   authorized_key:
@@ -11,10 +12,12 @@
 - name: Remove all keys from local agent
   command: ssh-add -D
   delegate_to: localhost
+  run_once: true
 
 - name: Add back temp key
   command: ssh-add {{ zuul_temp_ssh_key }}
   delegate_to: localhost
+  run_once: true
 
 - name: Verify we can still SSH to all nodes
   ping:
