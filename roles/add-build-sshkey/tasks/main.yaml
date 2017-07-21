@@ -7,4 +7,5 @@
 
 - name: Create a new key in workspace based on build UUID
   include: create-key-and-replace.yaml
-  when: zuul_temp_ssh_key_stat is defined
+  when:
+    - zuul_temp_ssh_key_stat.stat.exists != True
