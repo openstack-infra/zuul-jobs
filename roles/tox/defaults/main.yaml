@@ -1,3 +1,5 @@
 ---
 tox_envlist: venv
 zuul_work_dir: "src/{{ zuul.project.canonical_name }}"
+tox_environment: {}
+tox_environment_defaults: {}

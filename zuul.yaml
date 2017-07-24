@@ -44,19 +44,24 @@
       This performs basic host and general project setup tasks common
       to all tox unit test jobs.
 
-      Responds to three variables:
+      Responds to these variables:
 
       tox_envlist
         work against specified environments (ALL selects all)
 
       tox_environment
-        list of environmental variables to pass to bash shell
+        list of user defined environmental variables to pass to bash shell
 
       tox_command_line
         an optional command line
     run: playbooks/tox/run
     pre-run: playbooks/tox/pre
     post-run: playbooks/tox/post
+    vars:
+      tox_environment_defaults:
+        NOSE_WITH_HTML_OUTPUT: 1
+        NOSE_HTML_OUT_FILE: nose_results.html
+        NOSE_WITH_XUNIT: 1
 
 - job:
     name: tox-py27
