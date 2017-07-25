@@ -3,11 +3,15 @@
     msg: "tox_envlist is required for this role"
   when: tox_envlist is not defined
 
+- name: Create my_tox_environment variable
+  set_fact:
+    my_tox_environment: "{{ tox_environment_defaults | combine(tox_environment) }}"
+
 - name: Run tox
   args:
     chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
-  environment: "{{ tox_environment | default(omit) }}"
+  environment: "{{ my_tox_environment }}"
   shell: |
     # If a bundle file is present, call tox with the jenkins version of
     # the test environment so it is used.  Otherwise, use the normal
