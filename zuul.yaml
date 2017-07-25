@@ -130,7 +130,6 @@
 - job:
     name: tox-cover
     parent: tox
-    voting: false
     description: |
       Run code coverage tests.
 
@@ -141,7 +140,6 @@
 - job:
     name: tox-tarball
     parent: tox
-    voting: false
     description: |
       Generate a python source tarball and a binary wheel
 
