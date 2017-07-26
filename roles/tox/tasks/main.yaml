@@ -9,53 +9,6 @@
 
 - name: Run tox
   args:
-    chdir: "{{ zuul_work_dir }}"
-    executable: /bin/bash
+    chdir: "{{ zuul_work_dir | default(omit) }}"
   environment: "{{ my_tox_environment }}"
-  shell: |
-    # If a bundle file is present, call tox with the jenkins version of
-    # the test environment so it is used.  Otherwise, use the normal
-    # (non-bundle) test environment.
-
-    venv={{ tox_envlist }}
-
-    function process_testr_artifacts {
-        if [ ! -d ".testrepository" ] ; then
-            return
-        fi
-
-        rancount=$($bin_path/testr last | sed -ne 's/Ran \([0-9]\+\).*tests in.*/\1/p')
-        if [ -z "$rancount" ] || [ "$rancount" -eq "0" ] ; then
-            echo
-            echo "Zero tests were run. At least one test should have been run."
-            echo "Failing this test as a result"
-            echo
-            exit 1
-        fi
-    }
-
-    function check_nose_html {
-        htmlreport=$(find . -name $NOSE_HTML_OUT_FILE)
-        if [ -f "$htmlreport" ]; then
-            passcount=$(grep -c 'tr class=.passClass' $htmlreport)
-            if [ $passcount -eq "0" ]; then
-                echo
-                echo "Zero tests passed, which probably means there was an error"
-                echo "parsing one of the python files, or that some other failure"
-                echo "during test setup prevented a sane run."
-                echo
-                exit 1
-            fi
-        fi
-    }
-
-    bin_path=.tox/$venv/bin
-    export PYTHON=$bin_path/python
-
-    tox -vv -e$venv
-    result=$?
-
-    process_testr_artifacts
-    check_nose_html
-
-    exit $result
+  command: "{{ tox_executable }} -e{{ tox_envlist }} {{ tox_extra_args }}"
