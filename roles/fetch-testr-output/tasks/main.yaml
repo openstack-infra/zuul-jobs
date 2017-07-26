@@ -1,13 +1,12 @@
-- name: Register subunit file
+- name: Register testrepository directory
   stat:
-    path: "{{ zuul_work_dir }}/testrepository.subunit"
-  register: p
+    path: "{{ zuul_work_dir }}/.testrepository"
+  register: testrepository_stat
 
-- name: Compress subunit file to archive to logs server
-  archive:
-    path: "{{ p.stat.path }}"
+- name: Process testr artifacts
+  include: process.yaml
   when:
-    - p.stat.exists
+    - testrepository_stat.stat.exists
 
 - name: Collect test-results
   synchronize:
