@@ -15,7 +15,6 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../..'))
 # -- General configuration ----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -24,7 +23,6 @@ extensions = [
     'sphinx.ext.autodoc',
     #'sphinx.ext.intersphinx',
     'zuul_sphinx.zuul',
-    'oslosphinx'
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
