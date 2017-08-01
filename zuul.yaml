@@ -39,6 +39,12 @@
 
          Path to an upper constraints file. Will be provided to tox via
          UPPER_CONSTRAINTS_FILE environment variable if it exists.
+
+      .. zuul:jobvar: tox_install_siblings
+         :default: true
+
+         Override tox requirements that have corresponding zuul git repos
+         on the node by installing the git versions into the tox virtualenv.
     run: playbooks/tox/run
     pre-run: playbooks/tox/pre
     post-run: playbooks/tox/post
