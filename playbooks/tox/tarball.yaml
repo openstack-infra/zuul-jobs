@@ -1,4 +1,6 @@
 - hosts: all
   roles:
-    - run-tarball
-    - run-wheel
+    - role: tox
+      tox_extra_args: -vv python setup.py sdist
+    - role: tox
+      tox_extra_args: -vv python setup.py bdist_wheel
