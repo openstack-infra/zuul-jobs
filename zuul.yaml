@@ -31,9 +31,9 @@
          List of user defined environmental variables to pass to bash
          shell.
 
-      .. zuul:jobvar:: tox_command_line
+      .. zuul:jobvar:: tox_extra_args
 
-         An optional command line.
+         String containing extra arguments to append to the tox command line.
     run: playbooks/tox/run
     pre-run: playbooks/tox/pre
     post-run: playbooks/tox/post
