@@ -1,2 +1,2 @@
 - include: mirror.yaml
-  when: mirror_host is defined
+  when: mirror_fqdn is defined

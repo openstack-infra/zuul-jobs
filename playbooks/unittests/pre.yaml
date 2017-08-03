@@ -2,7 +2,7 @@
   roles:
     - role: configure-mirrors
       # TODO(mordred) When we have site-local variables, these should go there
-      mirror_host: "mirror.{{ nodepool.region | lower }}.{{ nodepool.provider | lower }}.openstack.org"
+      mirror_fqdn: "mirror.{{ nodepool.region | lower }}.{{ nodepool.provider | lower }}.openstack.org"
     - role: bindep
       bindep_profile: test
       bindep_dir: "{{ zuul_work_dir }}"
