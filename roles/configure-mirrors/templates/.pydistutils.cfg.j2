@@ -1,6 +1,4 @@
 # {{ ansible_managed }}
 [easy_install]
 index_url = {{ pypi_mirror }}
-{% if mirror_domain is defined %}
-allow_hosts = *.{{ mirror_domain }}
-{% endif %}
+allow_hosts = {{ mirror_host }}
