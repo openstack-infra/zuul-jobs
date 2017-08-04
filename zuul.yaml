@@ -106,6 +106,7 @@
     vars:
       tox_envlist: docs
     post-run: playbooks/tox/docs-post
+    success-url: html/
 
 - job:
     name: tox-linters
