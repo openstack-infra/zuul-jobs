@@ -1,12 +1,12 @@
-- name: Register testrepository directory
+- name: Register stestr directory
   stat:
-    path: "{{ zuul_work_dir }}/.testrepository"
-  register: testrepository_stat
+    path: "{{ zuul_work_dir }}/.stestr"
+  register: stestr_stat
 
 - name: Process testr artifacts
   include: process.yaml
   when:
-    - testrepository_stat.stat.exists
+    - stestr_stat.stat.exists
 
 - name: Collect test-results
   synchronize:
@@ -20,4 +20,4 @@
     - "*testr_results.html.gz"
     - "*testrepository.subunit.gz"
   when:
-    - testrepository_stat.stat.exists
+    - stestr_stat.stat.exists
