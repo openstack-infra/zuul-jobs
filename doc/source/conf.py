@@ -22,7 +22,7 @@ import sys
 extensions = [
     'sphinx.ext.autodoc',
     #'sphinx.ext.intersphinx',
-    'zuul_sphinx.zuul',
+    'zuul_sphinx',
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
