@@ -1,0 +1,32 @@
+- name: Find tox directories to synchrionize
+  find:
+    file_type: directory
+    paths: "{{ zuul_work_dir }}/.tox"
+    # NOTE(pabelanger): The .tox/log folder is empty, ignore it.
+    patterns: ^(?!log).*$
+    use_regex: yes
+  register: result
+
+- name: Set tox log path for multiple nodes
+  set_fact:
+    log_path: "{{ zuul.executor.log_root }}/{{ inventory_hostname }}/tox"
+  when: groups['all'] | length > 1
+
+- name: Set tox log path for single node
+  set_fact:
+    log_path: "{{ zuul.executor.log_root }}/tox"
+  when: log_path is not defined
+
+- name: Ensure local tox dir
+  file:
+    path: "{{ log_path }}"
+    state: directory
+  delegate_to: localhost
+
+- name: Collect tox logs
+  synchronize:
+    dest: "{{ log_path }}"
+    mode: pull
+    src: "{{ item.path }}/log/"
+    verify_host: true
+  with_items: "{{ result.files }}"
