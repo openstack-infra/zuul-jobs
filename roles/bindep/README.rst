@@ -5,22 +5,28 @@ that a ``other-requirements.txt``. If one exists, run ``bindep`` on the
 file to produce a list of required distro packages that do not exist and
 then install the missing packages.
 
-Role Variables
+**Role Variables**
 
-bindep_dir
-  The directory to look for bindep files in. Defaults to current directory.
+.. zuul:rolevar:: bindep_dir
+   :default: .
 
-bindep_profile
-  A specific bindep profile to request. Defaults to empty.
+   The directory to look for bindep files in.
 
-bindep_file
-  Path to a specific bindep file to read from.
+.. zuul:rolevar:: bindep_profile
 
-bindep_command
-  Path to the bindep command. Defaults to unset which will look for a system
-  installed bindep. If bindep_command is not found, bindep will be installed
-  into a temporary virtualenv.
+   A specific bindep profile to request.
 
-bindep_fallback
-  Path to a bindep fallback file to be used if no bindep file can be found in
-  `bindep_dir`.
+.. zuul:rolevar:: bindep_file
+
+   Path to a specific bindep file to read from.
+
+.. zuul:rolevar:: bindep_command
+
+   Path to the bindep command. Defaults to unset which will look for a
+   system installed bindep. If bindep_command is not found, bindep
+   will be installed into a temporary virtualenv.
+
+.. zuul:rolevar:: bindep_fallback
+
+   Path to a bindep fallback file to be used if no bindep file can be
+   found in :zuul:rolevar:`bindep.bindep_dir`.

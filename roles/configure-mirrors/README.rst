@@ -1,9 +1,12 @@
 An ansible role to configure services to use mirrors.
 
-Role Variables
+**Role Variables**
 
-mirror_fqdn
-  The base host for mirror servers
+.. zuul:rolevar:: mirror_fqdn
 
-pypi_mirror
-  URL to override the generated pypi mirror url based on mirror_fqdn
+   The base host for mirror servers.
+
+.. zuul:rolevar:: pypi_mirror
+
+   URL to override the generated pypi mirror url based on
+   :zuul:rolevar:`configure-mirrors.mirror_fqdn`.
