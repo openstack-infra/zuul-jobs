@@ -1,23 +1,33 @@
-Runs tox for a project.
+Runs tox for a project
 
-Role Variables
+**Role Variables**
 
-tox_environment
-  Environment variables to pass in to the tox run.
+.. zuul:rolevar:: tox_environment
 
-tox_environment_defaults
-  Default environment variables to pass in to the tox run. Intended to allow
-  setting a set of environment variables in a base job but to still allow
-  specific settings on a per-job or per-variant basis.
+   Environment variables to pass in to the tox run.
 
-tox_envlist
-  Which tox environment to run. Defaults to 'venv'.
+.. zuul:rolevar:: tox_environment_defaults
 
-tox_executable
-  Location of the tox executable. Defaults to 'tox'.
+   Default environment variables to pass in to the tox run. Intended
+   to allow setting a set of environment variables in a base job but
+   to still allow specific settings on a per-job or per-variant basis.
 
-tox_extra_args
-  String of extra command line options to pass to tox. Defaults to '-vv'.
+.. zuul:rolevar:: tox_envlist
+   :default: venv
 
-zuul_work_dir
-  Directory to run tox in.
+   Which tox environment to run.
+
+.. zuul:rolevar:: tox_executable
+   :default: tox
+
+   Location of the tox executable.
+
+.. zuul:rolevar:: tox_extra_args
+   :default: -vv
+
+   String of extra command line options to pass to tox.
+
+.. zuul:rolevar:: zuul_work_dir
+   :default: src/{{ zuul.project.canonical_name }}
+
+   Directory to run tox in.

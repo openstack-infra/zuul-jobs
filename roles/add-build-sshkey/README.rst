@@ -7,7 +7,8 @@ removes all keys from this job's SSH agent so that the original key
 used to log into all of the hosts is no longer accessible, then adds
 the newly generated private key.
 
-Role Variables
+**Role Variables**
 
-zuul_temp_ssh_key
-  Where to put the newly-generated SSH private key.
+.. zuul:rolevar:: zuul_temp_ssh_key
+
+   Where to put the newly-generated SSH private key.
