@@ -25,3 +25,6 @@
   apt:
     update_cache: yes
   when: ansible_os_family == 'Debian'
+  register: apt_cache
+  until: "'cache_updated' in apt_cache"
+  retries: 3
