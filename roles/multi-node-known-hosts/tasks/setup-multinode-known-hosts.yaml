@@ -1,0 +1,10 @@
+- name: Get known_hosts facts
+  generate_all_known_hosts:
+    hostvars: "{{ hostvars }}"
+
+- name: add known_host record for every public key of every other ip, hostname
+  known_hosts:
+    name: "{{ item.name }}"
+    key: "{{ item.key }}"
+  with_items:
+    "{{ all_known_hosts }}"
