@@ -10,5 +10,5 @@
   when: ara_db_stat.stat.exists
 
 - name: Generate ara html output
-  command: ara generate html "{{ zuul.executor.log_root/ara }}"
+  command: "ara generate html {{ zuul.executor.log_root }}/ara"
   when: ara_command_type|succeeded and not ara_command_type|skipped
