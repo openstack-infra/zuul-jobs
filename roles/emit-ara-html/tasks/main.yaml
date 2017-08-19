@@ -4,9 +4,7 @@
   register: ara_db_stat
 
 - name: Check for ara install
-  args:
-    executable: /bin/bash
-  command: type -p ara
+  command: which ara
   ignore_errors: yes
   register: ara_command_type
   when: ara_db_stat.stat.exists
