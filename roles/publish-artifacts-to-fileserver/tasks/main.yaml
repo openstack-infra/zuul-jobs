@@ -1,10 +1,6 @@
-- name: Set tarball path
-  set_fact:
-    tarball_path: "{{ fileserver.path }}/{{ zuul.project.short_name }}"
-
-- name: Ensure project directory exists
+- name: Ensure project artifact directory exists
   file:
-    path: "{{ tarball_path }}"
+    path: "{{ zuul_fileserver_project_path }}"
     state: directory
     recurse: yes
     mode: 0775
@@ -12,4 +8,4 @@
 - name: Upload contents of the artifacts folder
   synchronize:
     src: "{{ zuul.executor.work_root }}/artifacts/"
-    dest: "{{ tarball_path }}/"
+    dest: "{{ zuul_fileserver_project_path }}/"

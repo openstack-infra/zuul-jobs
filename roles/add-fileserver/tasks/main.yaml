@@ -1,21 +1,22 @@
 - name: Create SSH private key from secret
   copy:
     content: "{{ fileserver.ssh_private_key }}"
-    dest: ~/.ssh/tarballs_id_rsa
+    dest: ~/.ssh/fileserver_id_rsa
     mode: 0600
 
-- name: Add tarballs server ssh key
-  command: ssh-add ~/.ssh/tarballs_id_rsa
+- name: Add fileserver ssh key
+  command: ssh-add ~/.ssh/fileserver_id_rsa
 
 - name: Remove SSH private key from disk
-  command: shred ~/.ssh/tarballs_id_rsa
+  command: shred ~/.ssh/fileserver_id_rsa
 
-- name: Add tarballs server to inventory
+- name: Add fileserver to inventory
   add_host:
     name: "{{ fileserver.fqdn }}"
-    ansible_user: "{{ fileserver.ssh_username }}"
+    ansible_user: "{{ fileserver.ssh_username|default(ansible_user) }}"
+    zuul_fileserver_project_path: "{{ fileserver.path }}/{{ zuul.project.short_name }}"
 
-- name: Add tarballs server to known hosts
+- name: Add fileserver server to known hosts
   known_hosts:
     name: "{{ fileserver.fqdn }}"
     key: "{{ fileserver.ssh_known_hosts }}"
