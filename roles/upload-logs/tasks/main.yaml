@@ -34,3 +34,12 @@
     src: "{{ zuul.executor.log_root }}/job-output.txt.gz"
     dest: "{{zuul_logserver_root}}/{{ log_path }}/job-output.txt.gz"
     verify_host: true
+
+  post_tasks:
+    - name: Return log URL to Zuul
+      delegate_to: localhost
+      zuul_return:
+        data:
+          zuul:
+            log_url: "{{ zuul_log_url }}/{{ log_path }}/"
+      when: zuul_log_url is defined
