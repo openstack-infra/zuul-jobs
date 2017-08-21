@@ -136,6 +136,16 @@
     run: playbooks/tox/tarball
     post-run: playbooks/python/tarball-post
 
+- job:
+    name: python-upload-pypi
+    parent: python-sdist
+    description: |
+      Generate a and upload a python source tarball and binary wheel
+
+      Requires a variable ``pypi_info`` be set which is a dict containing
+      at least a ``username`` and ``password`` attribute.
+    post-run: playbooks/python/upload-pypi
+
 - project:
     name: openstack-infra/zuul-jobs
     check:
