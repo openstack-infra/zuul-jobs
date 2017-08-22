@@ -125,18 +125,6 @@
     post-run: playbooks/python/tarball-post
 
 - job:
-    name: tox-tarball
-    parent: tox
-    description: |
-      Generate a python source tarball and a binary wheel
-
-      Uses tox with the ``venv`` environment.
-    vars:
-      tox_envlist: venv
-    run: playbooks/tox/tarball
-    post-run: playbooks/python/tarball-post
-
-- job:
     name: python-upload-pypi
     parent: python-sdist
     description: |
