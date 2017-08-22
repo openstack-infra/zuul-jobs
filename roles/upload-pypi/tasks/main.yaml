@@ -20,7 +20,7 @@
   register: found_wheels
 
 - name: Upload wheel with twine before tarballs
-  command: "twine upload -r {{ pypi_repository }} {{ item }}"
+  command: "twine upload -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_wheels.files }}"
   when: found_wheels.matched|bool
 
@@ -31,6 +31,6 @@
   register: found_tarballs
 
 - name: Upload tarballs with twine
-  command: "twine upload -r {{ pypi_repository }} {{ item }}"
+  command: "twine upload -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_tarballs.files }}"
   when: found_tarballs.matched|bool
