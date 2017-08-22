@@ -127,7 +127,7 @@
     vars:
       tox_envlist: venv
     run: playbooks/tox/tarball
-    post-run: playbooks/tox/tarball-post
+    post-run: playbooks/python/tarball-post
 
 - project:
     name: openstack-infra/zuul-jobs
