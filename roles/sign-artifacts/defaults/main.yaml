@@ -1,0 +1,1 @@
+gpg_sign_path: "{{ zuul.executor.work_root }}/artifacts/"

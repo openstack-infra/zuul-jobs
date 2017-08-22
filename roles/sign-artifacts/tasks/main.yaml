@@ -1,0 +1,26 @@
+- name: Make GPG directory
+  tempfile:
+    state: directory
+  register: gnupg_tmpdir
+
+- name: Create GPG pubring
+  copy:
+    content: "{{ gpg_key.pubring }}"
+    dest: "{{ gnupg_tmpdir.path }}/pubring.gpg"
+    mode: 0400
+
+- name: Create GPG secring
+  copy:
+    content: "{{ gpg_key.secring }}"
+    dest: "{{ gnupg_tmpdir.path }}/secring.gpg"
+    mode: 0400
+
+- name: Find files to sign
+  find:
+    paths: "{{ gpg_sign_path }}"
+  register: artifacts
+
+- name: Sign artifacts
+  command: "gpg --homedir {{ gnupg_tmpdir.path }} --armor --detach-sign {{ item.path }}"
+  with_items: "{{ artifacts.files }}"
+  when: artifacts.matched|bool
