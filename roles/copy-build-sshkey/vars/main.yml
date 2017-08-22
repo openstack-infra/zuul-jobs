@@ -1,0 +1,2 @@
+zuul_temp_ssh_key: "{{ zuul.executor.work_root }}/{{ zuul.build }}_id_rsa"
+copy_sshkey_target_user: root
