@@ -14,6 +14,5 @@
   when: ara_command_type|succeeded and not ara_command_type|skipped
 
 - name: Compress ARA html output
-  archive:
-    path: "{{ zuul.executor.log_root }}/ara"
+  command: gzip --recursive --best {{ zuul.executor.log_root }}/ara
   when: ara_compress_html | bool
