@@ -134,6 +134,13 @@
       at least a ``username`` and ``password`` attribute.
     post-run: playbooks/python/upload-pypi
 
+- job:
+    name: multinode
+    description: |
+      Do additional setup needed for multi-node jobs such as setting up
+      overlay networks and setting up known-hosts and ssh keys
+    pre-run: playbooks/multinode/pre
+
 - project:
     name: openstack-infra/zuul-jobs
     check:
