@@ -2,3 +2,4 @@
 pypi_path: "src/{{ zuul.project.canonical_name }}/dist"
 pypi_repository: "{{ pypi_info.repository|default('pypi') }}"
 pypi_repository_url: "{{ pypi_info.repository_url|default('https://pypi.python.org/pypi') }}"
+pypi_twine_executable: twine

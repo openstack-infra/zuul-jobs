@@ -1,12 +1,3 @@
-- name: Check for twine install
-  command: which twine
-  ignore_errors: yes
-  register: twine_command_which
-
-- name: Ensure twine is installed
-  command: pip install --user twine
-  when: not twine_command_which|succeeded
-
 - name: Install .pypirc configuration file
   template:
     dest: ~/.pypirc
@@ -20,7 +11,7 @@
   register: found_wheels
 
 - name: Upload wheel with twine before tarballs
-  command: "twine upload -r {{ pypi_repository }} {{ item.path }}"
+  command: "{{ pypi_twine_executable }} upload -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_wheels.files }}"
   when: found_wheels.matched|bool
 
@@ -31,6 +22,6 @@
   register: found_tarballs
 
 - name: Upload tarballs with twine
-  command: "twine upload -r {{ pypi_repository }} {{ item.path }}"
+  command: "{{ pypi_twine_executable }} upload -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_tarballs.files }}"
   when: found_tarballs.matched|bool
