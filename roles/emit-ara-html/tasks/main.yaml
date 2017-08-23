@@ -1,14 +1,19 @@
-- name: Check for ara db
+- name: Check for ARA db
   stat:
     path: "{{ zuul.executor.work_root }}/.ara/ansible.sqlite"
   register: ara_db_stat
 
-- name: Check for ara install
+- name: Check for ARA install
   command: which ara
   ignore_errors: yes
   register: ara_command_type
   when: ara_db_stat.stat.exists
 
-- name: Generate ara html output
+- name: Generate ARA html output
   command: "ara generate html {{ zuul.executor.log_root }}/ara"
   when: ara_command_type|succeeded and not ara_command_type|skipped
+
+- name: Compress ARA html output
+  archive:
+    path: "{{ zuul.executor.log_root }}/ara"
+  when: ara_compress_html | bool
