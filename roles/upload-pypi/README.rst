@@ -30,3 +30,8 @@ Upload python packages to PyPI
    :default: src/{{ zuul.project.canonical_name }}/dist
 
    Path containing artifacts to upload.
+
+.. zuul:rolevar:: pypi_twine_executable
+   :default: twine
+
+   Path to twine executable.
