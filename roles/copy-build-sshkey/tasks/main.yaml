@@ -1,0 +1,25 @@
+---
+# Add the authorization first, to take advantage of manage_dir
+- name: Authorize build key
+  authorized_key:
+    user: "{{ copy_sshkey_target_user }}"
+    manage_dir: yes
+    key: "{{ lookup('file', zuul_temp_ssh_key ~ '.pub') }}"
+
+# Use a block to add become to a set of tasks
+- block:
+  - name: Install the build private key
+    copy:
+      src: "{{ zuul_temp_ssh_key }}"
+      dest: "~/.ssh/id_rsa"
+      mode: 0600
+      force: no
+
+  - name: Install the build public key
+    copy:
+      src: "{{ zuul_temp_ssh_key }}.pub"
+      dest: "~/.ssh/id_rsa.pub"
+      mode: 0644
+      force: no
+  become: true
+  become_user: "{{ copy_sshkey_target_user }}"
