@@ -15,6 +15,12 @@
     dest: "{{ gnupg_tmpdir.path }}/secring.gpg"
     mode: 0400
 
+- name: Display sha1sum for GPG pubring / secring
+  command: "sha1sum {{ item }}"
+  with_items:
+    - "{{ gnupg_tmpdir.path }}/pubring.gpg"
+    - "{{ gnupg_tmpdir.path }}/secring.gpg"
+
 - name: Find files to sign
   find:
     paths: "{{ gpg_sign_path }}"
