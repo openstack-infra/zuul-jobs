@@ -23,7 +23,7 @@
 - name: Sign artifacts
   command: "gpg --homedir {{ gnupg_tmpdir.path }} --armor --detach-sign {{ item.path }}"
   with_items: "{{ artifacts.files }}"
-  when: artifacts.matched|bool
+  when: artifacts.matched > 0
 
 - name: Delete keyring directory
   file:
