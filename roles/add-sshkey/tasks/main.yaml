@@ -1,0 +1,10 @@
+- name: Write out ssh key
+  file:
+    path: "~/.ssh/id_rsa"
+    content: "{{ ssh_key.ssh_private_key }}"
+
+- name: Add host key information to known hosts
+  known_hosts:
+    name: "{{ ssh_key.fqdn }}"
+    key: "{{ ssh_key.ssh_known_hosts }}"
+  when: ssh_key.ssh_known_hosts is defined and ssh_key.fqdn is defined
