@@ -4,13 +4,9 @@ Sign artifacts
 
 .. zuul:rolevar:: gpg_key
 
-   Complex argument which contains the GPG public and secret keyrings
-   for signing the artifacts. It is expected that this argument comes
-   from a `Secret`.
-
-  .. zuul:rolevar:: public
-
-     The ascii-armored contents of the GPG public key.
+   Complex argument which contains the GPG private key for signing
+   the artifacts. It is expected that this argument comes from a
+   `Secret`.
 
   .. zuul:rolevar:: private
 
