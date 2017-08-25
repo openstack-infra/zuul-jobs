@@ -7,7 +7,7 @@
 - name: Find wheels to upload
   find:
     paths: "{{ pypi_path }}"
-    patterns: "*.whl,*.whl.asc"
+    patterns: "*.whl"
   register: found_wheels
 
 - name: Upload wheel with twine before tarballs
@@ -17,7 +17,7 @@
 - name: Find tarballs to upload
   find:
     paths: "{{ pypi_path }}"
-    patterns: "*.tar.gz,*.tar.gz.asc"
+    patterns: "*.tar.gz"
   register: found_tarballs
 
 - name: Upload tarballs with twine
