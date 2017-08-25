@@ -1,14 +1,19 @@
+- name: Create SSH private key tempfile
+  tempfile:
+    state: file
+  register: ssh_private_key_tmp
+
 - name: Create SSH private key from secret
   copy:
     content: "{{ fileserver.ssh_private_key }}"
-    dest: ~/.ssh/fileserver_id_rsa
+    dest: "{{ ssh_private_key_tmp.path }}"
     mode: 0600
 
 - name: Add fileserver ssh key
-  command: ssh-add ~/.ssh/fileserver_id_rsa
+  command: "ssh-add {{ ssh_private_key_tmp.path }}"
 
 - name: Remove SSH private key from disk
-  command: shred ~/.ssh/fileserver_id_rsa
+  command: "shred {{ ssh_private_key_tmp.path }}"
 
 - name: Add fileserver to inventory
   add_host:
