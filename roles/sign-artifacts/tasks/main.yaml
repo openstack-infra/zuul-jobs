@@ -3,23 +3,43 @@
     state: directory
   register: gnupg_tmpdir
 
-- name: Create GPG pubring
+- name: Create GPG private key tempfile
+  tempfile:
+    state: file
+  register: gpg_private_key_tmp
+
+- name: Create GPG private key
   copy:
-    content: "{{ gpg_key.pubring }}"
-    dest: "{{ gnupg_tmpdir.path }}/pubring.gpg"
+    content: "{{ gpg_key.private }}"
+    dest: "{{ gpg_private_key_tmp.path }}"
     mode: 0400
 
-- name: Create GPG secring
+- name: Import GPG private key
+  command: "gpg --homedir {{ gnupg_tmpdir.path }} --allow-secret-key-import --import {{ gpg_private_key_tmp.path }}"
+
+- name: Delete GPG private key
+  file:
+    path: "{{ gpg_private_key_tmp.path }}"
+    state: absent
+
+- name: Create GPG public key tempfile
+  tempfile:
+    state: file
+  register: gpg_public_key_tmp
+
+- name: Create GPG public key
   copy:
-    content: "{{ gpg_key.secring }}"
-    dest: "{{ gnupg_tmpdir.path }}/secring.gpg"
+    content: "{{ gpg_key.public }}"
+    dest: "{{ gpg_public_key_tmp.path }}"
     mode: 0400
 
-- name: Display sha1sum for GPG pubring / secring
-  command: "sha1sum {{ item }}"
-  with_items:
-    - "{{ gnupg_tmpdir.path }}/pubring.gpg"
-    - "{{ gnupg_tmpdir.path }}/secring.gpg"
+- name: Import GPG public key
+  command: "gpg --homedir {{ gnugp_tmpdir.path }} --import {{ gpg_public_key_tmp.path }}"
+
+- name: Delete GPG public key
+  file:
+    path: "{{ gpg_public_key_tmp.path }}"
+    state: absent
 
 - name: Find files to sign
   find:

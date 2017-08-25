@@ -8,13 +8,13 @@ Sign artifacts
    for signing the artifacts. It is expected that this argument comes
    from a `Secret`.
 
-  .. zuul:rolevar:: pubring
+  .. zuul:rolevar:: public
 
-     The binary contents of the GPG pubring.
+     The ascii-armored contents of the GPG public key.
 
-  .. zuul:rolevar:: secring
+  .. zuul:rolevar:: private
 
-     The binary contents of the GPG secring.
+     The ascii-armored contents of the GPG private key.
 
 .. zuul:rolevar:: gpg_artifact_path
    :default: "{{ zuul.executor.work_root }}/artifacts/"
