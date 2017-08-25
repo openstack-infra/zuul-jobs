@@ -13,7 +13,6 @@
 - name: Upload wheel with twine before tarballs
   command: "{{ pypi_twine_executable }} upload -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_wheels.files }}"
-  when: found_wheels.matched|bool
 
 - name: Find tarballs to upload
   find:
@@ -24,4 +23,3 @@
 - name: Upload tarballs with twine
   command: "{{ pypi_twine_executable }} upload -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_tarballs.files }}"
-  when: found_tarballs.matched|bool
