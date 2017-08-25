@@ -34,7 +34,7 @@
     mode: 0400
 
 - name: Import GPG public key
-  command: "gpg --homedir {{ gnugp_tmpdir.path }} --import {{ gpg_public_key_tmp.path }}"
+  command: "gpg --homedir {{ gnupg_tmpdir.path }} --import {{ gpg_public_key_tmp.path }}"
 
 - name: Delete GPG public key
   file:
