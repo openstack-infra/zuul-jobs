@@ -1,0 +1,21 @@
+- name: Create AFS keytab tempfile
+  tempfile:
+    state: file
+  register: afs_keytab_tmp
+
+- name: Create (base64 decode) AFS keytab from secret
+  copy:
+    content: "{{ afs.keytab | b64decode }}"
+    dest: "{{ afs_keytab_tmp.path }}"
+    mode: 0400
+
+- name: Obtain ticket for Kerberos
+  command: "kinit -k -t {{ afs_keytab_tmp.path}} {{ afs.service_name }}"
+
+- name: Delete AFS keytab tempfile
+  file:
+    path: "{{ afs_keytab_tmp.path }}"
+    state: absent
+
+- name: Obtain authentication token for AFS
+  command: aklog
