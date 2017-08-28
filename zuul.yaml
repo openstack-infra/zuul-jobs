@@ -135,6 +135,13 @@
     post-run: playbooks/python/upload-pypi
 
 - job:
+    name: trigger-readthedocs
+    description:
+      Send a trigger to the readthedocs url to tell it to build docs
+    nodes: []
+    run: playbooks/python/readthedocs
+
+- job:
     name: multinode
     description: |
       Do additional setup needed for multi-node jobs such as setting up

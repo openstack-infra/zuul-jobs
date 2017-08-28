@@ -1,0 +1,6 @@
+- hosts: localhost
+  tasks:
+    - name: Trigger readthedocs build URI
+      uri:
+        method: POST
+        url: 'https://readthedocs.org/build/{{ zuul.project.short_name }}'
