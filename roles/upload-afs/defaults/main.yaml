@@ -1,0 +1,1 @@
+afs_source: "{{ zuul.executor.work_root }}/artifacts/"
