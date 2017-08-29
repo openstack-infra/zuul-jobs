@@ -148,6 +148,18 @@
       overlay networks and setting up known-hosts and ssh keys
     pre-run: playbooks/multinode/pre
 
+- project-template:
+    name: docs-on-readthedocs
+    post:
+      jobs:
+        - trigger-readthedocs
+    pre-release:
+      jobs:
+        - trigger-readthedocs
+    release:
+      jobs:
+        - trigger-readthedocs
+
 - project:
     name: openstack-infra/zuul-jobs
     check:
