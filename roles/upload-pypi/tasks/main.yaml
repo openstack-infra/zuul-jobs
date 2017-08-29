@@ -1,6 +1,11 @@
-- name: Install .pypirc configuration file
+- name: Create .pypirc configuration file tempfile
+  tempfile:
+    state: file
+  register: _pypirc_tmp
+
+- name: Create .pypirc configuration file
   template:
-    dest: ~/.pypirc
+    dest: "{{ _pypirc_tmp.path }}"
     mode: 0400
     src: .pypirc.j2
 
@@ -11,7 +16,7 @@
   register: found_wheels
 
 - name: Upload wheel with twine before tarballs
-  command: "{{ pypi_twine_executable }} upload -r {{ pypi_repository }} {{ item.path }}"
+  command: "{{ pypi_twine_executable }} upload --config-file {{ _pypirc_tmp.path }} -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_wheels.files }}"
 
 - name: Find tarballs to upload
@@ -21,10 +26,10 @@
   register: found_tarballs
 
 - name: Upload tarballs with twine
-  command: "{{ pypi_twine_executable }} upload -r {{ pypi_repository }} {{ item.path }}"
+  command: "{{ pypi_twine_executable }} upload --config-file {{ _pypirc_tmp.path }} -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_tarballs.files }}"
 
 - name: Delete .pypirc configuration file
   file:
-    path: ~/.pyirc
+    path: "{{ _pypirc_tmp.path }}"
     state: absent
