@@ -1,19 +1,22 @@
 - name: Synchronize src repos to workspace directory
   command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.src_dir}}"
-  chdir: "{{ zuul.executor.src_root }}/{{ item.src_dir }}"
+  args:
+    chdir: "{{ zuul.executor.src_root }}/{{ item.src_dir }}"
   with_items: "{{ zuul.projects }}"
   delegate_to: localhost
 
 - name: Determine local HEAD
   shell: "git status |head -1 |awk '{ print $NF }'"
-  chdir: "{{ zuul.executor.src_root }}/{{ item.src_dir }}"
+  args:
+    chdir: "{{ zuul.executor.src_root }}/{{ item.src_dir }}"
   with_items: "{{ zuul.projects }}"
   delegate_to: localhost
   register: statuses
 
 - name: Checkout local HEAD on remote
   command: "git checkout {{ item.1 }}"
-  chdir: "{{ zuul.executor.src_root }}/{{ item.0.src_dir }}"
+  args:
+    chdir: "{{ zuul.executor.src_root }}/{{ item.0.src_dir }}"
   with_together:
     - "{{ zuul.projects }}"
     - "{{ statuses }}"
