@@ -1,2 +1,3 @@
 ---
+zuul_executor_dest: "{{ zuul.executor.log_root }}"
 zuul_work_dir: "src/{{ zuul.project.canonical_name }}"

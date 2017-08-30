@@ -1,6 +1,6 @@
 - name: Collect sphinx build html
   synchronize:
-    dest: "{{ zuul.executor.log_root }}"
+    dest: "{{ zuul_executor_dest }}"
     mode: pull
     src: "{{ zuul_work_dir }}/doc/build/html"
     verify_host: true
