@@ -10,7 +10,10 @@
 
 - name: Ensure twine is installed
   block:
-    - command: pip install twine --user
-    - set_fact:
+    - name: Ensure twine is installed
+      command: pip install twine --user
+
+    - name: Set pypi_twine_executable
+      set_fact:
         pypi_twine_executable: ~/.local/bin/twine
   when: register_twine.rc != 0
