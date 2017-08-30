@@ -1,7 +1,5 @@
-# Shared jobs that are generally applicable and non-OpenStack specific
+# Shared jobs that are generally applicable to everyone
 # Assumes a 'base' job defined elsewhere
-# In OpenStack, jobs in this repo may be overridden by jobs defined in:
-#    https://git.openstack.org/cgit/openstack-infra/project-config
 
 - job:
     name: unittests
@@ -78,10 +76,6 @@
 - job:
     name: tox-docs
     parent: tox
-    # NOTE: This is not the OpenStack docs job, this is a job to run a tox
-    #       environment called "docs". OpenStack project should use the
-    #       openstack-doc-build job from
-    #       git.openstack.org/openstack-infra/openstack-zuul-jobs
     description: |
       Run documentation unit tests.
 
