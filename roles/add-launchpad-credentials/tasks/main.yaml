@@ -1,0 +1,16 @@
+- name: Ensure launchpadlib directory
+  file:
+    path: ~/.launchpadlib
+    state: directory
+
+- name: Write credentials
+  template:
+    path: ~/.launchpadlib/creds
+    mode: 0600
+    src: creds.j2
+
+- name: Install launchpadlib
+  package:
+    name: python-launchpadlib
+    state: present
+  become: yes

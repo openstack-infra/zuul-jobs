@@ -1,0 +1,7 @@
+- name: Remove the launchpadlib credentials
+  command: shred ~/.launchpadlib/creds
+
+- name: Remove launchpadlib directory
+  file:
+    path: ~/.launchpadlib
+    state: absent
