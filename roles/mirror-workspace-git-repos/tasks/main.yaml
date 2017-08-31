@@ -27,9 +27,9 @@
     # Undo the config setting we did above
     git config --local --unset receive.denyCurrentBranch
     # checkout the branch matching the branch set up by the executor
-    git checkout {{ item.1 }}
+    git checkout {{ item.1.stdout }}
   args:
     chdir: "{{ ansible_user_dir }}/{{ item.0.src_dir }}"
   with_together:
     - "{{ zuul.projects }}"
-    - "{{ statuses }}"
+    - "{{ statuses.results }}"
