@@ -2,5 +2,5 @@
   synchronize:
     dest: "{{ zuul_executor_dest }}"
     mode: pull
-    src: "{{ zuul_work_dir }}/doc/build/html"
+    src: "{{ sphinx_output_src }}"
     verify_host: true
