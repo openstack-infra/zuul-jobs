@@ -85,11 +85,11 @@ def afs_sync(afssource, afstarget):
         shell_cmd = bash_cmd.format(
             src=subsource,
             dst=subtarget,
-            filter=filter_file)
+            filter=filter_file.name)
         output['source'] = subsource
         output['destination'] = subtarget
         output['output'] = subprocess.check_output(shell_cmd, shell=True)
-        os.remove(filter_file)
+        os.remove(filter_file.name)
 
     return output_blocks
 
