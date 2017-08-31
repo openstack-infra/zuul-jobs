@@ -1,3 +1,9 @@
+- name: Allow pushing to non-bare repo
+  command: "git config --local receive.denyCurrentBranch ignore"
+  args:
+    chdir: "{{ ansible_user_dir }}/{{ item.src_dir}}"
+  with_items: "{{ zuul.projects }}"
+
 - name: Synchronize src repos to workspace directory
   command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.src_dir}}"
   args:
@@ -13,8 +19,15 @@
   delegate_to: localhost
   register: statuses
 
-- name: Checkout local HEAD on remote
-  command: "git checkout {{ item.1 }}"
+# Do this as a multi-line shell so that we can do the loop once
+- name: Update remote repository state correctly
+  shell: |
+    # Reset is needed because we pushed to a non-bare repo
+    git reset --hard
+    # Undo the config setting we did above
+    git config --local --unset receive.denyCurrentBranch
+    # checkout the branch matching the branch set up by the executor
+    git checkout {{ item.1 }}
   args:
     chdir: "{{ ansible_user_dir }}/{{ item.0.src_dir }}"
   with_together:
