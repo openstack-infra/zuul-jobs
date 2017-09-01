@@ -66,7 +66,7 @@ def afs_sync(afssource, afstarget):
         filter_file = tempfile.NamedTemporaryFile(delete=False)
 
         for exclude in excludes:
-            filter_file.write('- %s\n' % exclude)
+            filter_file.write(b'- %s\n' % exclude.encode('utf8'))
         filter_file.close()
 
         # Perform the rsync with the filter list.
