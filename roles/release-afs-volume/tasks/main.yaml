@@ -1,0 +1,6 @@
+- name: Emit volume name
+  debug:
+    var: afs_volume
+
+- name: Releasing AFS volume
+  command: "vos release -v {{ afs_volume }}"
