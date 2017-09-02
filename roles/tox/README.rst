@@ -6,12 +6,6 @@ Runs tox for a project
 
    Environment variables to pass in to the tox run.
 
-.. zuul:rolevar:: tox_environment_defaults
-
-   Default environment variables to pass in to the tox run. Intended
-   to allow setting a set of environment variables in a base job but
-   to still allow specific settings on a per-job or per-variant basis.
-
 .. zuul:rolevar:: tox_envlist
    :default: venv
 
@@ -27,7 +21,12 @@ Runs tox for a project
 
    String of extra command line options to pass to tox.
 
+.. zuul:rolevar:: tox_upper_constraints_file
+
+   Path to an upper constraints file. Will be provided to tox via
+   UPPER_CONSTRAINTS_FILE environment variable if it exists.
+
 .. zuul:rolevar:: zuul_work_dir
-   :default: src/{{ zuul.project.canonical_name }}
+   :default: {{ zuul.project.src_dir }}
 
    Directory to run tox in.

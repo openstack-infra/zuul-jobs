@@ -34,11 +34,16 @@
       .. zuul:jobvar:: tox_extra_args
 
          String containing extra arguments to append to the tox command line.
+
+      .. zuul:jobvar: tox_upper_constraints_file
+
+         Path to an upper constraints file. Will be provided to tox via
+         UPPER_CONSTRAINTS_FILE environment variable if it exists.
     run: playbooks/tox/run
     pre-run: playbooks/tox/pre
     post-run: playbooks/tox/post
     vars:
-      tox_environment_defaults:
+      tox_environment:
         NOSE_WITH_HTML_OUTPUT: 1
         NOSE_HTML_OUT_FILE: nose_results.html
         NOSE_WITH_XUNIT: 1
