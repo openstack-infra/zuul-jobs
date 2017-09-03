@@ -4,7 +4,7 @@
     prefix: bindep
   register: bindep_temp_dir
   notify:
-  - remove bindep temp dir
+    - remove bindep temp dir
 
 - name: install bindep into temporary venv
   pip:

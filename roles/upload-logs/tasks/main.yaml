@@ -20,7 +20,7 @@
     src: "{{ zuul.executor.log_root }}/"
     dest: "{{zuul_logserver_root}}/{{ log_path }}/"
     rsync_opts:
-    - "--exclude=job-output.txt"
+      - "--exclude=job-output.txt"
   no_log: true
 
 # After this point there are no more logs
