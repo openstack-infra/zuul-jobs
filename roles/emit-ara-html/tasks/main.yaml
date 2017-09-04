@@ -11,8 +11,10 @@
 
 - name: Generate ARA html output
   command: "ara generate html {{ zuul.executor.log_root }}/ara"
+  ignore_errors: yes
   when: ara_command_type|succeeded and not ara_command_type|skipped
 
 - name: Compress ARA html output
   command: gzip --recursive --best {{ zuul.executor.log_root }}/ara
-  when: ara_compress_html | bool
+  ignore_errors: yes
+  when: ara_compress_html | bool
