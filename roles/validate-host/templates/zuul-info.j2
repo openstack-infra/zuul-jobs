@@ -1,46 +1,51 @@
-{% if 'image_manifest' in zdi %}
+{% if zdi.image_manifest_files %}
 Image Information
 =================
-{{ zdi.image_manifest }}
-{% endif %}
 
+{% for item in zdi.image_manifest_files %}
+{{ item.filename }}
+{{ item.underline }}
+{{ item.content }}
+{% endfor %}
+
+{% endif %}
 {% if 'uname' in zdi %}
 Host & kernel
 =============
 {{ zdi.uname }}
-{% endif %}
 
+{% endif %}
 {% if 'network_interfaces' in zdi %}
 Network interface addresses
 ===========================
 {{ zdi.network_interfaces }}
-{% endif %}
 
+{% endif %}
 {% if 'network_routing_v4' in zdi %}
 Network routing tables v4
 =========================
 {{ zdi.network_routing_v4 }}
-{% endif %}
 
+{% endif %}
 {% if 'network_routing_v6' in zdi %}
 Network routing tables v6
 =========================
 {{ zdi.network_routing_v6 }}
-{% endif %}
 
+{% endif %}
 {% if 'network_neighbors' in zdi %}
 Network neighbors
 =================
 {{ zdi.network_neighbors }}
-{% endif %}
 
+{% endif %}
 {% if 'traceroute_v4' in zdi %}
 Route to Known Host v4
 ======================
 Known Host: {{ zuul_traceroute_host }}
 {{ zdi.traceroute_v4 }}
-{% endif %}
 
+{% endif %}
 {% if 'traceroute_v6' in zdi %}
 Route to Known Host v6
 ======================

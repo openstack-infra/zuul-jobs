@@ -21,8 +21,9 @@
 
 - name: Collect information about zuul worker
   zuul_debug_info:
-    image_manifest: "{{ zuul_image_manifest|default(omit) }}"
-    traceroute_host: "{{ zuul_traceroute_host|default(omit) }}"
+    image_manifest: "{{ zuul_site_image_manifest|default(omit) }}"
+    image_manifest_files: "{{ zuul_site_image_manifest_files|default(omit) }}"
+    traceroute_host: "{{ zuul_site_traceroute_host|default(omit) }}"
   register: zdi
 
 - name: Write out all zuul information for each host
