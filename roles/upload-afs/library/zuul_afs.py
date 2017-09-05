@@ -14,10 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
 
 import os
 import subprocess
 import tempfile
+
+from ansible.module_utils.basic import AnsibleModule
 
 
 def afs_sync(afssource, afstarget):
@@ -106,7 +110,6 @@ def main():
     output = afs_sync(p['source'], p['target'])
     module.exit_json(changed=True, build_roots=output)
 
-from ansible.module_utils.basic import *  # noqa
 
 if __name__ == '__main__':
     main()
