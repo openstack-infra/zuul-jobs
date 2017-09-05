@@ -27,6 +27,7 @@
 - name: Define bindep_command fact
   set_fact:
     bindep_run: "{{ bindep_command }} -b -f {{ bindep_file }} {{ bindep_profile }}"
+  when: bindep_file is defined
 
 - include: packages.yaml
   when: bindep_file is defined
