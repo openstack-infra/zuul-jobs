@@ -1,0 +1,7 @@
+- debug:
+    msg: "Job {{ zuul.job }} triggered from {{ zuul.change_url }}"
+  when: zuul.change_url is defined
+
+- debug:
+    msg: "At completion, logs for this job will be availble at {{ log_path }}"
+  when: log_path is defined
