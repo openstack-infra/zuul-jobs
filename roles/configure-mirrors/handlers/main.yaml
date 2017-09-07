@@ -3,3 +3,10 @@
 - name: Update apt cache
   become: yes
   command: apt-get update
+
+- name: Update yum cache
+  become: yes
+  command: "{{ item }}"
+  with_items:
+    - yum clean all
+    - yum makecache
