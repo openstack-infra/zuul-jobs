@@ -145,3 +145,42 @@
       Do additional setup needed for multi-node jobs such as setting up
       overlay networks and setting up known-hosts and ssh keys
     pre-run: playbooks/multinode/pre
+
+####
+# zuul-jobs/project-config integration
+####
+
+- job:
+    name: base-integration
+    description: |
+      Runs roles that are included by default in the 'base' job in order to
+      prevent regressions.
+    parent: base-minimal
+    roles:
+      - zuul: openstack-infra/project-config
+    run: playbooks/integration-tests/base
+
+- job:
+    name: base-integration-ubuntu-trusty
+    parent: base-integration
+    nodes:
+      - name: ubuntu-trusty
+        label: ubuntu-trusty
+
+- job:
+    name: base-integration-ubuntu-xenial
+    parent: base-integration
+    nodes:
+      - name: ubuntu-xenial
+        label: ubuntu-xenial
+
+- project:
+    name: openstack-infra/zuul-jobs
+    check:
+      jobs:
+        - base-integration-ubuntu-trusty
+        - base-integration-ubuntu-xenial
+    gate:
+      jobs:
+        - base-integration-ubuntu-trusty
+        - base-integration-ubuntu-xenial
