@@ -17,3 +17,10 @@
   with_items:
     - yum clean all
     - yum makecache
+
+- name: Update zypper cache
+  become: yes
+  command: "{{ item }}"
+  with_items:
+    - zypper clean
+    - zypper refresh

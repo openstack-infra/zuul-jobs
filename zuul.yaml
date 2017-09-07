@@ -182,6 +182,13 @@
         label: fedora-26
 
 - job:
+    name: base-integration-opensuse423
+    parent: base-integration
+    nodes:
+      - name: opensuse-423
+        label: opensuse-423
+
+- job:
     name: base-integration-ubuntu-trusty
     parent: base-integration
     nodes:
@@ -204,6 +211,7 @@
         - base-integration-fedora-26
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
+        - base-integration-opensuse423
     gate:
       jobs:
         - base-integration-centos-7
@@ -211,3 +219,4 @@
         - base-integration-fedora-26
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
+        - base-integration-opensuse423

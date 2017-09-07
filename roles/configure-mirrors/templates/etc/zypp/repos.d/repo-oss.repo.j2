@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+[repo-oss]
+name=repo-oss
+enabled=1
+autorefresh=0
+baseurl={{ package_mirror }}/distribution/leap/$releasever/repo/oss/
+type=yast2
+keeppackages=0
