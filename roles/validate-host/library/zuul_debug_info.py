@@ -31,7 +31,7 @@ command_map = {
 
 def run_command(command):
     env = os.environ.copy()
-    env['PATH'] = '{path}:/sbin'.format(path=env['PATH'])
+    env['PATH'] = '{path}:/sbin:/usr/sbin'.format(path=env['PATH'])
     return subprocess.check_output(
         shlex.split(command),
         stderr=subprocess.STDOUT,
@@ -58,13 +58,13 @@ def main():
             ret['traceroute_v6'] = run_command(
                 'traceroute6 -n {host}'.format(host=traceroute_host))
             passed = True
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, OSError):
             pass
         try:
             ret['traceroute_v4'] = run_command(
                 'traceroute -n {host}'.format(host=traceroute_host))
             passed = True
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, OSError):
             pass
         if not passed:
             module.fail_json(
