@@ -4,6 +4,13 @@
   become: yes
   command: apt-get update
 
+- name: Update dnf cache
+  become: yes
+  command: "{{ item }}"
+  with_items:
+    - dnf clean all
+    - dnf makecache
+
 - name: Update yum cache
   become: yes
   command: "{{ item }}"

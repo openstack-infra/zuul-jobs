@@ -175,6 +175,13 @@
         label: debian-jessie
 
 - job:
+    name: base-integration-fedora-26
+    parent: base-integration
+    nodes:
+      - name: fedora-26
+        label: fedora-26
+
+- job:
     name: base-integration-ubuntu-trusty
     parent: base-integration
     nodes:
@@ -194,11 +201,13 @@
       jobs:
         - base-integration-centos-7
         - base-integration-debian-jessie
+        - base-integration-fedora-26
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
     gate:
       jobs:
         - base-integration-centos-7
         - base-integration-debian-jessie
+        - base-integration-fedora-26
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
