@@ -22,5 +22,6 @@
 # Make sure OS does not have a stale package cache.
 - name: Update apt cache
   become: yes
-  command: apt-get update
+  apt:
+    update_cache: yes
   when: ansible_os_family == 'Debian'
