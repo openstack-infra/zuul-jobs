@@ -168,6 +168,13 @@
         label: centos-7
 
 - job:
+    name: base-integration-debian-jessie
+    parent: base-integration
+    nodes:
+      - name: debian-jessie
+        label: debian-jessie
+
+- job:
     name: base-integration-ubuntu-trusty
     parent: base-integration
     nodes:
@@ -186,10 +193,12 @@
     check:
       jobs:
         - base-integration-centos-7
+        - base-integration-debian-jessie
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
     gate:
       jobs:
         - base-integration-centos-7
+        - base-integration-debian-jessie
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
