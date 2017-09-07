@@ -161,6 +161,13 @@
     run: playbooks/integration-tests/base
 
 - job:
+    name: base-integration-centos-7
+    parent: base-integration
+    nodes:
+      - name: centos-7
+        label: centos-7
+
+- job:
     name: base-integration-ubuntu-trusty
     parent: base-integration
     nodes:
@@ -178,9 +185,11 @@
     name: openstack-infra/zuul-jobs
     check:
       jobs:
+        - base-integration-centos-7
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
     gate:
       jobs:
+        - base-integration-centos-7
         - base-integration-ubuntu-trusty
         - base-integration-ubuntu-xenial
