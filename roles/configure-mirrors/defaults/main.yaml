@@ -1,1 +1,2 @@
 pypi_mirror: "http://{{ mirror_fqdn }}/pypi/simple"
+wheel_mirror: "http://{{ mirror_fqdn }}/wheel/{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}-{{ ansible_architecture | lower }}"

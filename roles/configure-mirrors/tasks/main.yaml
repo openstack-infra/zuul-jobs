@@ -1,2 +1,4 @@
-- include: mirror.yaml
+- name: Set up infrastructure mirrors
+  include: mirror.yaml
   when: mirror_fqdn is defined
+  static: no
