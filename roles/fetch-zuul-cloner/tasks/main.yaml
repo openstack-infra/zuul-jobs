@@ -1,0 +1,10 @@
+- name: Install zuul-cloner shim
+  delegate_to: localhost
+  template:
+    src: templates/zuul-cloner-shim.py.j2
+    dest: "{{ destination }}"
+
+- name: Change zuul-cloner permissions
+  file:
+    path: "{{ destination }}"
+    mode: 0755
