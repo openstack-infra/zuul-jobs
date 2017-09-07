@@ -1,10 +1,17 @@
+- name: Create zuul-cloner destination directory
+  file:
+    path: "{{ destination | dirname }}"
+    state: directory
+  become: yes
+
 - name: Install zuul-cloner shim
-  delegate_to: localhost
   template:
     src: templates/zuul-cloner-shim.py.j2
     dest: "{{ destination }}"
+  become: yes
 
 - name: Change zuul-cloner permissions
   file:
     path: "{{ destination }}"
     mode: 0755
+  become: yes
