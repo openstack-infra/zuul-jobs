@@ -1,14 +1,25 @@
-- name: Require tox_envlist variable - {{ tox_envlist }}
+- name: Require tox_envlist variable
   fail:
-    msg: "tox_envlist is required for this role"
+    msg: tox_envlist is required for this role
   when: tox_envlist is not defined
 
-- name: Create my_tox_environment variable
+- name: Check to see if the constraints file exists
+  stat:
+    path: "{{ tox_upper_constraints_file }}"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
+  register: stat_results
+  when: tox_upper_constraints_file is defined
+
+- name: Record file location
   set_fact:
-    my_tox_environment: "{{ tox_environment_defaults | combine(tox_environment) }}"
+    tox_upper_constraints_env:
+      UPPER_CONSTRAINTS_FILE: "{{ tox_upper_constraints_file }}"
+  when: not stat_results|skipped and stat_results.stat.exists
 
 - name: Run tox
   args:
-    chdir: "{{ zuul_work_dir | default(omit) }}"
-  environment: "{{ my_tox_environment }}"
+    chdir: "{{ zuul_work_dir }}"
+  environment: "{{ tox_environment|combine(tox_upper_constraints_env|default({})) }}"
   command: "{{ tox_executable }} -e{{ tox_envlist }} {{ tox_extra_args }}"
