@@ -1,0 +1,13 @@
+- name: Install Suse repository files
+  become: yes
+  template:
+    dest: "/{{ item }}"
+    group: root
+    mode: 0644
+    owner: root
+    src: "{{ item }}.j2"
+  with_items:
+    - etc/zypp/repos.d/repo-oss.repo
+    - etc/zypp/repos.d/repo-update.repo
+  notify:
+    - Update zypper cache
