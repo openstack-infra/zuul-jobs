@@ -42,16 +42,26 @@ def main():
     module = AnsibleModule(
         argument_spec=dict(
             image_manifest=dict(required=False, type='str'),
+            image_manifest_files=dict(required=False, type='list'),
             traceroute_host=dict(required=False, type='str'),
         )
     )
 
     image_manifest = module.params['image_manifest']
     traceroute_host = module.params['traceroute_host']
-    ret = {'image_manifest': None, 'traceroute': None}
+    image_manifest_files = module.params['image_manifest_files']
+    if not image_manifest_files and image_manifest:
+        image_manifest_files = [image_manifest]
+    ret = {'image_manifest_files': [], 'traceroute': None}
 
-    if image_manifest and os.path.exists(image_manifest):
-        ret['image_manifest'] = open(image_manifest, 'r').read()
+    for image_manifest in image_manifest_files:
+        if image_manifest and os.path.exists(image_manifest):
+            ret['image_manifest_files'].append({
+                'filename': image_manifest,
+                # Do this in python cause it's easier than in jinja2
+                'underline': len(image_manifest) * '-',
+                'content': open(image_manifest, 'r').read(),
+            })
     if traceroute_host:
         passed = False
         try:

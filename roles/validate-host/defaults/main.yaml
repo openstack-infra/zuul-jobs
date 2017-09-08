@@ -1,0 +1,3 @@
+zuul_site_traceroute_host: "{{ zuul_traceroute_host|default(omit) }}"
+zuul_site_image_manifest: "{{ validate_host_default_image_manifest_files }}"
+zuul_site_image_manifest_files: "{{ zuul_site_image_manifest_files|default(validate_host_default_image_manifest_files) }}"
