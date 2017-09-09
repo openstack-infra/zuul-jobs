@@ -1,0 +1,6 @@
+- name: Collect translation source files
+  synchronize:
+    dest: "{{ zuul_executor_dest }}"
+    mode: pull
+    src: "{{ translation_output_src }}"
+    verify_host: true
