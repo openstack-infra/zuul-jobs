@@ -42,13 +42,13 @@ Network neighbors
 {% if 'traceroute_v4' in zdi %}
 Route to Known Host v4
 ======================
-Known Host: {{ zuul_traceroute_host }}
+Known Host: {{ zuul_site_traceroute_host }}
 {{ zdi.traceroute_v4 }}
 
 {% endif %}
 {% if 'traceroute_v6' in zdi %}
 Route to Known Host v6
 ======================
-Known Host: {{ zuul_traceroute_host }}
+Known Host: {{ zuul_site_traceroute_host }}
 {{ zdi.traceroute_v6 }}
 {% endif %}
