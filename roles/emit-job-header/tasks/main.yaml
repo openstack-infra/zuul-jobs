@@ -1,7 +1,10 @@
+- include_role:
+    name: set-zuul-log-path-fact
+
 - debug:
     msg: "Job {{ zuul.job }} triggered from {{ zuul.change_url }}"
   when: zuul.change_url is defined
 
 - debug:
-    msg: "At completion, logs for this job will be availble at "{{ zuul_log_url }}/{{ log_path }}"
-  when: zuul_log_url is defined and log_path is defined
+    msg: "At completion, logs for this job will be availble at "{{ zuul_log_url }}/{{ zuul_log_path }}"
+  when: zuul_log_url is defined and zuul_log_path is defined

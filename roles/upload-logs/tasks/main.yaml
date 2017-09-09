@@ -1,9 +1,9 @@
 - include_role:
-    name: generate-log-url
+    name: set-zuul-log-path-fact
 
 - name: Create log directories
   file:
-    path: "{{zuul_logserver_root}}/{{ log_path }}"
+    path: "{{zuul_logserver_root}}/{{ zuul_log_path }}"
     state: directory
     recurse: yes
     mode: 0775
@@ -11,7 +11,7 @@
 - name: Upload logs to log server
   synchronize:
     src: "{{ zuul.executor.log_root }}/"
-    dest: "{{zuul_logserver_root}}/{{ log_path }}/"
+    dest: "{{zuul_logserver_root}}/{{ zuul_log_path }}/"
     rsync_opts:
       - "--exclude=job-output.txt"
   no_log: true
@@ -25,7 +25,7 @@
 - name: Upload console log
   synchronize:
     src: "{{ zuul.executor.log_root }}/job-output.txt.gz"
-    dest: "{{zuul_logserver_root}}/{{ log_path }}/job-output.txt.gz"
+    dest: "{{zuul_logserver_root}}/{{ zuul_log_path }}/job-output.txt.gz"
     verify_host: true
 
 - name: Return log URL to Zuul
@@ -33,5 +33,5 @@
   zuul_return:
     data:
       zuul:
-        log_url: "{{ zuul_log_url }}/{{ log_path }}/"
+        log_url: "{{ zuul_log_url }}/{{ zuul_log_path }}/"
   when: zuul_log_url is defined
