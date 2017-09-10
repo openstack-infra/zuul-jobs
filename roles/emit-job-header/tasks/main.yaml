@@ -6,5 +6,5 @@
   when: zuul.change_url is defined
 
 - debug:
-    msg: "At completion, logs for this job will be availble at "{{ zuul_log_url }}/{{ zuul_log_path }}"
+    msg: "At completion, logs for this job will be available at "{{ zuul_log_url }}/{{ zuul_log_path }}"
   when: zuul_log_url is defined and zuul_log_path is defined
