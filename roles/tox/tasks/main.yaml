@@ -5,21 +5,21 @@
 
 - name: Check to see if the constraints file exists
   stat:
-    path: "{{ tox_upper_constraints_file }}"
+    path: "{{ tox_constraints_file|default('missing') }}"
     get_checksum: false
     get_mime: false
     get_md5: false
   register: stat_results
-  when: tox_upper_constraints_file is defined
+  when: tox_constraints_file is defined
 
 - name: Record file location
   set_fact:
-    tox_upper_constraints_env:
-      UPPER_CONSTRAINTS_FILE: "{{ tox_upper_constraints_file }}"
+    tox_constraints_env:
+      UPPER_CONSTRAINTS_FILE: "{{ tox_constraints_file }}"
   when: not stat_results|skipped and stat_results.stat.exists
 
 - name: Run tox
   args:
     chdir: "{{ zuul_work_dir }}"
-  environment: "{{ tox_environment|combine(tox_upper_constraints_env|default({})) }}"
+  environment: "{{ tox_environment|combine(tox_constraints_env|default({})) }}"
   command: "{{ tox_executable }} -e{{ tox_envlist }} {{ tox_extra_args }}"
