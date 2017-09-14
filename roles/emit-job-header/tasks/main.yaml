@@ -1,5 +1,4 @@
-- name: include the log path role
-  include_role:
+- include_role:
     name: set-zuul-log-path-fact
 
 - debug:

@@ -3,9 +3,6 @@
 - name: Update apt cache
   become: yes
   command: apt-get update
-  # skip linting for above comment
-  tags:
-    - skip_ansible_lint
 
 - name: Update dnf cache
   become: yes
