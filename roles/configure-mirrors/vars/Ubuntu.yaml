@@ -1,1 +1,1 @@
-package_mirror: "http://{{ mirror_fqdn }}/{{ ansible_distribution | lower }}"
+package_mirror: "http://{{ mirror_fqdn }}/{{ ansible_distribution | lower }}"
