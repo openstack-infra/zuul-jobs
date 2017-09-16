@@ -12,3 +12,7 @@
     - name: Set up multi-node hosts file
       include_role:
         name: multi-node-hosts-file
+
+    - name: Set up multi-node firewall
+      include_role:
+        name: multi-node-firewall
