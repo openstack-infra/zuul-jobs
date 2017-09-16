@@ -1,0 +1,39 @@
+- name: Include OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yaml"
+    - "{{ ansible_os_family }}.yaml"
+    - "default.yaml"
+
+# RHEL and CentOS requires repositories provided by RDO in order to install
+# openvswitch, set them up.
+- name: Set-up RDO repositories
+  become: yes
+  package:
+    name: "{{ rdo_repository }}"
+    state: installed
+  when:
+    - rdo_repository is defined
+    - ansible_os_family == "RedHat"
+  register: rdo_repos
+
+- name: Install openvswitch
+  become: yes
+  package:
+    name: "{{ ovs_package }}"
+    state: installed
+
+- name: Ensure openvswitch is started
+  become: yes
+  service:
+    name: "{{ ovs_service }}"
+    state: started
+    enabled: yes
+
+# If we've installed RDO repositories for openvswitch earlier, remove them
+- name: Ensure RDO repositories are removed
+  become: yes
+  package:
+    name: "rdo-release"
+    state: absent
+  when: rdo_repos | changed
