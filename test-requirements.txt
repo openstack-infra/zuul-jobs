@@ -5,6 +5,9 @@ pep8
 pyflakes
 flake8
 
+# We need to pin Ansible to <2.4 until Zuul supports it, otherwise ansible-lint
+# picks the latest version which is not known to work yet.
+ansible<2.4
 ansible-lint
 bashate>=0.2
 zuul-sphinx>=0.1.1
