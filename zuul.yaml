@@ -157,7 +157,8 @@
     name: trigger-readthedocs
     description:
       Send a trigger to the readthedocs url to tell it to build docs
-    nodes: []
+    nodeset:
+      nodes: []
     run: playbooks/python/readthedocs
 
 - job:
