@@ -21,9 +21,9 @@ Runs tox for a project
 
    String of extra command line options to pass to tox.
 
-.. zuul:rolevar:: tox_upper_constraints_file
+.. zuul:rolevar:: tox_constraints_file
 
-   Path to an upper constraints file. Will be provided to tox via
+   Path to a pip constraints file. Will be provided to tox via
    UPPER_CONSTRAINTS_FILE environment variable if it exists.
 
 .. zuul:rolevar:: zuul_work_dir

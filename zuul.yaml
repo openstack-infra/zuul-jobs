@@ -35,9 +35,9 @@
 
          String containing extra arguments to append to the tox command line.
 
-      .. zuul:jobvar: tox_upper_constraints_file
+      .. zuul:jobvar: tox_constraints_file
 
-         Path to an upper constraints file. Will be provided to tox via
+         Path to a pip constraints file. Will be provided to tox in the
          UPPER_CONSTRAINTS_FILE environment variable if it exists.
 
       .. zuul:jobvar: tox_install_siblings
