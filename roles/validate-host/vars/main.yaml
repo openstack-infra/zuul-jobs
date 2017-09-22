@@ -1,3 +1,0 @@
-validate_host_default_image_manifest_files:
-  - /etc/dib-builddate.txt
-  - /etc/image-hostname.txt
