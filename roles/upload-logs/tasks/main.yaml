@@ -8,6 +8,13 @@
     recurse: yes
     mode: 0775
 
+- name: Ensure logs are readable before uploading
+  file:
+    path: "{{ zuul.executor.log_root }}/"
+    mode: u=rwX,g=rX,o=rX
+    state: directory
+    recurse: yes
+
 - name: Upload logs to log server
   synchronize:
     src: "{{ zuul.executor.log_root }}/"
