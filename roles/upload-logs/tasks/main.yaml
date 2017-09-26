@@ -9,6 +9,7 @@
     mode: 0775
 
 - name: Ensure logs are readable before uploading
+  delegate_to: localhost
   file:
     path: "{{ zuul.executor.log_root }}/"
     mode: u=rwX,g=rX,o=rX
