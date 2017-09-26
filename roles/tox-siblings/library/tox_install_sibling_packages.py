@@ -100,15 +100,23 @@ def main():
     project_dir = module.params['project_dir']
     projects = module.params['projects']
 
+    if not os.path.exists(os.path.join(project_dir, 'setup.cfg')):
+        module.exit_json(changed=False, msg="No setup.cfg, no action needed")
+
+    # Who are we?
+    try:
+        c = configparser.ConfigParser()
+        c.read(os.path.join(project_dir, 'setup.cfg'))
+        package_name = c.get('metadata', 'name')
+    except Exception:
+        module.exit_json(
+            changed=False, msg="No name in setup.cfg, skipping siblings")
+
     tox_python = '{project_dir}/.tox/{envlist}/bin/python'.format(
         project_dir=project_dir, envlist=envlist)
     # Write a log file into the .tox dir so that it'll get picked up
     log_file = '{project_dir}/.tox/{envlist}/log/siblings.txt'.format(
         project_dir=project_dir, envlist=envlist)
-    # Who are we?
-    package_name = subprocess.check_output(
-        ['.tox/{envlist}/bin/python'.format(envlist=envlist),
-         'setup.py', '--name'], cwd=project_dir).strip()
 
     log = list()
     log.append(
