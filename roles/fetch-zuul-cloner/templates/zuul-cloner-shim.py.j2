@@ -140,13 +140,12 @@ def main():
         # Remove the tail end of the path (since the copy operation will
         # automatically create that)
         d = dst.rstrip('/')
-        d, base = os.path.split(d)
         if not os.path.exists(d):
             print("Creating %s" % d)
             os.makedirs(d)
 
         # Create hard link copy of the source directory
-        cmd = "cp -al %s %s" % (src, dst)
+        cmd = "cp -al %s/. %s" % (src, dst)
         print("%s" % cmd)
         if os.system(cmd):
             print("Error executing: %s" % cmd)
