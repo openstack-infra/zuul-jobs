@@ -16,7 +16,6 @@
 import argparse
 import os
 import re
-import subprocess
 import sys
 import yaml
 
@@ -145,13 +144,15 @@ def main():
             print("Creating %s" % d)
             os.makedirs(d)
 
-        # Create hard link copy of the source directory.  Note we cd
-        # into the target directory to avoid "cp -a" modifying the
-        # permissions of dst itself, which in particular can be fatal
-        # to ssh access when dst is a homedir
-        cmd = "cd %s; cp -al %s/. ." % (dst, src)
+        # Create hard link copy of the source directory
+
+        # note: don't use "-a" here as that implies "--preserve=all"
+        # which overwrites the permissions of dst from src ... this is
+        # fatal to ssh if dst is a home directory and we make it
+        # world-accessable.  This should leave dst alone
+        cmd = "cp -dRl %s/. %s" % (src, dst)
         print("%s" % cmd)
-        if subprocess.call(cmd, shell=True) != 0:
+        if os.system(cmd):
             print("Error executing: %s" % cmd)
             sys.exit(1)
 
