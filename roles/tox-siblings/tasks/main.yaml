@@ -13,5 +13,5 @@
   tox_install_sibling_packages:
     tox_envlist: "{{ tox_envlist }}"
     project_dir: "{{ zuul_work_dir }}"
-    projects: "{{ zuul.projects }}"
+    projects: "{{ zuul.projects | selectattr('required') | list }}"
   when: tox_install_siblings
