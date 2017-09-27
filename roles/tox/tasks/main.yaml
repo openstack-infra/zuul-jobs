@@ -18,6 +18,10 @@
       UPPER_CONSTRAINTS_FILE: "{{ tox_constraints_file }}"
   when: not stat_results|skipped and stat_results.stat.exists
 
+- name: Emit tox command
+  debug:
+    msg: "Running tox: {{ tox_executable }} -e{{ tox_envlist }} {{ tox_extra_args }}"
+
 - name: Run tox
   args:
     chdir: "{{ zuul_work_dir }}"
