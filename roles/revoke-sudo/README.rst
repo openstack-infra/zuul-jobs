@@ -1,6 +1,6 @@
 Remove sudo access for the Zuul user.
 
-If the file ``/etc/sudoers.d/zuul-sudo`` exists, then it will be
+If the file ``/etc/sudoers.d/zuul`` exists, then it will be
 removed.  This is to facilitate systems which may use the same image
 for tests which require sudo and those which do not.
 
