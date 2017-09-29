@@ -17,6 +17,7 @@ import argparse
 import os
 import re
 import sys
+import textwrap
 import yaml
 
 from collections import defaultdict
@@ -135,6 +136,28 @@ def main():
 
     for project in args.projects:
         src = os.path.join(os.path.expanduser(REPO_SRC_DIR), project)
+        if not os.path.exists(src):
+            print(textwrap.dedent(
+                """
+                **********************************
+                ERROR! {src} not found
+                In Zuul v3 all repositories used need to be declared
+                in the 'required-projects' parameter on the job.
+                To fix this issue, add:
+
+                  {src}
+
+                to 'required-projects'.
+
+                While you're at it, it's worth noting that zuul-cloner itself
+                is deprecated and this shim is only present for transition
+                purposes. Start thinking about how to rework job content to
+                just use the git repos that zuul will place into
+                /home/zuul/src directly.
+                **********************************
+                """.format(src=src)))
+            sys.exit(1)
+
         dst = dests[project]
 
         # Remove the tail end of the path (since the copy operation will
