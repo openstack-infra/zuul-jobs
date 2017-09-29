@@ -1,2 +1,5 @@
 ---
-zuul_work_dir: "src/{{ zuul.project.canonical_name }}"
+tox_envlist: all
+tox_executable: tox
+
+zuul_work_dir: "{{ zuul.project.src_dir }}"

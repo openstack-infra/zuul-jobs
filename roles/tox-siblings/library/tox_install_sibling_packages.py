@@ -115,8 +115,12 @@ def main():
     tox_python = '{project_dir}/.tox/{envlist}/bin/python'.format(
         project_dir=project_dir, envlist=envlist)
     # Write a log file into the .tox dir so that it'll get picked up
-    log_file = '{project_dir}/.tox/{envlist}/log/siblings.txt'.format(
+    # Name it with envlist as a prefix so that fetch-tox-output will properly
+    # get it in a multi-env scenario
+    log_dir = '{project_dir}/.tox/{envlist}/log'.format(
         project_dir=project_dir, envlist=envlist)
+    log_file = '{log_dir}/{envlist}-siblings.txt'.format(
+        log_dir=log_dir, envlist=envlist)
 
     log = list()
     log.append(
