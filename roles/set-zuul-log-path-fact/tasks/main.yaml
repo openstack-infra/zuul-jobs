@@ -6,4 +6,4 @@
 - name: Set log path for a ref update
   when: zuul.newrev is defined
   set_fact:
-    zuul_log_path: "{{ zuul.newrev[2:] }}/{{ zuul.newrev }}/{{ zuul.pipeline }}/{{ zuul.job }}/{{ zuul.build[:7] }}"
+    zuul_log_path: "{{ zuul.newrev[:2] }}/{{ zuul.newrev }}/{{ zuul.pipeline }}/{{ zuul.job }}/{{ zuul.build[:7] }}"
