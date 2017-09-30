@@ -1,3 +1,14 @@
-- hosts: all
-  roles:
-    - multi-node-known-hosts
+- name: Configure a multi node environment
+  hosts: all
+  tasks:
+    # TODO: Add groups['all'] | length > 1 conditional when the truncated JSON
+    # issue is resolved, see:
+    # - https://github.com/ansible/ansible/issues/30385
+    # - https://review.openstack.org/#/c/504238/
+    - name: Set up multi-node known hosts
+      include_role:
+        name: multi-node-known-hosts
+
+    - name: Set up multi-node hosts file
+      include_role:
+        name: multi-node-hosts-file
