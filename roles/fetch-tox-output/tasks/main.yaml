@@ -21,6 +21,8 @@
 
 - name: Find all environments
   command: tox -l
+  args:
+    chdir: "{{ zuul_work_dir }}"
   register: tox_environments
   when: tox_envlist is not defined or tox_envlist == 'all'
 
