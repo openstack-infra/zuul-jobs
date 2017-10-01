@@ -145,7 +145,7 @@ def main():
                 in the 'required-projects' parameter on the job.
                 To fix this issue, add:
 
-                  {src}
+                  {project}
 
                 to 'required-projects'.
 
@@ -153,9 +153,10 @@ def main():
                 is deprecated and this shim is only present for transition
                 purposes. Start thinking about how to rework job content to
                 just use the git repos that zuul will place into
-                /home/zuul/src directly.
+                {repo_src_dir} directly.
                 **********************************
-                """.format(src=src)))
+                """.format(
+                    src=src, project=project, repo_src_dir=REPO_SRC_DIR)))
             sys.exit(1)
 
         dst = dests[project]
