@@ -1,0 +1,59 @@
+---
+# This dynamically configures a unique offset for this peer
+- name: Set offset
+  set_fact:
+    offset: "{{ bridge_address_offset | int + 1 + groups['peers'].index(inventory_hostname) }}"
+
+- name: Add additional vni offset
+  set_fact:
+    vni: "{{ offset | int + bridge_vni_offset | int }}"
+
+# To make things more readable in the following tasks
+- name: Alias the primary node private IP
+  set_fact:
+    switch_private_ip: "{{ hostvars[groups['switch'][0]]['nodepool']['private_ipv4'] }}"
+
+- name: Add port to bridge on switch node
+  become: yes
+  command: >-
+    ovs-vsctl --may-exist add-port {{ bridge_name }}
+    {{ bridge_name }}_{{ nodepool['private_ipv4'] }}
+    -- set interface {{ bridge_name }}_{{ nodepool['private_ipv4'] }}
+    type=vxlan options:remote_ip={{ nodepool['private_ipv4'] }} options:key={{ vni }}
+    options:local_ip={{ switch_private_ip }}
+  delegate_to: "{{ groups['switch'][0] }}"
+
+- name: Create bridge on peer node
+  become: yes
+  openvswitch_bridge:
+    bridge: "{{ bridge_name }}"
+
+- name: Set MTU on peer node bridge
+  become: yes
+  command: ip link set mtu {{ bridge_mtu }} dev {{ bridge_name }}
+
+- name: Add port to bridge on peer node
+  become: yes
+  command: >-
+    ovs-vsctl --may-exist add-port {{ bridge_name }}
+    {{ bridge_name }}_{{ switch_private_ip }}
+    -- set interface {{ bridge_name }}_{{ switch_private_ip }}
+    type=vxlan options:remote_ip={{ switch_private_ip }} options:key={{ vni }}
+    options:local_ip={{ nodepool['private_ipv4'] }}
+
+- when: bridge_configure_address
+  block:
+    - name: Verify if the bridge address is set
+      shell: ip addr show dev {{ bridge_name }} | grep -q {{ bridge_address_prefix }}.{{ offset }}/{{ bridge_address_subnet }}
+      register: ip_addr_var
+      failed_when: False
+      changed_when: False
+
+    - name: Set the bridge address
+      become: yes
+      command: ip addr add {{ bridge_address_prefix }}.{{ offset }}/{{ bridge_address_subnet }} dev {{ bridge_name }}
+      when: ip_addr_var.rc == 1
+
+- name: Bring subnode bridge interface up
+  become: yes
+  command: ip link set dev {{ bridge_name }} up

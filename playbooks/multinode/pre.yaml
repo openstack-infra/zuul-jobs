@@ -16,3 +16,10 @@
     - name: Set up multi-node firewall
       include_role:
         name: multi-node-firewall
+
+- name: Configure multi-node networking switch and peer nodes
+  hosts:
+    - switch
+    - peers
+  roles:
+    - multi-node-bridge

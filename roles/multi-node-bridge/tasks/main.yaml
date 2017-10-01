@@ -1,0 +1,9 @@
+- include: common.yaml
+
+- include: switch.yaml
+  when: inventory_hostname in groups['switch']
+  static: no
+
+- include: peer.yaml
+  when: inventory_hostname in groups['peers']
+  static: no

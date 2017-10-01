@@ -1,0 +1,4 @@
+---
+ovs_package: "openvswitch"
+ovs_service: "openvswitch"
+rdo_repository: "https://rdoproject.org/repos/openstack-ocata/rdo-release-ocata.rpm"
