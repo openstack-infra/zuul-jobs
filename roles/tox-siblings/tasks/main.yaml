@@ -9,6 +9,7 @@
     chdir: "{{ zuul_work_dir }}"
   when: tox_install_siblings
 
+# TODO(mordred) handle tox_envlist being a list
 - name: Install any sibling python packages
   tox_install_sibling_packages:
     tox_envlist: "{{ tox_envlist }}"
