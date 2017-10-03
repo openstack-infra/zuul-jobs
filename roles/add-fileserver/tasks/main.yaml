@@ -19,7 +19,7 @@
   add_host:
     name: "{{ fileserver.fqdn }}"
     ansible_user: "{{ fileserver.ssh_username|default(ansible_user) }}"
-    zuul_fileserver_project_path: "{{ fileserver.path }}/{{ zuul.project.short_name }}"
+    zuul_fileserver_project_path: "{{ fileserver.path }}{{ '/' + fileserver_leading_path if fileserver_leading_path is defined else ''}}/{{ zuul.project.short_name }}"
 
 - name: Add fileserver server to known hosts
   known_hosts:
