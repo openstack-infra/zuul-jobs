@@ -3,7 +3,7 @@ Collect log output from a tox build
 **Role Variables**
 
 .. zuul:rolevar:: tox_envlist
-   :default: all
+   :default: venv
 
    Which tox environment to fetch log output from.
 
