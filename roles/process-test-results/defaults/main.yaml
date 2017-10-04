@@ -1,0 +1,4 @@
+tox_envdir: venv
+stage_dir: "{{ ansible_user_dir }}"
+subunit2html: /usr/os-testr-env/bin/subunit2html
+test_results_stage_name: test_results
