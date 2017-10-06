@@ -1,0 +1,24 @@
+- name: Require npm_command variable
+  fail:
+    msg: npm_command is required for this role
+  when: npm_command is not defined
+
+- name: Run npm lifecycle command
+  when: npm_command in npm_lifecycle_phases
+  command: "npm {{ npm_command }} --verbose"
+  # Need to set DISPLAY to the value that will be set when the virtual
+  # framebuffer is set up for doing browser tests.
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Run npm custom command
+  when: npm_command not in npm_lifecycle_phases
+  command: "npm run {{ npm_command }} --verbose"
+  # Need to set DISPLAY to the value that will be set when the virtual
+  # framebuffer is set up for doing browser tests.
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"

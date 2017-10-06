@@ -1,0 +1,62 @@
+- name: Set log path for multiple nodes
+  set_fact:
+    log_path: "{{ zuul.executor.log_root }}/{{ inventory_hostname }}/npm"
+  when: groups['all'] | length > 1
+
+- name: Set log path for single node
+  set_fact:
+    log_path: "{{ zuul.executor.log_root }}/npm"
+  when: log_path is not defined
+
+- name: Ensure local tox dir
+  file:
+    path: "{{ log_path }}"
+    state: directory
+  delegate_to: localhost
+
+- name: Check for shrinkwrap
+  stat:
+    path: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
+  register: shrinkwrap
+
+- name: Run npm prune because of https://github.com/npm/npm/issues/6298
+  when: not shrinkwrap.stat.exists
+  command: npm prune
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Run npm shrinkwrap
+  when: not shrinkwrap.stat.exists
+  command: npm shrinkwrap
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Check for reports
+  stat:
+    path: "{{ zuul_work_dir }}/reports"
+  register: reports_stat
+
+- name: Collect npm reports
+  synchronize:
+    dest: "{{ log_path }}"
+    mode: pull
+    src: "{{ zuul_work_dir }}/reports"
+    verify_host: true
+  when: reports_stat.stat.exists
+
+- name: Check for karma.subunit files
+  stat:
+    path: "{{ zuul_work_dir }}/karma.subunit"
+  register: karma_stat
+
+- name: Collect karma subunit files
+  synchronize:
+    dest: "{{ log_path }}"
+    mode: pull
+    src: "{{ zuul_work_dir }}/karma.subunit"
+    verify_host: true
+  when: karma_stat.stat.exists

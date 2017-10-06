@@ -1,0 +1,56 @@
+- name: Get SCM_SHA info
+  command: git rev-parse --short HEAD
+  failed_when: false
+  register: scm_sha_output
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Set scm_sha fact
+  set_fact:
+    scm_sha: "{{ scm_sha_output.stdout }}"
+
+- name: Get SCM_TAG info
+  command: git describe --abbrev=0 --tags
+  failed_when: false
+  register: scm_tag_output
+  when: zuul.tag is not defined
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Set scm_sha fact from output
+  set_fact:
+    scm_tag: "{{ scm_tag_output.stdout }}"
+  when: zuul.tag is not defined and scm_tag_output.stdout
+
+- name: Set scm_tag fact from zuul
+  set_fact:
+    scm_tag: "{{ zuul.tag }}"
+  when: zuul.tag is defined
+
+- name: Use git sha if there is no tag
+  set_fact:
+    scm_tag: "{{ scm_sha }}"
+  when: zuul.tag is not defined and not scm_tag_output.stdout
+
+- name: Get commits since tag
+  # assumes format is like this  '0.0.4-2-g135721c'
+  shell: |
+    git describe | awk '{split($0,a,"-"); print a[2]}'
+  failed_when: false
+  register: commits_since_tag_output
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Set commits_since_tag fact
+  set_fact:
+    commits_since_tag: "{{ commits_since_tag_output.stdout }}"
+
+- name: Set project_ver to scm_tag if there are no commits
+  when: not commits_since_tag
+  set_fact:
+    project_ver: "{{ scm_tag }}"
+
+- name: Set project_ver if there are commits since the tag
+  when: not commits_since_tag
+  set_fact:
+    project_ver: "{{ scm_tag }}.{{ commits_since_tag }}.{{ scm_sha }}"

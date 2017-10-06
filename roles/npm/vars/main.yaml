@@ -1,0 +1,9 @@
+npm_lifecycle_phases:
+  - install
+  - pack
+  - publish
+  - restart
+  - start
+  - stop
+  - test
+  - version
