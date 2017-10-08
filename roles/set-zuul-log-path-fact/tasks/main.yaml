@@ -11,4 +11,4 @@
 - name: Set log path for a periodic job
   when: zuul.change is not defined and zuul.newrev is not defined
   set_fact:
-    zuul_log_path: "{{ zuul.pipeline }}/{{ zuul.job }}/{{ zuul.build[:7] }}"
+    zuul_log_path: "{{ zuul.pipeline }}/{{ zuul.project.canonical_name }}/{{ zuul.branch }}/{{ zuul.job }}/{{ zuul.build[:7] }}"
