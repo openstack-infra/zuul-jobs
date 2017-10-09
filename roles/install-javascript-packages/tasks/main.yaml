@@ -1,0 +1,6 @@
+- name: Install npm dependencies
+  command: npm install --verbose
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"

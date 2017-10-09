@@ -167,3 +167,42 @@
       Do additional setup needed for multi-node jobs such as setting up
       overlay networks and setting up known-hosts and ssh keys
     pre-run: playbooks/multinode/pre
+
+- job:
+    name: javascript-base
+    description: |
+      Base job for javascript operations
+
+      Responds to these variables:
+
+      .. zuul:jobvar:: node_version
+         :default: 6
+
+         The version of Node to use.
+
+      .. zuul:jobvar: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Path to operate in.
+    pre-run: playbooks/javascript/pre
+    post-run: playbooks/javascript/post
+
+- job:
+    name: build-javascript-tarball
+    parent: javascript-base
+    description: |
+      Build a source tarball for a Javascript project
+
+      Responds to these variables:
+
+      .. zuul:jobvar:: node_version
+         :default: 6
+
+         The version of Node to use.
+
+      .. zuul:jobvar: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Path to operate in.
+
+    run: playbooks/javascript/tarball

@@ -1,0 +1,20 @@
+- name: Rename tarball for uploading
+  shell: |
+    mkdir -p dist
+    cp *.tgz dist/{{ zuul.project.short_name }}-{{ project_ver }}.tar.gz
+    cp *.tgz dist/{{ zuul.project.short_name }}-latest.tar.gz
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Ensure artifacts directory exists
+  file:
+    path: "{{ zuul.executor.work_root }}/artifacts"
+    state: directory
+  delegate_to: localhost
+
+- name: Collect artifacts
+  synchronize:
+    dest: "{{ zuul.executor.work_root }}/artifacts/"
+    mode: pull
+    src: "{{ zuul_work_dir }}/dist/"
+    verify_host: true
