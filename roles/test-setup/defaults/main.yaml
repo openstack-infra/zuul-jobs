@@ -1,2 +1,6 @@
 ---
+test_setup_args: ""
+test_setup_environment: {}
+
 zuul_work_dir: "src/{{ zuul.project.canonical_name }}"
+

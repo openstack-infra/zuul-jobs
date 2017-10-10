@@ -4,7 +4,8 @@
   register: p
 
 - name: Run tools/test-setup.sh
-  command: tools/test-setup.sh
+  command: tools/test-setup.sh {{ test_setup_args }}
+  environment: "{{ test_setup_environment }}"
   args:
     chdir: "{{ zuul_work_dir }}"
   when:
