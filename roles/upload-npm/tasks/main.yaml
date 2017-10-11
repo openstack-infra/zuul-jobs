@@ -1,0 +1,21 @@
+# This is not optimized, but allows for getting a version of node in the
+# home dir.
+- name: Create .npmrc configuration file
+  template:
+    dest: "~/.npmrc"
+    mode: 0400
+    src: .npmrc.j2
+
+- name: Install NVM
+  git:
+    repo: 'https://github.com/creationix/nvm'
+    dest: '~/.nvm'
+    version: v0.33.5
+
+- name: Upload tarball to npm
+  shell:
+    executable: /bin/bash
+    cmd: |
+      nvm install node
+      nvm use node
+      npm publish --ignore-scripts {{ zuul.executor.work_dir }}/artifacts/{{ zuul.project.short_name }}-{{ project_ver }}.tar.gz
