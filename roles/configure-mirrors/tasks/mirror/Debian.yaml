@@ -10,6 +10,7 @@
     - etc/apt/default.list
     - etc/apt/updates.list
     - etc/apt/backports.list
+    - etc/apt/security.list
     - etc/apt/apt.conf.d/99unauthenticated
   notify:
     - Update apt cache
