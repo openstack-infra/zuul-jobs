@@ -124,19 +124,6 @@ def readCloneMap(clone_map):
     return clone_map
 
 
-def get_fs(mounts, path):
-    longest_match = ''
-    real_path = os.path.realpath(path)
-    for mount_path in mounts.keys():
-        if (real_path.startswith(mount_path) and
-            len(mount_path) > len(longest_match)):
-            longest_match = mount_path
-    if longest_match:
-        return mounts[longest_match]
-    else:
-        return None
-
-
 def main():
     args = parseArgs()
 
@@ -146,12 +133,6 @@ def main():
 
     mapper = CloneMapper(clone_map, args.projects)
     dests = mapper.expand(workspace=args.workspace)
-
-    mounts = {}
-    with open('/proc/mounts') as f:
-        for line in f.readlines():
-            fs, mount_path = line.split()[0:2]
-            mounts[mount_path] = fs
 
     for project in args.projects:
         src = os.path.join(os.path.expanduser(REPO_SRC_DIR), project)
@@ -187,19 +168,21 @@ def main():
             print("Creating %s" % d)
             os.makedirs(d)
 
-        src_fs = get_fs(mounts, src)
-        dst_fs = get_fs(mounts, dst)
+        #
+        # Create (possible hard link) copy of the source directory
+        #
 
-        # Create hard link copy of the source directory
+        # Check if src & dst are on the same filesystem; if so we will
+        # hardlink, otherwise we copy
+        src_dev = os.stat(src).st_dev
+        dst_dev = os.stat(dst).st_dev
+        link = "l" if src_dev == dst_dev else ""
 
         # note: don't use "-a" here as that implies "--preserve=all"
         # which overwrites the permissions of dst from src ... this is
         # fatal to ssh if dst is a home directory and we make it
         # world-accessable.  This should leave dst alone
-        if src_fs == dst_fs:
-            cmd = "cp -dRl %s/. %s" % (src, dst)
-        else:
-            cmd = "cp -dR %s/. %s" % (src, dst)
+        cmd = "cp -dR%s %s/. %s" % (link, src, dst)
         print("%s" % cmd)
         if os.system(cmd):
             print("Error executing: %s" % cmd)
