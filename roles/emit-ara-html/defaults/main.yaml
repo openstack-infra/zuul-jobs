@@ -3,3 +3,6 @@ ara_generate_html: true
 
 # Whether to compress the ARA HTML output or not
 ara_compress_html: true
+
+# Whether to save the ARA sqlite database as part of the logs or not
+ara_save_database: false

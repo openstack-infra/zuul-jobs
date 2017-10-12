@@ -3,6 +3,14 @@
     path: "{{ zuul.executor.work_root }}/.ara/ansible.sqlite"
   register: ara_db_stat
 
+- name: Save the ARA database
+  command: |
+    cp "{{ zuul.executor.work_root }}/.ara/ansible.sqlite" \
+    {{ zuul.executor.log_root }}
+  when:
+    - ara_db_stat.stat.exists
+    - ara_save_database | bool
+
 - name: Check for ARA install
   command: which ara
   ignore_errors: yes

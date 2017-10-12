@@ -12,6 +12,11 @@ Have ARA generate html logs if ARA and ARA data are both present.
    Whether to compress the ARA HTML output or not.
    Defaults to ``true``.
 
+.. zuul:rolevar:: ara_save_database
+
+   Whether the ARA sqlite database should be saved as part of the logs.
+   Defaults to ``false``.
+
 .. tip::
    Make sure the web server is configured to set the required mimetypes_ in
    order to serve gzipped content properly.
