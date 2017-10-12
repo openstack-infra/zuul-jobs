@@ -17,15 +17,21 @@
   register: ara_command_type
   when: ara_db_stat.stat.exists
 
-- name: Generate ARA html output
-  command: "ara generate html {{ zuul.executor.log_root }}/ara"
-  ignore_errors: yes
-  when:
+- when:
     - ara_command_type | succeeded
     - not ara_command_type | skipped
-    - ara_generate_html | bool
+  block:
+    # Always generate (true), never (false) or only on failure ('failure')
+    # Additionally cover for edge cases where zuul_success might be undefined
+    - name: Generate ARA html output
+      command: "ara generate html {{ zuul.executor.log_root }}/ara"
+      ignore_errors: yes
+      when: ara_generate_html | bool or
+            (ara_generate_html == 'failure' and not zuul_success | default(false) | bool)
+      register: ara_generated
 
-- name: Compress ARA html output
-  command: gzip --recursive --best {{ zuul.executor.log_root }}/ara
-  ignore_errors: yes
-  when: ara_compress_html | bool
+    - name: Compress ARA html output
+      command: gzip --recursive --best {{ zuul.executor.log_root }}/ara
+      ignore_errors: yes
+      when:
+        - not ara_generated | skipped

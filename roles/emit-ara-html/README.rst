@@ -5,6 +5,12 @@ Have ARA generate html logs if ARA and ARA data are both present.
 .. zuul:rolevar:: ara_generate_html
 
    Whether to generate a static ARA HTML report or not.
+   Possible values:
+
+   - ``true`` (always generate a report)
+   - ``false`` (never generate a report)
+   - ``failure`` (only generate a report on failure)
+
    Defaults to ``true``.
 
 .. zuul:rolevar:: ara_compress_html

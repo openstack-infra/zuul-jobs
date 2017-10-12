@@ -1,4 +1,8 @@
 # Whether to generate a static ARA HTML report or not
+# Possible values:
+#   - true (always)
+#   - false (never)
+#   - 'failure' (only on failure)
 ara_generate_html: true
 
 # Whether to compress the ARA HTML output or not
