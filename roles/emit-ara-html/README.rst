@@ -2,6 +2,11 @@ Have ARA generate html logs if ARA and ARA data are both present.
 
 **Role Variables**
 
+.. zuul:rolevar:: ara_generate_html
+
+   Whether to generate a static ARA HTML report or not.
+   Defaults to ``true``.
+
 .. zuul:rolevar:: ara_compress_html
 
    Whether to compress the ARA HTML output or not.

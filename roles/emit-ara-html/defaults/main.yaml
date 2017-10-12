@@ -1,2 +1,5 @@
+# Whether to generate a static ARA HTML report or not
+ara_generate_html: true
+
 # Whether to compress the ARA HTML output or not
 ara_compress_html: true
