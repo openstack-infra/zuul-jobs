@@ -1,0 +1,39 @@
+- name: Set log path for multiple nodes
+  set_fact:
+    log_path: "{{ zuul.executor.log_root }}/{{ inventory_hostname }}"
+  when: groups['all'] | length > 1
+
+- name: Set log path for single node
+  set_fact:
+    log_path: "{{ zuul.executor.log_root }}"
+  when: log_path is not defined
+
+- name: Ensure local output dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ log_path }}"
+    - "{{ zuul.executor.work_dir }}/artifacts"
+    - "{{ zuul.executor.work_dir }}/docs"
+
+- name: Collect log output
+  synchronize:
+    dest: "{{ log_path }}/"
+    mode: pull
+    src: "{{ zuul_output_dir }}/logs/"
+    verify_host: true
+
+- name: Collect artifacts
+  synchronize:
+    dest: "{{ zuul.executor.work_dir }}/artifacts/"
+    mode: pull
+    src: "{{ zuul_output_dir }}/artifacts/"
+    verify_host: true
+
+- name: Collect docs
+  synchronize:
+    dest: "{{ zuul.executor.work_dir }}/docs/"
+    mode: pull
+    src: "{{ zuul_output_dir }}/docs/"
+    verify_host: true
