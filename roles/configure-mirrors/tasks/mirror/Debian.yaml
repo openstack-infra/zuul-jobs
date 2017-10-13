@@ -7,10 +7,10 @@
     owner: root
     src: "{{ item }}.j2"
   with_items:
-    - etc/apt/default.list
-    - etc/apt/updates.list
-    - etc/apt/backports.list
-    - etc/apt/security.list
+    - etc/apt/sources.list.d/default.list
+    - etc/apt/sources.list.d/updates.list
+    - etc/apt/sources.list.d/backports.list
+    - etc/apt/sources.list.d/security.list
     - etc/apt/apt.conf.d/99unauthenticated
   notify:
     - Update apt cache
