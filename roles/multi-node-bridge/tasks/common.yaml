@@ -15,6 +15,7 @@
   when:
     - rdo_repository is defined
     - ansible_os_family == "RedHat"
+    - ansible_distribution != "Fedora"
   register: rdo_repos
 
 - name: Install openvswitch
