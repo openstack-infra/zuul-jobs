@@ -5,7 +5,7 @@
 
 - name: Write credentials
   template:
-    path: ~/.launchpadlib/creds
+    dest: ~/.launchpadlib/creds
     mode: 0600
     src: creds.j2
 
