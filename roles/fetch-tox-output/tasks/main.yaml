@@ -37,4 +37,6 @@
     mode: pull
     src: "{{ zuul_work_dir }}/.tox/{{ item }}/log/"
     verify_host: true
+    rsync_opts:
+      - "--ignore-missing-args"
   with_items: "{{ envlist }}"
