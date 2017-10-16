@@ -112,13 +112,17 @@ def main():
         module.exit_json(
             changed=False, msg="No name in setup.cfg, skipping siblings")
 
-    tox_python = '{project_dir}/.tox/{envlist}/bin/python'.format(
+    envdir = '{project_dir}/.tox/{envlist}'.format(
         project_dir=project_dir, envlist=envlist)
+    if not os.path.exists(envdir):
+        module.exit_json(
+            changed=False, msg="envdir does not exist, skipping siblings")
+
+    tox_python = '{envdir}/bin/python'.format(envdir=envdir)
     # Write a log file into the .tox dir so that it'll get picked up
     # Name it with envlist as a prefix so that fetch-tox-output will properly
     # get it in a multi-env scenario
-    log_dir = '{project_dir}/.tox/{envlist}/log'.format(
-        project_dir=project_dir, envlist=envlist)
+    log_dir = '{envdir}/log'.format(envdir=envdir)
     log_file = '{log_dir}/{envlist}-siblings.txt'.format(
         log_dir=log_dir, envlist=envlist)
 
