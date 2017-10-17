@@ -8,11 +8,12 @@ then install the missing packages.
 **Role Variables**
 
 .. zuul:rolevar:: bindep_dir
-   :default: .
+   :default: {{ zuul.project.src_dir }}
 
    The directory to look for bindep files in.
 
 .. zuul:rolevar:: bindep_profile
+   :default: test
 
    A specific bindep profile to request.
 
