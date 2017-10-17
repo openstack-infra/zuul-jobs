@@ -3,6 +3,8 @@ index-servers=
   {{ pypi_repository }}
 
 [{{ pypi_repository }}]
+{% if pypi_repository_url %}
 repository:{{ pypi_repository_url }}
+{% endif %}
 username:{{ pypi_info.username }}
 password:{{ pypi_info.password }}

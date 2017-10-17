@@ -19,12 +19,12 @@ Upload python packages to PyPI
   .. zuul:rolevar:: repository
      :default: pypi
 
-     Name of the repository to upload to
+     Name of the repository to upload to.
 
   .. zuul:rolevar:: repository_url
-     :default: https://pypi.python.org/pypi
+     :default: The built-in twine default for the production pypi.org service.
 
-     URL of the PyPI repostory
+     URL of the PyPI repostory.
 
 .. zuul:rolevar:: pypi_path
    :default: src/{{ zuul.project.canonical_name }}/dist
