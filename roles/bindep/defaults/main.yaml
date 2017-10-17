@@ -1,3 +1,3 @@
 ---
-bindep_dir: .
-bindep_profile: ""
+bindep_dir: "{{ zuul.project.src_dir }}"
+bindep_profile: test
