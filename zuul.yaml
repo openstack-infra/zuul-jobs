@@ -123,6 +123,7 @@
       Run code coverage tests.
 
       Uses tox with the ``cover`` environment.
+    post-run: playbooks/cover/tox/cover-post
     vars:
       tox_envlist: cover
 

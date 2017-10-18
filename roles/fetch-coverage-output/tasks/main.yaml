@@ -1,0 +1,6 @@
+- name: Collect coverage details output
+  synchronize:
+    dest: "{{ zuul_executor_dest }}"
+    mode: pull
+    src: "{{ coverage_output_src }}"
+    verify_host: true
