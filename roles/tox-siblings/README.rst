@@ -17,6 +17,11 @@ Installs python packages from other Zuul repos into a tox environment.
 
    Location of the tox executable. Defaults to 'tox'.
 
+.. zuul:rolevar:: tox_constraints_file
+
+   Path to a pip constraints file. Will be provided to pip via '-c'
+   argument for any sibling package installations.
+
 .. zuul:rolevar:: tox_install_siblings
    :default: true
 

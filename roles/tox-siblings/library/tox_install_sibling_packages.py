@@ -88,20 +88,36 @@ def get_installed_packages(tox_python):
             tmp_requirements.name, session=pip.download.PipSession())
 
 
+def write_new_constraints_file(constraints, packages):
+    with tempfile.NamedTemporaryFile(delete=False) as constraints_file:
+        constraints_lines = open(constraints, 'r').read().split('\n')
+        for line in constraints_lines:
+            package_name = line.split('===')[0]
+            if package_name in packages:
+                continue
+            constraints_file.write(line)
+            constraints_file.write('\n')
+        return constraints_file.name
+
+
 def main():
     module = AnsibleModule(
         argument_spec=dict(
             tox_envlist=dict(required=True, type='str'),
+            tox_constraints_file=dict(type='str'),
             project_dir=dict(required=True, type='str'),
             projects=dict(required=True, type='list'),
         )
     )
     envlist = module.params['tox_envlist']
+    constraints = module.params.get('tox_constraints_file')
     project_dir = module.params['project_dir']
     projects = module.params['projects']
 
     if not os.path.exists(os.path.join(project_dir, 'setup.cfg')):
         module.exit_json(changed=False, msg="No setup.cfg, no action needed")
+    if constraints and not os.path.exists(constraints):
+        module.fail_json(msg="Constraints file {constraints} was not found")
 
     # Who are we?
     try:
@@ -137,6 +153,7 @@ def main():
     sibling_python_packages = get_sibling_python_packages(projects)
     for name, root in sibling_python_packages.items():
         log.append("Sibling {name} at {root}".format(name=name, root=root))
+    found_sibling_packages = []
     for package in get_installed_packages(tox_python):
         log.append(
             "Found {name} python package installed".format(name=package.name))
@@ -158,16 +175,25 @@ def main():
                 [tox_python, '-m', 'pip', 'uninstall', '-y', package.name],
                 stderr=subprocess.STDOUT)
             log.extend(uninstall_output.decode('utf-8').split('\n'))
+            found_sibling_packages.append(package.name)
 
-            # TODO(mordred) Account for upper-constraints during this install
-            log.append(
-                "Installing {name} from {root}".format(
-                    name=package.name,
-                    root=sibling_python_packages[package.name]))
-            install_output = subprocess.check_output(
-                [tox_python, '-m', 'pip', 'install',
-                 '-e', sibling_python_packages[package.name]])
-            log.extend(install_output.decode('utf-8').split('\n'))
+    args = [tox_python, '-m', 'pip', 'install']
+
+    if constraints:
+        constraints_file = write_new_constraints_file(
+            constraints, found_sibling_packages)
+        args.extend(['-c', constraints_file])
+
+    for sibling_package in found_sibling_packages:
+        log.append(
+            "Installing {name} from {root}".format(
+                name=sibling_package,
+                root=sibling_python_packages[sibling_package]))
+        args.append('-e')
+        args.append(sibling_python_packages[sibling_package])
+
+    install_output = subprocess.check_output(args)
+    log.extend(install_output.decode('utf-8').split('\n'))
 
     log_text = "\n".join(log)
     module.append_to_file(log_file, log_text)

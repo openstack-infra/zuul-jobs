@@ -13,6 +13,7 @@
 - name: Install any sibling python packages
   tox_install_sibling_packages:
     tox_envlist: "{{ tox_envlist }}"
+    tox_constraints_file: "{{ tox_constraints_file | default(omit) }}"
     project_dir: "{{ zuul_work_dir }}"
     projects: "{{ zuul.projects | selectattr('required') | list }}"
   when: tox_install_siblings
