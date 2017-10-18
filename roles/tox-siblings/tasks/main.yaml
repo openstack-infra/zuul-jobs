@@ -10,9 +10,10 @@
   when: tox_install_siblings
 
 # TODO(mordred) handle tox_envlist being a list
-- name: Install any sibling python packages
-  tox_install_sibling_packages:
-    tox_envlist: "{{ tox_envlist }}"
-    project_dir: "{{ zuul_work_dir }}"
-    projects: "{{ zuul.projects | selectattr('required') | list }}"
-  when: tox_install_siblings
+# NOTE(jeblair) disabled because of lack of constraints support
+#- name: Install any sibling python packages
+#  tox_install_sibling_packages:
+#    tox_envlist: "{{ tox_envlist }}"
+#    project_dir: "{{ zuul_work_dir }}"
+#    projects: "{{ zuul.projects | selectattr('required') | list }}"
+#  when: tox_install_siblings
