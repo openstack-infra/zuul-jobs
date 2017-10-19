@@ -1,0 +1,18 @@
+- name: Create GPG private key tempfile
+  tempfile:
+    state: file
+  register: gpg_private_key_tmp
+
+- name: Stage GPG private key for importing
+  copy:
+    content: "{{ gpg_key.private }}"
+    dest: "{{ gpg_private_key_tmp.path }}"
+    mode: 0400
+
+- name: Import GPG private key
+  command: "gpg --allow-secret-key-import --import {{ gpg_private_key_tmp.path }}"
+
+- name: Delete staged GPG private key
+  file:
+    path: "{{ gpg_private_key_tmp.path }}"
+    state: absent
