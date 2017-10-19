@@ -4,6 +4,14 @@
     content: "{{ ssh_key.ssh_private_key }}"
     mode: 0400
 
+# To almost everyone's surprise, if your pub key is different than
+# your private, the private won't work.  But it's okay for it to be
+# absent.
+- name: Delete ssh pub key if it exists
+  file:
+    path: "~/.ssh/id_rsa.pub"
+    state: absent
+
 - name: Add host key information to known hosts
   known_hosts:
     name: "{{ ssh_key.fqdn }}"
