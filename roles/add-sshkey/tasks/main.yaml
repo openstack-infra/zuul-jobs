@@ -2,7 +2,7 @@
   copy:
     dest: "~/.ssh/id_rsa"
     content: "{{ ssh_key.ssh_private_key }}"
-    mode: 0400
+    mode: 0600
 
 # To almost everyone's surprise, if your pub key is different than
 # your private, the private won't work.  But it's okay for it to be
