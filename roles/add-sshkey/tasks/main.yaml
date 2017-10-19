@@ -1,6 +1,6 @@
 - name: Write out ssh key
   copy:
-    path: "~/.ssh/id_rsa"
+    dest: "~/.ssh/id_rsa"
     content: "{{ ssh_key.ssh_private_key }}"
     mode: 0400
 
