@@ -1,7 +1,8 @@
 - name: Write out ssh key
-  file:
+  copy:
     path: "~/.ssh/id_rsa"
     content: "{{ ssh_key.ssh_private_key }}"
+    mode: 0400
 
 - name: Add host key information to known hosts
   known_hosts:
