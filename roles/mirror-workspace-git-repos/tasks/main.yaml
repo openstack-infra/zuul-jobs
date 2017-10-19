@@ -3,14 +3,14 @@
     name: receive.denyCurrentBranch ignore
     value: ignore
     scope: local
-    repo: "{{ ansible_user_dir }}/{{ item.src_dir}}"
-  with_items: "{{ zuul.projects }}"
+    repo: "{{ ansible_user_dir }}/{{ item.value.src_dir}}"
+  with_dict: "{{ zuul._projects }}"
 
 - name: Synchronize src repos to workspace directory
-  command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.src_dir}}"
+  command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.value.src_dir}}"
   args:
-    chdir: "{{ zuul.executor.work_root }}/{{ item.src_dir }}"
-  with_items: "{{ zuul.projects }}"
+    chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
+  with_dict: "{{ zuul._projects }}"
   delegate_to: localhost
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but push is not supported by ansible git module.
@@ -20,8 +20,8 @@
 - name: Determine local HEAD
   shell: "git status |head -1 |awk '{ print $NF }'"
   args:
-    chdir: "{{ zuul.executor.work_root }}/{{ item.src_dir }}"
-  with_items: "{{ zuul.projects }}"
+    chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
+  with_dict: "{{ zuul._projects }}"
   delegate_to: localhost
   register: statuses
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
@@ -39,9 +39,9 @@
     # checkout the branch matching the branch set up by the executor
     git checkout {{ item.1.stdout }}
   args:
-    chdir: "{{ ansible_user_dir }}/{{ item.0.src_dir }}"
+    chdir: "{{ ansible_user_dir }}/{{ zuul._projects.get(item.0).src_dir }}"
   with_together:
-    - "{{ zuul.projects }}"
+    - "{{ zuul._projects }}"
     - "{{ statuses.results }}"
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but we prefer the shell above
