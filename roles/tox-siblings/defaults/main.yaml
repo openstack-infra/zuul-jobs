@@ -1,6 +1,7 @@
 ---
 tox_envlist: venv
 tox_executable: tox
-tox_install_siblings: true
+# NOTE(jeblair) disabled because of lack of constraints support
+tox_install_siblings: false
 
 zuul_work_dir: "{{ zuul.project.src_dir }}"
