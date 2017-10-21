@@ -37,6 +37,7 @@
     source: "{{ item }}"
     jump: ACCEPT
   with_items: "{{ ipv6_addresses }}"
-  when:
-    - ipv6_addresses is defined
-    - ipv6_addresses
+
+- name: Persist iptables rules
+  include_role:
+    name: persistent-firewall

@@ -14,3 +14,7 @@
     PATH: "{{ ansible_env.PATH }}:/sbin:/usr/sbin"
   when: inventory_hostname in groups['peers']
   static: no
+
+- name: Persist iptables rules
+  include_role:
+    name: persistent-firewall

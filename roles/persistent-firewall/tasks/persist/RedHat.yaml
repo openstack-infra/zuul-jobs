@@ -1,0 +1,18 @@
+- name: Persist ipv4 rules
+  become: yes
+  copy:
+    content: "{{ iptables_rules.stdout }}"
+    dest: "/etc/sysconfig/iptables"
+
+- name: Persist ipv6 rules
+  become: yes
+  copy:
+    content: "{{ ip6tables_rules.stdout }}"
+    dest: "/etc/sysconfig/ip6tables"
+
+- name: Ensure iptables is started
+  become: yes
+  service:
+    name: iptables
+    state: started
+    enabled: yes

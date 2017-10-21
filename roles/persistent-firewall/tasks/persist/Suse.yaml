@@ -1,0 +1,36 @@
+- name: Persist ipv4 rules
+  become: yes
+  copy:
+    content: "{{ iptables_rules.stdout }}"
+    dest: "/etc/sysconfig/iptables"
+
+- name: Persist ipv6 rules
+  become: yes
+  copy:
+    content: "{{ ip6tables_rules.stdout }}"
+    dest: "/etc/sysconfig/ip6tables"
+
+- name: Set up SuSEfirewall2 custom rules to be loaded
+  become: yes
+  replace:
+    path: /etc/sysconfig/SuSEfirewall2
+    regexp: '^FW_CUSTOMRULES=.*$'
+    replace: 'FW_CUSTOMRULES="/etc/sysconfig/scripts/SuSEfirewall2-custom"'
+
+- name: Configure SuSEfirewall2 to restore saved rules on restart
+  become: yes
+  blockinfile:
+    path: /etc/sysconfig/scripts/SuSEfirewall2-custom
+    insertafter: EOF
+    content: |
+      fw_custom_after_finished() {
+          /usr/sbin/iptables-restore /etc/sysconfig/iptables
+          /usr/sbin/ip6tables-restore /etc/sysconfig/ip6tables
+      }
+
+- name: Ensure SuSEfirewall2 is started
+  become: yes
+  service:
+    name: SuSEfirewall2
+    state: started
+    enabled: yes

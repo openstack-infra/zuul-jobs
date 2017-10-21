@@ -1,0 +1,22 @@
+- name: List current ipv4 rules
+  become: yes
+  command: iptables-save
+  changed_when: false
+  failed_when: false
+  register: iptables_rules
+
+- name: List current ipv6 rules
+  become: yes
+  command: ip6tables-save
+  changed_when: false
+  failed_when: false
+  register: ip6tables_rules
+
+- name: Configure persistent iptables rules
+  include: "{{ item }}"
+  static: no
+  with_first_found:
+    - "persist/{{ ansible_distribution }}_{{ ansible_distribution_release }}.yaml"
+    - "persist/{{ ansible_distribution }}.yaml"
+    - "persist/{{ ansible_os_family }}.yaml"
+    - "persist/default.yaml"

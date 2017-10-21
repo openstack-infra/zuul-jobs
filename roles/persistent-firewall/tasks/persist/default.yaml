@@ -1,0 +1,5 @@
+- name: Warn about unsupported distribution
+  debug:
+    msg: >
+      WARNING: {{ ansible_distribution }} is not supported by this role yet.
+      The execution of the job will continue without persisting iptables rules.

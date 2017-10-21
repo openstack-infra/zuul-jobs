@@ -1,0 +1,24 @@
+- name: Install iptables-persistent
+  become: yes
+  package:
+    name: iptables-persistent
+    state: installed
+
+- name: Persist ipv4 rules
+  become: yes
+  copy:
+    content: "{{ iptables_rules.stdout }}"
+    dest: "/etc/iptables/rules.v4"
+
+- name: Persist ipv6 rules
+  become: yes
+  copy:
+    content: "{{ ip6tables_rules.stdout }}"
+    dest: "/etc/iptables/rules.v6"
+
+- name: Ensure iptables-persistent is started
+  become: yes
+  service:
+    name: iptables-persistent
+    state: started
+    enabled: yes
