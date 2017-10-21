@@ -1,4 +1,4 @@
 - name: Build a tarball and wheel
   command: python setup.py sdist bdist_wheel
   args:
-    chdir: "{{ python_sdist_chdir }}"
+    chdir: "{{ zuul_work_dir }}"
