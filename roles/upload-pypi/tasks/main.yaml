@@ -15,6 +15,11 @@
     patterns: "*.whl"
   register: found_wheels
 
+- name: Report no wheels to be uploaded
+  debug:
+    msg: "Found no wheels to upload: {{found_wheels.msg}}"
+  when: found_wheels.files == []
+
 - name: Upload wheel with twine before tarballs
   command: "{{ pypi_twine_executable }} upload --config-file {{ _pypirc_tmp.path }} -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_wheels.files }}"
@@ -24,6 +29,11 @@
     paths: "{{ pypi_path }}"
     patterns: "*.tar.gz"
   register: found_tarballs
+
+- name: Report no tarballs to be uploaded
+  debug:
+    msg: "Found no tarballs to upload: {{found_tarballs.msg}}"
+  when: found_tarballs.files == []
 
 - name: Upload tarballs with twine
   command: "{{ pypi_twine_executable }} upload --config-file {{ _pypirc_tmp.path }} -r {{ pypi_repository }} {{ item.path }}"
