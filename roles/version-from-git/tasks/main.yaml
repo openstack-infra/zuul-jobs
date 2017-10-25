@@ -4,6 +4,10 @@
   register: scm_sha_output
   args:
     chdir: "{{ zuul_work_dir }}"
+  # Skip linting since it triggers on the "git" command,
+  # but rev-parse is not supported by ansible git module.
+  tags:
+    - skip_ansible_lint
 
 - name: Set scm_sha fact
   set_fact:

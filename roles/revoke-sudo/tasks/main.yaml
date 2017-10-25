@@ -6,3 +6,6 @@
 
 - name: Prove that general sudo access is actually revoked.
   shell: '! sudo -n true'
+  tags:
+    # We really need shell above, skip warning
+    - skip_ansible_lint
