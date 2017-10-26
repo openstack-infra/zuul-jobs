@@ -4,7 +4,7 @@
   register: scm_sha_output
   args:
     chdir: "{{ zuul_work_dir }}"
-  # Skip linting since it triggers on the "git" command,
+  # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but rev-parse is not supported by ansible git module.
   tags:
     - skip_ansible_lint
@@ -20,6 +20,10 @@
   when: zuul.tag is not defined
   args:
     chdir: "{{ zuul_work_dir }}"
+  # ANSIBLE0006: Skip linting since it triggers on the "git" command,
+  # but describe is not supported by ansible git module.
+  tags:
+    - skip_ansible_lint
 
 - name: Set scm_sha fact from output
   set_fact:
@@ -44,6 +48,10 @@
   register: commits_since_tag_output
   args:
     chdir: "{{ zuul_work_dir }}"
+  # ANSIBLE0006: Skip linting since it triggers on the "git" command,
+  # but describe is not supported by ansible git module.
+  tags:
+    - skip_ansible_lint
 
 - name: Set commits_since_tag fact
   set_fact:

@@ -32,6 +32,9 @@
     name: nodejs
     state: latest
   become: yes
+  tags:
+    # Ignore ANSIBLE0010: We really want latest version
+    - skip_ansible_lint
 
 - name: Output node version
   command: node --version
