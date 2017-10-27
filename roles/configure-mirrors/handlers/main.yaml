@@ -3,6 +3,9 @@
 - name: Update apt cache
   become: yes
   command: apt-get update
+  # ANSIBLE0006: ignore, since we cannot use the apt module
+  tags:
+    - skip_ansible_lint
 
 - name: Update dnf cache
   become: yes
