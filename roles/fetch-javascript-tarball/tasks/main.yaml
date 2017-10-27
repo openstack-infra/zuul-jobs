@@ -5,6 +5,9 @@
     cp *.tgz dist/{{ zuul.project.short_name }}-latest.tar.gz
   args:
     chdir: "{{ zuul_work_dir }}"
+  tags:
+    # Ignore ANSIBLE0007: No need to use file module instead of mkdir
+    - skip_ansible_lint
 
 - name: Ensure artifacts directory exists
   file:
