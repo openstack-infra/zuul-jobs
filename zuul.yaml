@@ -8,8 +8,8 @@
 
       This performs basic host and general project setup tasks common
       to all types of unit test jobs.
-    pre-run: playbooks/unittests/pre
-    post-run: playbooks/unittests/post
+    pre-run: playbooks/unittests/pre.yaml
+    post-run: playbooks/unittests/post.yaml
 
 - job:
     name: tox
@@ -45,9 +45,9 @@
 
          Override tox requirements that have corresponding zuul git repos
          on the node by installing the git versions into the tox virtualenv.
-    run: playbooks/tox/run
-    pre-run: playbooks/tox/pre
-    post-run: playbooks/tox/post
+    run: playbooks/tox/run.yaml
+    pre-run: playbooks/tox/pre.yaml
+    post-run: playbooks/tox/post.yaml
     vars:
       tox_environment:
         NOSE_WITH_HTML_OUTPUT: 1
@@ -93,7 +93,7 @@
       Uses tox with the ``docs`` environment.
     vars:
       tox_envlist: docs
-    post-run: playbooks/tox/docs-post
+    post-run: playbooks/tox/docs-post.yaml
     success-url: html/
 
 - job:
@@ -123,7 +123,7 @@
       Run code coverage tests.
 
       Uses tox with the ``cover`` environment.
-    post-run: playbooks/tox/cover-post
+    post-run: playbooks/tox/cover-post.yaml
     vars:
       tox_envlist: cover
 
@@ -142,7 +142,7 @@
     description: |
       Build a source tarball and wheel for uploading
     run: playbooks/python/sdist.yaml
-    post-run: playbooks/python/tarball-post
+    post-run: playbooks/python/tarball-post.yaml
 
 - job:
     name: python-upload-pypi
@@ -152,22 +152,21 @@
 
       Requires a variable ``pypi_info`` be set which is a dict containing
       at least a ``username`` and ``password`` attribute.
-    post-run: playbooks/python/upload-pypi
+    post-run: playbooks/python/upload-pypi.yaml
 
 - job:
     name: trigger-readthedocs
-    description:
-      Send a trigger to the readthedocs url to tell it to build docs
+    description: Send a trigger to the readthedocs url to tell it to build docs
     nodeset:
       nodes: []
-    run: playbooks/python/readthedocs
+    run: playbooks/python/readthedocs.yaml
 
 - job:
     name: multinode
     description: |
       Do additional setup needed for multi-node jobs such as setting up
       overlay networks and setting up known-hosts and ssh keys
-    pre-run: playbooks/multinode/pre
+    pre-run: playbooks/multinode/pre.yaml
 
 - job:
     name: javascript-base
@@ -185,8 +184,8 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
-    pre-run: playbooks/javascript/pre
-    post-run: playbooks/javascript/post
+    pre-run: playbooks/javascript/pre.yaml
+    post-run: playbooks/javascript/post.yaml
 
 - job:
     name: build-javascript-tarball
@@ -206,4 +205,4 @@
 
          Path to operate in.
 
-    run: playbooks/javascript/tarball
+    run: playbooks/javascript/tarball.yaml
