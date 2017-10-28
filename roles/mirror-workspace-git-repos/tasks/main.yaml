@@ -1,7 +1,9 @@
 - name: Allow pushing to non-bare repo
-  command: "git config --local receive.denyCurrentBranch ignore"
-  args:
-    chdir: "{{ ansible_user_dir }}/{{ item.src_dir}}"
+  git_config:
+    name: receive.denyCurrentBranch ignore
+    value: ignore
+    scope: local
+    repo: "{{ ansible_user_dir }}/{{ item.src_dir}}"
   with_items: "{{ zuul.projects }}"
 
 - name: Synchronize src repos to workspace directory
@@ -10,6 +12,10 @@
     chdir: "{{ zuul.executor.work_root }}/{{ item.src_dir }}"
   with_items: "{{ zuul.projects }}"
   delegate_to: localhost
+  # ANSIBLE0006: Skip linting since it triggers on the "git" command,
+  # but push is not supported by ansible git module.
+  tags:
+    - skip_ansible_lint
 
 - name: Determine local HEAD
   shell: "git status |head -1 |awk '{ print $NF }'"
@@ -18,6 +24,10 @@
   with_items: "{{ zuul.projects }}"
   delegate_to: localhost
   register: statuses
+  # ANSIBLE0006: Skip linting since it triggers on the "git" command,
+  # but status is not supported by ansible git module.
+  tags:
+    - skip_ansible_lint
 
 # Do this as a multi-line shell so that we can do the loop once
 - name: Update remote repository state correctly
@@ -33,3 +43,7 @@
   with_together:
     - "{{ zuul.projects }}"
     - "{{ statuses.results }}"
+  # ANSIBLE0006: Skip linting since it triggers on the "git" command,
+  # but we prefer the shell above
+  tags:
+    - skip_ansible_lint

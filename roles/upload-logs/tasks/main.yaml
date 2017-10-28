@@ -1,4 +1,5 @@
-- include_role:
+- name: Set zuul-log-path fact
+  include_role:
     name: set-zuul-log-path-fact
 
 - name: Create log directories
