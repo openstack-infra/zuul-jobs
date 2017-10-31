@@ -2,6 +2,7 @@ bridge_vni_offset: 1000000
 bridge_mtu: 1450
 bridge_name: br-infra
 
+bridge_authorize_internal_traffic: false
 bridge_configure_address: true
 bridge_address_prefix: 172.24.4
 bridge_address_offset: 1

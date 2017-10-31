@@ -48,6 +48,13 @@ inventory in order to work:
 
    Whether or not to configure an IP address on the bridge interface.
 
+.. zuul:rolevar:: bridge_authorize_internal_traffic
+   :default: false
+
+   When ``bridge_configure_address`` is ``true``, whether or not to set up
+   firewall rules in order to allow traffic to flow freely within the bridge
+   subnet (``bridge_address_prefix``.0/``bridge_address_subnet``).
+
 .. zuul:rolevar:: bridge_address_prefix
    :default: 172.24.4
 

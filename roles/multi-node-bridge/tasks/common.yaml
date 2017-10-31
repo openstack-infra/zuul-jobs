@@ -38,3 +38,17 @@
     name: "rdo-release"
     state: absent
   when: rdo_repos | changed
+
+- name: Authorize the multi-node-bridge network
+  become: yes
+  iptables:
+    state: present
+    action: insert
+    chain: INPUT
+    ip_version: ipv4
+    source: "{{ bridge_address_prefix }}.0/{{ bridge_address_subnet }}"
+    destination: "{{ bridge_address_prefix }}.0/{{ bridge_address_subnet }}"
+    jump: ACCEPT
+  when:
+    - bridge_configure_address | bool
+    - bridge_authorize_internal_traffic | bool
