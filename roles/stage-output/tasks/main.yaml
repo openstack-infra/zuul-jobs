@@ -1,0 +1,47 @@
+- name: Register sources
+  stat:
+    path: "{{ item.key }}"
+  with_dict: "{{ zuul_copy_output }}"
+  register: sources
+
+- name: Build the replace regex
+  set_fact:
+    extensions_regex: "{{ extensions_to_txt | join('|') | default('__do_not_replace__') }}"
+
+- debug:
+    var: extensions_regex
+
+# TODO(andreaf) We might want to enforce that item.value is a valid value
+# in docs, artifacts, logs. Null case already handled.
+# We don't check if the item is a file before renaming, but it is not likely
+# to have directories with log, yaml or conf extension.
+- name: Set source and destination for files and folders
+  set_fact:
+    source: "{{ item.stat.path }}"
+    dest: "{{ item.item.value }}/{{ item.stat.path|basename|regex_replace('\\.(' + extensions_regex + ')$', '_\\1.txt') }}"
+  with_items: "{{ sources.results }}"
+  when:
+    - item.stat.exists
+    - item.item.value
+  register: results
+
+- name: Build a list of source, dest dictionaries for text files
+  set_fact:
+    all_sources: "{{ results.results | selectattr('ansible_facts', 'defined') | map(attribute='ansible_facts') | list }}"
+
+- name: ensure target folders exist
+  become: true
+  file:
+    path: "{{ stage_dir }}/{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+  with_items:
+    - docs
+    - artifacts
+    - logs
+
+- name: Copy text files to staging folder
+  # remote_src copy does not work recursively, synchronise is restricted by
+  # zuul, using command
+  command: cp -pR {{ item.source}} {{ stage_dir }}/{{ item.dest }}
+  with_items: "{{ all_sources }}"
