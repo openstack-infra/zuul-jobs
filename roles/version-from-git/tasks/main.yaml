@@ -63,6 +63,6 @@
     project_ver: "{{ scm_tag }}"
 
 - name: Set project_ver if there are commits since the tag
-  when: not commits_since_tag
+  when: commits_since_tag
   set_fact:
     project_ver: "{{ scm_tag }}.{{ commits_since_tag }}.{{ scm_sha }}"
