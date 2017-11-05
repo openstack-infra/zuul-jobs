@@ -206,3 +206,32 @@
          Path to operate in.
 
     run: playbooks/javascript/tarball.yaml
+
+- job:
+    name: nodejs-npm-run-test
+    parent: javascript-base
+    description: |
+      Run test using nodejs.
+
+      Responds to this variable:
+
+      .. zuul:jobvar:: node_version
+         :default: 6
+
+        The version of Node to use.
+
+    run: playbooks/javascript/run-test.yaml
+
+- job:
+    name: nodejs-npm-run-lint
+    parent: javascript-base
+    description: |
+      Run lint using nodejs.
+
+      Responds to this variable:
+
+      .. zuul:jobvar:: node_version
+         :default: 6
+
+        The version of Node to use.
+    run: playbooks/javascript/run-lint.yaml
