@@ -60,3 +60,16 @@
     src: "{{ zuul_work_dir }}/karma.subunit"
     verify_host: true
   when: karma_stat.stat.exists
+
+- name: Check again for shrinkwrap
+  stat:
+    path: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
+  register: shrinkwrap_final
+
+- name: Collect shrinkwrap file
+  synchronize:
+    dest: "{{ log_path }}"
+    mode: pull
+    src: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
+    verify_host: true
+  when: shrinkwrap_final.stat.exists
