@@ -235,3 +235,19 @@
 
         The version of Node to use.
     run: playbooks/javascript/run-lint.yaml
+
+- job:
+    name: nodejs-npm-run-docs
+    parent: javascript-base
+    description: |
+      Run docs using nodejs.
+
+      Responds to this variable:
+
+      .. zuul:jobvar:: node_version
+         :default: 6
+
+        The version of Node to use.
+    run: playbooks/javascript/run-docs.yaml
+    post-run: playbooks/tox/docs-post.yaml
+    success-url: html/
