@@ -10,4 +10,4 @@
     tox_envlist: "{{ tox_envlist }}"
     tox_constraints_file: "{{ tox_constraints_file | default(omit) }}"
     project_dir: "{{ zuul_work_dir }}"
-    projects: "{{ zuul.projects | selectattr('required') | list }}"
+    projects: "{{ zuul._projects.values() | selectattr('required') | list }}"

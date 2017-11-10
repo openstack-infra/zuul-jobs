@@ -3,31 +3,37 @@
     name: receive.denyCurrentBranch ignore
     value: ignore
     scope: local
-    repo: "{{ ansible_user_dir }}/{{ item.src_dir}}"
-  with_items: "{{ zuul.projects }}"
+    repo: "{{ ansible_user_dir }}/{{ item.value.src_dir}}"
+  with_dict: "{{ zuul._projects }}"
 
 - name: Synchronize src repos to workspace directory
-  command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.src_dir}}"
+  command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.value.src_dir}}"
   args:
-    chdir: "{{ zuul.executor.work_root }}/{{ item.src_dir }}"
-  with_items: "{{ zuul.projects }}"
+    chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
+  with_dict: "{{ zuul._projects }}"
   delegate_to: localhost
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but push is not supported by ansible git module.
   tags:
     - skip_ansible_lint
 
-- name: Determine local HEAD
-  shell: "git status |head -1 |awk '{ print $NF }'"
+- name: Determine local HEAD of projects
+  # Output yaml-valid dict data for projects and their current HEAD
+  shell: "echo '{{ item.key }}:' $(git status | head -1 |awk '{ print $NF }')"
   args:
-    chdir: "{{ zuul.executor.work_root }}/{{ item.src_dir }}"
-  with_items: "{{ zuul.projects }}"
+    chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
+  with_dict: "{{ zuul._projects }}"
   delegate_to: localhost
-  register: statuses
+  register: project_heads_yaml
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but status is not supported by ansible git module.
   tags:
     - skip_ansible_lint
+
+- name: Build dict to map project and current head HEAD
+  set_fact:
+    project_heads: "{{ project_heads|default({}) | combine( item.stdout | from_yaml ) }}"
+  with_items: '{{ project_heads_yaml.results }}'
 
 # Do this as a multi-line shell so that we can do the loop once
 - name: Update remote repository state correctly
@@ -37,12 +43,11 @@
     # Undo the config setting we did above
     git config --local --unset receive.denyCurrentBranch
     # checkout the branch matching the branch set up by the executor
-    git checkout {{ item.1.stdout }}
+    git checkout {{ project_heads[item.key] }}
   args:
-    chdir: "{{ ansible_user_dir }}/{{ item.0.src_dir }}"
-  with_together:
-    - "{{ zuul.projects }}"
-    - "{{ statuses.results }}"
+    chdir: "{{ ansible_user_dir }}/{{ item.value.src_dir }}"
+  with_dict:
+    - "{{ zuul._projects }}"
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but we prefer the shell above
   tags:
