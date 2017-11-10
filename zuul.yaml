@@ -209,7 +209,6 @@
 
 - job:
     name: nodejs-npm-run-test
-    parent: javascript-base
     description: |
       Run test using nodejs.
 
@@ -220,7 +219,9 @@
 
         The version of Node to use.
 
+    pre-run: playbooks/javascript/pre-test.yaml
     run: playbooks/javascript/run-test.yaml
+    post-run: playbooks/javascript/post.yaml
 
 - job:
     name: nodejs-npm-run-lint
