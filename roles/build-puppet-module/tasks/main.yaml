@@ -1,0 +1,4 @@
+- name: Build puppet module
+  command: puppet module build .
+  args:
+    chdir: "{{ puppet_module_chdir }}"
