@@ -1,0 +1,59 @@
+# TODO(mordred) rework tox-siblings so it can be used here - probably by
+# making it take a parameter as to what path to python/pip to use.
+
+- name: Find Constraints File
+  include_role:
+    name: find-constraints
+
+- name: Check to see if the project is a python project
+  find:
+    paths: "{{ zuul_work_dir }}"
+    patterns:
+      - setup.cfg
+      - setup.py
+  register: found_python_files
+  when: install_package
+
+# Installing the directory with the constraints flag can hit into problems
+# with conflicting values between constraints and current project. So look
+# for a requirements.txt file so we can install it directly.
+- name: Check to see if the project has a requirements.txt file
+  stat:
+    get_checksum: false
+    get_mime: false
+    get_md5: false
+    path: "{{ zuul_work_dir }}/requirements.txt"
+  register: requirements_file
+
+- name: Install requirements if they exist
+  pip:
+    chdir: "{{ zuul_work_dir }}"
+    virtualenv: "{{ ansible_user_dir }}/.venv"
+    requirements: requirements.txt
+    extra_args: "{{ upper_constraints|default(omit) }}"
+  register: requirements_install
+  when:
+    - install_package
+    - found_python_files.matched
+    - requirements_file.stat.exists
+  failed_when:
+    - error_on_failure is defined
+    - error_on_failure
+    - requirements_install|failed
+
+# Try installing current repo in case it needs to be available for
+# example for version number calculation. Ignore any failures here.
+- name: Install the project if it is a Python project
+  pip:
+    chdir: "{{ zuul_work_dir }}"
+    virtualenv: "{{ ansible_user_dir }}/.venv"
+    name: .
+    extra_args: --no-deps
+  when:
+    - install_package
+    - found_python_files.matched
+  register: install_package_results
+  failed_when:
+    - error_on_failure is defined
+    - error_on_failure
+    - install_package_results|failed

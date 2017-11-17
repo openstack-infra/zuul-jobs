@@ -1,0 +1,6 @@
+zuul_work_dir: "{{ zuul.project.src_dir }}"
+zuul_work_virtualenv: "{{ ansible_user_dir }}/.venv"
+sphinx_source_dir: "doc/source"
+sphinx_build_dir: "doc/build"
+sphinx_builders:
+  - html
