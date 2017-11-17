@@ -1,0 +1,49 @@
+# NOTE(andreaf) There could be more than one repo in the test folder.
+# Since that's unlikely we don't provide a variable to select the
+# test runner and we pick the first hit.
+- name: Discover stestr repo
+  stat:
+    path: "{{ test_results_dir }}/.stestr"
+  register: stestr_repo
+
+- name: Discover testr repo
+  stat:
+    path: "{{ test_results_dir }}/.testrepository"
+  register: testr_repo
+  when: not stestr_repo.stat.exists
+
+- name: Use stestr test runner
+  set_fact:
+    test_runner: ".tox/{{ tox_envdir }}/bin/stestr"
+  when: stestr_repo.stat.exists
+
+- name: Use legacy testr test runner
+  set_fact:
+    test_runner: ".tox/{{ tox_envdir }}/bin/testr"
+  when: not stestr_repo.stat.exists and testr_repo.stat.exists
+
+- name: Check if the venv has been created
+  stat:
+    path: "{{ test_results_dir }}/.tox/{{ tox_envdir }}"
+  register: run_venv
+
+- name: Make sure test results are world readable
+  file:
+    path: "{{ test_results_dir }}"
+    mode: "a+rX"
+    recurse: true
+  become: true
+
+- name: Create a subunit file from the last run
+  shell: "{{ test_runner }} last --subunit > {{ stage_dir }}/{{ test_results_stage_name }}.subunit"
+  args:
+    chdir: "{{ test_results_dir }}"
+  when: run_venv.stat.exists and test_runner is defined
+  register: subunit_report
+
+- name: Generate the html report for the last run
+  command: "{{ subunit2html }} ./{{ test_results_stage_name}}.subunit {{ test_results_stage_name }}.html"
+  args:
+    chdir: "{{ stage_dir }}"
+  when: run_venv.stat.exists and test_runner is defined
+  register: html_report
