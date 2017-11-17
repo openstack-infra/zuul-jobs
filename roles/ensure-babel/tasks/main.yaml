@@ -1,0 +1,32 @@
+- name: Install gettext package
+  package:
+    name: gettext
+    state: present
+  become: yes
+
+- name: Check to see if the constraints file exists
+  stat:
+    path: "{{ constraints_file|default('missing') }}"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
+  register: stat_results
+  when: constraints_file is defined
+
+- name: Record file location
+  set_fact:
+    upper_constraints: "-c {{ constraints_file }}"
+  when: not stat_results|skipped and stat_results.stat.exists
+
+- name: Install babel
+  pip:
+    name:
+      - pbr
+      - Babel
+      - lxml
+      - requests
+      # Install subunit for the subunit output stream for
+      # healthcheck.openstack.org.
+      # TODO(mordred) Does this need to be os-testr or can it just be subunit?
+      - os-testr
+    extra_args: "--user {{ upper_constraints|default('') }}"

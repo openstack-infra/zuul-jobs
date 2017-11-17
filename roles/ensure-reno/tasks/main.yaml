@@ -1,0 +1,39 @@
+- name: Install gettext package
+  package:
+    name: gettext
+    state: present
+  become: yes
+
+- name: Check to see if the constraints file exists
+  stat:
+    path: "{{ constraints_file|default('missing') }}"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
+  register: stat_results
+  when: constraints_file is defined
+
+- name: Record file location
+  set_fact:
+    upper_constraints: "-c {{ constraints_file }}"
+  when: not stat_results|skipped and stat_results.stat.exists
+
+- name: Install reno
+  pip:
+    name:
+      - sphinx
+      - openstackdocstheme
+      - reno
+    extra_args: "--user {{ upper_constraints|default('') }}"
+
+- name: Install extra requirements if needed
+  shell:
+    chdir: '{{ zuul_work_dir }}'
+    executable: /bin/bash
+    cmd: |
+      # TODO(jaegerandi): Remove once all repos are fixed.
+      # Try installing current repo in case it needs to be available for
+      # example for version number calculation. Ignore any failures here.
+      if [ -f setup.cfg ] ; then
+          pip install --user . || true
+      fi
