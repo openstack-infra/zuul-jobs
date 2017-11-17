@@ -19,6 +19,7 @@
   set_fact:
     source: "{{ item.stat.path }}"
     dest: "{{ item.item.value }}/{{ item.stat.path|basename|regex_replace('\\.(' + extensions_regex + ')$', '_\\1.txt') }}"
+    type: "{{ item.item.value }}"
   with_items: "{{ sources.results }}"
   when:
     - item.stat.exists
@@ -45,3 +46,17 @@
   # zuul, using command
   command: cp -pR {{ item.source}} {{ stage_dir }}/{{ item.dest }}
   with_items: "{{ all_sources }}"
+
+# NOTE(andreaf) The ansible module does not support recursive archive, so
+# using gzip is the only option here. The good bit is that gzip itself is
+# almost idempotent, as it will not compress again files with .gz extension.
+# gzip will however return 1 if any compressed file is encountered, so we
+# must ignore that (there's no specific error code).
+- name: Archive everything from docs sources
+  shell: gzip --recursive --best {{ item.dest }} || true
+  args:
+    chdir: "{{ stage_dir }}"
+  with_items: "{{ all_sources }}"
+  when:
+    - stage_compress_logs
+    - item.type == 'logs'

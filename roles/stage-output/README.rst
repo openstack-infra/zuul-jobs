@@ -47,3 +47,8 @@ intended to be used before output fetching in a base job's post-playbook.
      - log
 
      zuul.conf --(staged as)--> zuul_conf.txt
+
+.. zuul:rolevar:: stage_compress_logs
+   :default: True
+
+   When True, files staged as logs will be compressed individually.
