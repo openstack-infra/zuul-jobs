@@ -1,1 +1,0 @@
-python_sdist_chdir: "src/{{ zuul.project.canonical_name }}"

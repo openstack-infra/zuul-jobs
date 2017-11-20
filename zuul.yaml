@@ -141,12 +141,20 @@
     name: python-sdist
     description: |
       Build a source tarball and wheel for uploading
-    run: playbooks/python/sdist.yaml
+      DEPRECATED. Build a source tarball and a bdist wheel for uploading.
+    run: playbooks/python/release.yaml
+    post-run: playbooks/python/tarball-post.yaml
+
+- job:
+    name: build-python-release
+    description: |
+      Build a source tarball and a bdist wheel for uploading.
+    run: playbooks/python/release.yaml
     post-run: playbooks/python/tarball-post.yaml
 
 - job:
     name: python-upload-pypi
-    parent: python-sdist
+    parent: build-python-release
     description: |
       Generate a and upload a python source tarball and binary wheel
 
