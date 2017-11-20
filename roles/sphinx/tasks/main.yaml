@@ -1,6 +1,21 @@
+- name: Attempt to get warning-is-error from config file
+  when: sphinx_warning_is_error is not defined
+  sphinx_check_warning_is_error:
+    project_dir: "{{ zuul_work_dir }}"
+  register: check_result
+
+- name: Set sphinx_warning_is_error
+  when: sphinx_warning_is_error is not defined
+  set_fact:
+    sphinx_warning_is_error: "{{ check_result.warning_is_error }}"
+
 - name: Run sphinx
   command:
-    cmd: "{{ zuul_work_virtualenv }}/bin/sphinx-build -b {{ item }} {{ sphinx_source_dir }} {{ sphinx_build_dir }}/{{ item }}"
+    cmd: >
+      {{ zuul_work_virtualenv }}/bin/sphinx-build
+        -b {{ item }}
+        {% if sphinx_warning_is_error %} -W {% endif %}
+        {{ sphinx_source_dir }} {{ sphinx_build_dir }}/{{ item }}
     chdir: "{{ zuul_work_dir }}"
   with_items: "{{ sphinx_builders }}"
 

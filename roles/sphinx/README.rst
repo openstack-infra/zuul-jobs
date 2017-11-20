@@ -17,6 +17,11 @@ Run sphinx to generate documentation
 
    Which sphinx builders to run.
 
+.. zuul:rolevar:: sphinx_warning_is_error
+
+   Whether to treat sphinx build warnings as errors. Defaults to undefined
+   which means to attempt to find the setting in a setup.cfg file.
+
 .. zuul:rolevar:: zuul_work_virtualenv
    :default: ~/.venv
 
