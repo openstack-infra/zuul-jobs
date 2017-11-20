@@ -11,9 +11,19 @@ to the log root of the executor.
    The destination directory on the executor.  By default, the log
    root.
 
+.. zuul:rolevar:: sphinx_build_dir
+   :default: doc/build
+
+   Directory relative to zuul_work_dir where build output will be put.
+
 .. zuul:rolevar:: sphinx_output_src
-   :default: src/{{ zuul.project.canonical_name }}/doc/build/html
+   :default: {{ zuul_work_dir }}/{{ sphinx_build_dir }}/html
 
    The location on the worker from which to fetch the generated sphinx
    content.  By default, the HTML doc build dir of the current
    project.
+
+.. zuul:rolevar:: zuul_work_dir
+   :default: {{ zuul.project.src_dir }}
+
+   The location of the main working directory of the job.
