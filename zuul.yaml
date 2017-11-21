@@ -163,6 +163,67 @@
     post-run: playbooks/python/upload-pypi.yaml
 
 - job:
+    name: build-sphinx-docs
+    description: |
+      Build documentation using Sphinx
+
+      Additional requirements can be provided in a project in either the
+      file ``doc/requirements.txt`` or ``test-requirements.txt``. (The first
+      file found in that order will be the one used) Non-python distro
+      requirements can be specified in ``bindep.txt`` using the ``doc`` tag.
+
+      Runs `whereto https://docs.openstack.org/whereto/latest/` after the build
+      if it is installed.
+
+      Responds to these variables:
+
+      .. zuul:jobvar:: constraints_file
+
+         Optional path to a pip constraints file for installing python
+         libraries.
+
+      .. zuul:jobvar:: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Directory to operate in.
+    pre-run: playbooks/sphinx/pre.yaml
+    run: playbooks/sphinx/run.yaml
+    post-run: playbooks/sphinx/post.yaml
+
+- job:
+    name: build-reno-releasenotes
+    description: |
+      Build releasenotes using reno
+
+      Additional requirements can be provided in a project in either the
+      file ``doc/requirements.txt`` or ``test-requirements.txt``. (The first
+      file found in that order will be the one used) Non-python distro
+      requirements can be specified in ``bindep.txt`` using the ``doc`` tag.
+
+      Responds to these variables:
+
+      .. zuul:jobvar:: constraints_file
+
+         Optional path to a pip constraints file for installing python
+         libraries.
+
+      .. zuul:jobvar:: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Directory to operate in.
+    success-url: html/
+    # Release notes always build on master.
+    override-checkout: master
+    pre-run: playbooks/releasenotes/pre.yaml
+    run: playbooks/releasenotes/run.yaml
+    post-run: playbooks/releasenotes/post.yaml
+    files:
+      - ^releasenotes/.*
+      - bindep.txt
+      - doc/requirements.txt
+      - test-requirements.txt
+
+- job:
     name: trigger-readthedocs
     description: Send a trigger to the readthedocs url to tell it to build docs
     nodeset:

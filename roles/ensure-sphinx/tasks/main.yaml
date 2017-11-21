@@ -1,0 +1,44 @@
+# TODO(mordred) Make this a list of known binary depends that sphinx needs
+- name: Install gettext package
+  package:
+    name: gettext
+    state: present
+  become: yes
+
+- name: Find Constraints File
+  include_role:
+    name: find-constraints
+
+- name: Install virtualenv and doc requirements files if found
+  shell:
+    executable: /bin/bash
+    chdir: "{{ zuul_work_dir }}"
+    # NOTE(mordred) There is a bug in ansible-lint that mistakenly detects
+    # setting the VENV variable below as an error if it occurs on the fist
+    # line. Work around that by putting a comment as the first line until we
+    # can get a fix upstream.
+    cmd: |
+      # Create virtualenv is it does not already exist
+      VENV={{ zuul_work_virtualenv }}
+      if [ ! -d $VENV ] ; then
+          virtualenv $VENV
+      fi
+      source $VENV/bin/activate
+      # skipping requirements.txt as it gets picked up by installing the
+      # python package itself
+      for f in docs/requirements.txt test-requirements.txt ; do
+          if [ -f $f ] ; then
+              pip install $CONSTRAINTS -r $f
+              break
+          fi
+      done
+  environment:
+    CONSTRAINTS: "{{ upper_constraints|default('') }}"
+
+- name: Install doc building packages
+  pip:
+    name: "{{ item }}"
+    chdir: "{{ zuul_work_dir }}"
+    virtualenv: "{{ zuul_work_virtualenv }}"
+    extra_args: "{{ upper_constraints|default(omit) }}"
+  with_items: "{{ doc_building_packages }}"
