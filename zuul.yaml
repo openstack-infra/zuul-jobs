@@ -186,6 +186,7 @@
          :default: {{ zuul.project.src_dir }}
 
          Directory to operate in.
+    success-url: html/
     pre-run: playbooks/sphinx/pre.yaml
     run: playbooks/sphinx/run.yaml
     post-run: playbooks/sphinx/post.yaml
