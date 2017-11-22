@@ -27,9 +27,18 @@
     get_md5: false
   register: whereto
 
-# TODO(mordred) What happens with whereto if sphinx_source_dir is not doc/source?
+- name: Check for htaccess
+  stat:
+    path: "{{ zuul_work_dir }}/{{ sphinx_source_dir }}/_extra/.htaccess"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
+  register: htaccess
+
 - name: Run whereto
   command:
     cmd: "{{ whereto.stat.path }} {{ sphinx_source_dir }}/_extra/.htaccess doc/test/redirect-tests.txt"
     chdir: "{{ zuul_work_dir }}"
-  when: whereto.stat.exists
+  when:
+    - whereto.stat.exists
+    - htaccess.stat.exists
