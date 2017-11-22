@@ -1,18 +1,18 @@
-- name: Create zuul-cloner destination directory
-  file:
-    path: "{{ destination | dirname }}"
-    state: directory
+- name: Install zuul-cloner shim dependencies
+  pip:
+    name: PyYAML
+    virtualenv: "{{ virtualenv }}"
   become: yes
 
 - name: Install zuul-cloner shim
   template:
     src: templates/zuul-cloner-shim.py.j2
-    dest: "{{ destination }}"
+    dest: "{{ virtualenv }}/bin/zuul-cloner"
   become: yes
 
 - name: Change zuul-cloner permissions
   file:
-    path: "{{ destination }}"
+    path: "{{ virtualenv }}/bin/zuul-cloner"
     mode: 0755
   become: yes
 
