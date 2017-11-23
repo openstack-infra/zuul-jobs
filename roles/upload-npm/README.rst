@@ -2,7 +2,7 @@ Upload javascript packages to npm
 
 **Role Variables**
 
-.. zuul:rolevar:: npm_info
+.. zuul:rolevar:: npm_credentials
 
    Complex argument which contains the information about the npm
    server as well as the authentication information needed.
