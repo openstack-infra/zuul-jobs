@@ -1,19 +1,3 @@
-- name: Require tox_envlist variable
-  fail:
-    msg: tox_envlist is required for this role
-  when: tox_envlist is not defined
-
-- name: Run tox without tests
-  command: "{{ tox_executable }} --notest -e{{ tox_envlist }}"
-  args:
-    chdir: "{{ zuul_work_dir }}"
-  when: tox_install_siblings
-
-# TODO(mordred) handle tox_envlist being a list
-- name: Install any sibling python packages
-  tox_install_sibling_packages:
-    tox_envlist: "{{ tox_envlist }}"
-    tox_constraints_file: "{{ tox_constraints_file | default(omit) }}"
-    project_dir: "{{ zuul_work_dir }}"
-    projects: "{{ zuul.projects | selectattr('required') | list }}"
+- name: Install tox siblings
+  include: siblings.yaml
   when: tox_install_siblings
