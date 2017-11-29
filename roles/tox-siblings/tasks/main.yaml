@@ -1,3 +1,0 @@
-- name: Emit warning message
-  debug:
-    msg: tox-siblings is no longer needed and should be removed
