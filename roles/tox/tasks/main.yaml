@@ -5,18 +5,27 @@
 
 - name: Check to see if the constraints file exists
   stat:
-    path: "{{ tox_constraints_file|default('missing') }}"
+    path: "{{ tox_constraints_file }}"
     get_checksum: false
     get_mime: false
     get_md5: false
   register: stat_results
   when: tox_constraints_file is defined
 
+- name: Fail if constraints file is missing
+  when: tox_constraints_file is defined and not stat_results.stat.exists
+  fail:
+    msg: tox_constraints_file is defined but was not found
+
 - name: Record file location
   set_fact:
     tox_constraints_env:
       UPPER_CONSTRAINTS_FILE: "{{ tox_constraints_file }}"
-  when: not stat_results|skipped and stat_results.stat.exists
+  when: tox_constraints_file is defined
+
+- name: Install tox siblings
+  include: siblings.yaml
+  when: tox_install_siblings
 
 - name: Emit tox command
   debug:

@@ -26,6 +26,12 @@ Runs tox for a project
    Path to a pip constraints file. Will be provided to tox via
    UPPER_CONSTRAINTS_FILE environment variable if it exists.
 
+.. zuul:rolevar:: tox_install_siblings
+   :default: true
+
+   Flag controlling whether to attempt to install python packages from any
+   other source code repos zuul has checked out. Defaults to True.
+
 .. zuul:rolevar:: zuul_work_dir
    :default: {{ zuul.project.src_dir }}
 

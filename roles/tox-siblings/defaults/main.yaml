@@ -1,6 +1,0 @@
----
-tox_envlist: venv
-tox_executable: tox
-tox_install_siblings: true
-
-zuul_work_dir: "{{ zuul.project.src_dir }}"

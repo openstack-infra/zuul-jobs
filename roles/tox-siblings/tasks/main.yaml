@@ -1,3 +1,3 @@
-- name: Install tox siblings
-  include: siblings.yaml
-  when: tox_install_siblings
+- name: Emit warning message
+  debug:
+    msg: tox-siblings is no longer needed and should be removed
