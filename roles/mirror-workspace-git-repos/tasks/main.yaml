@@ -46,8 +46,7 @@
     git checkout {{ project_heads[item.key] }}
   args:
     chdir: "{{ ansible_user_dir }}/{{ item.value.src_dir }}"
-  with_dict:
-    - "{{ zuul._projects }}"
+  with_dict: "{{ zuul._projects }}"
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but we prefer the shell above
   tags:
