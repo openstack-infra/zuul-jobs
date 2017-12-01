@@ -41,6 +41,21 @@
     - error_on_failure
     - requirements_install|failed
 
+# Build an sdist. This is needed for pbr projects that may expect
+# the ChangeLog to have been generated.
+- name: Make sdist to generate ChangeLog
+  command:
+    cmd: "{{ ansible_user_dir }}/.venv/bin/python setup.py sdist"
+    chdir: "{{ zuul_work_dir }}"
+  when:
+    - install_package
+    - found_python_files.matched
+  register: sdist_results
+  failed_when:
+    - error_on_failure is defined
+    - error_on_failure
+    - sdist_results|failed
+
 # Try installing current repo in case it needs to be available for
 # example for version number calculation. Ignore any failures here.
 - name: Install the project if it is a Python project
