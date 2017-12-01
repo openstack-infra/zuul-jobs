@@ -4,13 +4,13 @@
     value: ignore
     scope: local
     repo: "{{ ansible_user_dir }}/{{ item.value.src_dir}}"
-  with_dict: "{{ zuul._projects }}"
+  with_dict: "{{ zuul.projects }}"
 
 - name: Synchronize src repos to workspace directory
   command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.value.src_dir}}"
   args:
     chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
-  with_dict: "{{ zuul._projects }}"
+  with_dict: "{{ zuul.projects }}"
   delegate_to: localhost
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but push is not supported by ansible git module.
@@ -22,7 +22,7 @@
   shell: "echo '{{ item.key }}:' $(git status | head -1 |awk '{ print $NF }')"
   args:
     chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
-  with_dict: "{{ zuul._projects }}"
+  with_dict: "{{ zuul.projects }}"
   delegate_to: localhost
   register: project_heads_yaml
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
@@ -46,7 +46,7 @@
     git checkout {{ project_heads[item.key] }}
   args:
     chdir: "{{ ansible_user_dir }}/{{ item.value.src_dir }}"
-  with_dict: "{{ zuul._projects }}"
+  with_dict: "{{ zuul.projects }}"
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but we prefer the shell above
   tags:
