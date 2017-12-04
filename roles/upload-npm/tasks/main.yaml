@@ -18,4 +18,4 @@
     cmd: |
       nvm install node
       nvm use node
-      npm publish --ignore-scripts {{ zuul.executor.work_dir }}/artifacts/{{ zuul.project.short_name }}-{{ project_ver }}.tar.gz
+      npm publish --ignore-scripts {{ zuul.executor.work_root }}/artifacts/{{ zuul.project.short_name }}-{{ project_ver }}.tar.gz
