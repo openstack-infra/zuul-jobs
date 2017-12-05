@@ -16,6 +16,11 @@ All pip installs are done with a provided constraints file, if given.
 
    List of python packages to install for building docs.
 
+.. zuul:rolevar:: sphinx_python
+   :default: python2
+
+   Version of python to use, either ``python2`` or ``python3``.
+
 .. zuul:rolevar:: zuul_work_virtualenv
    :default: ~/.venv
 
