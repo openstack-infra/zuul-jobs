@@ -52,8 +52,12 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
+try:
+    import pip
+except ImportError:
+    pip = None
+
 import os
-import pip
 import subprocess
 import tempfile
 
@@ -80,6 +84,8 @@ def get_sibling_python_packages(projects):
 
 
 def get_installed_packages(tox_python):
+    if pip is None:
+        raise RuntimeError("pip python module is required")
     with tempfile.NamedTemporaryFile(delete=False) as tmp_requirements:
         tmp_requirements.write(subprocess.check_output(
             [tox_python, '-m', 'pip', 'freeze']))
