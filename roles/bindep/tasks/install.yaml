@@ -11,6 +11,6 @@
     name: bindep
     virtualenv: "{{ bindep_temp_dir.path }}/venv"
 
-- name: Define bindep_found_command
+- name: Define bindep_command
   set_fact:
-    bindep_found_command: "{{ bindep_temp_dir.path }}/venv/bin/bindep"
+    bindep_command: "{{ bindep_temp_dir.path }}/venv/bin/bindep"
