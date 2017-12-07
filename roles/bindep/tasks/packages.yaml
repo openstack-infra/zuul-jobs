@@ -8,6 +8,7 @@
     name: "{{ bindep_output.stdout_lines }}"
     state: present
   become: yes
+  when: bindep_output.stdout_lines
 
 - name: Check that packages are installed
   command: "{{ bindep_run }}"
