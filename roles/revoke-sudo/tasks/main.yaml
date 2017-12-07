@@ -1,11 +1,18 @@
+- name: Check if zuul is sudoer
+  command: sudo -n true
+  failed_when: false
+  register: zuul_is_sudoer
+
 - name: Remove sudo access for zuul user.
   become: yes
   file:
     path: /etc/sudoers.d/zuul
     state: absent
+  when: zuul_is_sudoer.rc == 0
 
 - name: Prove that general sudo access is actually revoked.
   shell: '! sudo -n true'
   tags:
     # We really need shell above, skip warning
     - skip_ansible_lint
+  when: zuul_is_sudoer.rc == 0
