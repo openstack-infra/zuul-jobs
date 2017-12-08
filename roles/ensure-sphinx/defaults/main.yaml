@@ -1,4 +1,5 @@
 zuul_work_dir: "{{ zuul.project.src_dir }}"
 zuul_work_virtualenv: "{{ ansible_user_dir }}/.venv"
+sphinx_python: python2
 doc_building_packages:
   - sphinx
