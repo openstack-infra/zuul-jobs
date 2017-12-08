@@ -174,11 +174,6 @@
          Optional path to a pip constraints file for installing python
          libraries.
 
-      .. zuul:jobvar:: sphinx_python
-          :default: python2
-
-         Version of python to use, either ``python2`` or ``python3``.
-
       .. zuul:jobvar:: zuul_work_dir
          :default: {{ zuul.project.src_dir }}
 
