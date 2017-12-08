@@ -9,36 +9,27 @@
   include_role:
     name: find-constraints
 
-- name: Install virtualenv and doc requirements files if found
-  shell:
-    executable: /bin/bash
+# Note (dmsimard): This installs doc/requirements.txt or test-requirements.txt
+# if the former is not found. If neither are found, this task is skipped.
+# TODO(dmsimard) Don't assume virtualenv is installed
+- name: Initialize virtual environment
+  pip:
+    requirements: "{{ item }}"
     chdir: "{{ zuul_work_dir }}"
-    # NOTE(mordred) There is a bug in ansible-lint that mistakenly detects
-    # setting the VENV variable below as an error if it occurs on the fist
-    # line. Work around that by putting a comment as the first line until we
-    # can get a fix upstream.
-    cmd: |
-      # Create virtualenv is it does not already exist
-      VENV={{ zuul_work_virtualenv }}
-      if [ ! -d $VENV ] ; then
-          virtualenv $VENV
-      fi
-      source $VENV/bin/activate
-      # skipping requirements.txt as it gets picked up by installing the
-      # python package itself
-      for f in doc/requirements.txt test-requirements.txt ; do
-          if [ -f $f ] ; then
-              pip install $CONSTRAINTS -r $f
-              break
-          fi
-      done
-  environment:
-    CONSTRAINTS: "{{ upper_constraints|default('') }}"
+    virtualenv: "{{ zuul_work_virtualenv }}"
+    virtualenv_python: "{{ sphinx_python }}"
+    extra_args: "{{ upper_constraints | default(omit) }}"
+  with_first_found:
+    - files:
+        - "{{ zuul_work_dir }}/doc/requirements.txt"
+        - "{{ zuul_work_dir }}/test-requirements.txt"
+      skip: true
 
 - name: Install doc building packages
   pip:
     name: "{{ item }}"
     chdir: "{{ zuul_work_dir }}"
     virtualenv: "{{ zuul_work_virtualenv }}"
-    extra_args: "{{ upper_constraints|default(omit) }}"
+    virtualenv_python: "{{ sphinx_python }}"
+    extra_args: "{{ upper_constraints | default(omit) }}"
   with_items: "{{ doc_building_packages }}"

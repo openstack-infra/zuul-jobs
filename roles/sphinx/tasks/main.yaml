@@ -10,11 +10,14 @@
     sphinx_warning_is_error: "{{ check_result.warning_is_error }}"
 
 - name: Run sphinx
-  command:
-    cmd: >
-      {{ zuul_work_virtualenv }}/bin/sphinx-build
-        -b {{ item }}
-        {% if sphinx_warning_is_error %} -W {% endif %}
+  shell:
+    executable: /bin/bash
+    cmd: |
+      # Source the activate file so that sphinx subcommands have the correct
+      # paths set.
+      source {{ zuul_work_virtualenv }}/bin/activate
+      sphinx-build -b {{ item }} \
+        {% if sphinx_warning_is_error %} -W {% endif %} \
         {{ sphinx_source_dir }} {{ sphinx_build_dir }}/{{ item }}
     chdir: "{{ zuul_work_dir }}"
   with_items: "{{ sphinx_builders }}"
