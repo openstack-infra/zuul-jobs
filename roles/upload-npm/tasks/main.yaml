@@ -13,6 +13,8 @@
     version: v0.33.5
 
 - name: Upload tarball to npm
+  args:
+    chdir: "{{ zuul.executor.work_root }}"
   shell:
     executable: /bin/bash
     cmd: |
