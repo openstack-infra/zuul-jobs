@@ -37,8 +37,6 @@
     mode: pull
     src: "{{ zuul_work_dir }}/.tox/{{ item }}/log/"
     verify_host: true
-    rsync_opts:
-      - "--ignore-missing-args"
   with_items: "{{ envlist }}"
   # some tox runs may not create a virtualenv and thus have
   # no ./tox/env directory
