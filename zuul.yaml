@@ -231,11 +231,16 @@
     pre-run: playbooks/multinode/pre.yaml
 
 - job:
-    name: javascript-base
+    name: nodejs-npm
     description: |
       Base job for javascript operations
 
       Responds to these variables:
+
+      .. zuul:jobvar:: npm_command
+         :default: test
+
+         Command to pass to npm.
 
       .. zuul:jobvar:: node_version
          :default: 6
@@ -247,11 +252,14 @@
 
          Path to operate in.
     pre-run: playbooks/javascript/pre.yaml
+    run: playbooks/javascript/run.yaml
     post-run: playbooks/javascript/post.yaml
+    vars:
+      npm_command: test
 
 - job:
     name: build-javascript-tarball
-    parent: javascript-base
+    parent: nodejs-npm
     description: |
       Build a source tarball for a Javascript project
 
@@ -266,51 +274,67 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
-
-    run: playbooks/javascript/tarball.yaml
+    vars:
+      npm_command: pack
 
 - job:
     name: nodejs-npm-run-test
     description: |
       Run test using nodejs.
 
-      Responds to this variable:
+      Responds to these variables:
 
       .. zuul:jobvar:: node_version
          :default: 6
 
         The version of Node to use.
 
+      .. zuul:jobvar: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Path to operate in.
     pre-run: playbooks/javascript/pre-test.yaml
     run: playbooks/javascript/run-test.yaml
     post-run: playbooks/javascript/post.yaml
 
 - job:
     name: nodejs-npm-run-lint
-    parent: javascript-base
+    parent: nodejs-npm
     description: |
       Run lint using nodejs.
 
-      Responds to this variable:
+      Responds to these variables:
 
       .. zuul:jobvar:: node_version
          :default: 6
 
-        The version of Node to use.
-    run: playbooks/javascript/run-lint.yaml
+         The version of Node to use.
+
+      .. zuul:jobvar: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Path to operate in.
+    vars:
+      npm_command: lint
 
 - job:
     name: nodejs-npm-run-docs
-    parent: javascript-base
+    parent: nodejs-npm
     description: |
       Run docs using nodejs.
 
-      Responds to this variable:
+      Responds to these variables:
 
       .. zuul:jobvar:: node_version
          :default: 6
 
-        The version of Node to use.
-    run: playbooks/javascript/run-docs.yaml
+         The version of Node to use.
+
+      .. zuul:jobvar: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Path to operate in.
     post-run: playbooks/tox/docs-post.yaml
     success-url: html/
+    vars:
+      npm_command: docs
