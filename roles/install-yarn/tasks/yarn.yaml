@@ -1,0 +1,11 @@
+- name: Install yarn from yarnpkg.com
+  package:
+    name: yarn
+    state: latest
+  become: yes
+  tags:
+    # Ignore ANSIBLE0010: We really want latest version
+    - skip_ansible_lint
+
+- name: Output yarn version
+  command: yarn --version

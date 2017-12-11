@@ -5,6 +5,7 @@
       bindep_dir: "{{ zuul_work_dir }}"
     - test-setup
     - install-nodejs
+    - install-yarn
     # nodejs-test-dependencies requires sudo,
     # so we cannot inherit pre.yaml from javascript-base.
     - nodejs-test-dependencies

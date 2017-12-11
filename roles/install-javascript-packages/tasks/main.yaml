@@ -1,6 +1,23 @@
+- name: Check for yarn.lock file
+  stat:
+    path: "{{ zuul_work_dir }}/yarn.lock"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
+  register: yarn_lock
+
+- name: Install yarn dependencies
+  command: yarn install
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"
+  when: yarn_lock.stat.exists
+
 - name: Install npm dependencies
   command: npm install --verbose
   environment:
     DISPLAY: ':99'
   args:
     chdir: "{{ zuul_work_dir }}"
+  when: not yarn_lock.stat.exists
