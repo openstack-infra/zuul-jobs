@@ -293,9 +293,6 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
-    pre-run: playbooks/javascript/pre-test.yaml
-    run: playbooks/javascript/run-test.yaml
-    post-run: playbooks/javascript/post.yaml
 
 - job:
     name: nodejs-npm-run-lint
