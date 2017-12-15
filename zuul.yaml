@@ -284,9 +284,9 @@
 
 - job:
     name: nodejs-npm-run-test
-    parent: nodejs-npm
     description: |
-      Run test using nodejs.
+      Run test using nodejs. This test also starts Xvfb for run time
+      tests.
 
       Responds to these variables:
 
@@ -299,6 +299,11 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
+    pre-run: playbooks/javascript/pre-test.yaml
+    run: playbooks/javascript/run.yaml
+    post-run: playbooks/javascript/post.yaml
+    vars:
+      npm_command: test
 
 - job:
     name: nodejs-npm-run-lint
