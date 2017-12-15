@@ -9,36 +9,37 @@
   include_role:
     name: find-constraints
 
-- name: Install virtualenv and doc requirements files if found
+# We're not using with_first_found because the files are remote, not local.
+# We want to use doc/requirements.txt if it exists or fallback to
+# test-requirements.txt.
+- name: Get requirements files
   shell:
     executable: /bin/bash
     chdir: "{{ zuul_work_dir }}"
-    # NOTE(mordred) There is a bug in ansible-lint that mistakenly detects
-    # setting the VENV variable below as an error if it occurs on the fist
-    # line. Work around that by putting a comment as the first line until we
-    # can get a fix upstream.
     cmd: |
-      # Create virtualenv is it does not already exist
-      VENV={{ zuul_work_virtualenv }}
-      if [ ! -d $VENV ] ; then
-          virtualenv $VENV
-      fi
-      source $VENV/bin/activate
-      # skipping requirements.txt as it gets picked up by installing the
-      # python package itself
       for f in doc/requirements.txt test-requirements.txt ; do
           if [ -f $f ] ; then
-              pip install $CONSTRAINTS -r $f
+              echo $f
               break
           fi
       done
-  environment:
-    CONSTRAINTS: "{{ upper_constraints|default('') }}"
+  failed_when: "'requirements.txt' not in requirements_file.stdout"
+  register: requirements_file
+
+# TODO(dmsimard) Don't assume virtualenv is installed
+- name: Initialize virtual environment
+  pip:
+    requirements: "{{ requirements_file.stdout }}"
+    chdir: "{{ zuul_work_dir }}"
+    virtualenv: "{{ zuul_work_virtualenv }}"
+    virtualenv_python: "{{ sphinx_python }}"
+    extra_args: "{{ upper_constraints | default(omit) }}"
 
 - name: Install doc building packages
   pip:
     name: "{{ item }}"
     chdir: "{{ zuul_work_dir }}"
     virtualenv: "{{ zuul_work_virtualenv }}"
-    extra_args: "{{ upper_constraints|default(omit) }}"
+    virtualenv_python: "{{ sphinx_python }}"
+    extra_args: "{{ upper_constraints | default(omit) }}"
   with_items: "{{ doc_building_packages }}"

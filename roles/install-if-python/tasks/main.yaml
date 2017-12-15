@@ -28,7 +28,7 @@
 - name: Install requirements if they exist
   pip:
     chdir: "{{ zuul_work_dir }}"
-    virtualenv: "{{ ansible_user_dir }}/.venv"
+    virtualenv: "{{ zuul_work_virtualenv }}"
     requirements: requirements.txt
     extra_args: "{{ upper_constraints|default(omit) }}"
   register: requirements_install
@@ -45,7 +45,7 @@
 # the ChangeLog to have been generated.
 - name: Make sdist to generate ChangeLog
   command:
-    cmd: "{{ ansible_user_dir }}/.venv/bin/python setup.py sdist"
+    cmd: "{{ zuul_work_virtualenv }}/bin/python setup.py sdist"
     chdir: "{{ zuul_work_dir }}"
   when:
     - install_package
@@ -61,7 +61,7 @@
 - name: Install the project if it is a Python project
   pip:
     chdir: "{{ zuul_work_dir }}"
-    virtualenv: "{{ ansible_user_dir }}/.venv"
+    virtualenv: "{{ zuul_work_virtualenv }}"
     name: .
     extra_args: --no-deps
   when:
