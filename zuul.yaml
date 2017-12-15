@@ -279,6 +279,7 @@
 
 - job:
     name: nodejs-npm-run-test
+    parent: nodejs-npm
     description: |
       Run test using nodejs.
 
