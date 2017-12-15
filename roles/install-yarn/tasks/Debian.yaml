@@ -1,0 +1,14 @@
+- name: Add yarnpkg repository key
+  apt_key:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+  become: yes
+
+- name: Add yarnpkg apt source repository
+  apt_repository:
+    repo: "deb https://dl.yarnpkg.com/debian/ stable main"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Install yarn
+  include: yarn.yaml

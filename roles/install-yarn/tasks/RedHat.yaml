@@ -1,0 +1,8 @@
+- name: Add yarnpkg repo file
+  get_url:
+    url: https://dl.yarnpkg.com/rpm/yarn.repo
+    dest: /etc/yum.repos.d/yarn.repo
+  become: yes
+
+- name: Install yarn
+  include: yarn.yaml
