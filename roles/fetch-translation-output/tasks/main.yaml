@@ -1,6 +1,12 @@
+- name: Check for translation files
+  stat:
+    path: "{{ translation_output_src }}"
+  register: translation_files
+
 - name: Collect translation source files
   synchronize:
     dest: "{{ zuul_executor_dest }}"
     mode: pull
     src: "{{ translation_output_src }}"
     verify_host: true
+  when: translation_files.stat.exists
