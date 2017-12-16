@@ -17,11 +17,17 @@
 - name: Check for yarn.lock
   stat:
     path: "{{ zuul_work_dir }}/yarn.lock"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
   register: yarn_lock
 
 - name: Check for shrinkwrap
   stat:
     path: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
   when: not yarn_lock.stat.exists
   register: shrinkwrap
 
@@ -48,6 +54,9 @@
 - name: Check for reports
   stat:
     path: "{{ zuul_work_dir }}/reports"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
   register: reports_stat
 
 - name: Collect npm reports
@@ -61,6 +70,9 @@
 - name: Check for karma.subunit files
   stat:
     path: "{{ zuul_work_dir }}/karma.subunit"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
   register: karma_stat
 
 - name: Collect karma subunit files
@@ -75,6 +87,9 @@
   when: not yarn_lock.stat.exists
   stat:
     path: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
   register: shrinkwrap_final
 
 - name: Collect shrinkwrap file
@@ -86,3 +101,20 @@
   when:
     - not yarn_lock.stat.exists
     - shrinkwrap_final.stat.exists
+
+- name: Check for built output
+  stat:
+    path: "{{ zuul_work_dir }}/{{ javascript_content_dir }}"
+    get_checksum: false
+    get_mime: false
+    get_md5: false
+  register: javascript_output
+
+- name: Collect javascript output
+  synchronize:
+    src: "{{ zuul_work_dir }}/{{ javascript_content_dir }}/"
+    dest: "{{ log_path }}/html/"
+    mode: pull
+    copy_links: true
+    verify_host: true
+  when: javascript_output.stat.exists
