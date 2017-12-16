@@ -14,13 +14,21 @@
     state: directory
   delegate_to: localhost
 
+- name: Check for yarn.lock
+  stat:
+    path: "{{ zuul_work_dir }}/yarn.lock"
+  register: yarn_lock
+
 - name: Check for shrinkwrap
   stat:
     path: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
+  when: not yarn_lock.stat.exists
   register: shrinkwrap
 
 - name: Run npm prune because of https://github.com/npm/npm/issues/6298
-  when: not shrinkwrap.stat.exists
+  when:
+    - not yarn_lock.stat.exists
+    - not shrinkwrap.stat.exists
   command: npm prune
   environment:
     DISPLAY: ':99'
@@ -28,7 +36,9 @@
     chdir: "{{ zuul_work_dir }}"
 
 - name: Run npm shrinkwrap
-  when: not shrinkwrap.stat.exists
+  when:
+    - not yarn_lock.stat.exists
+    - not shrinkwrap.stat.exists
   command: npm shrinkwrap
   environment:
     DISPLAY: ':99'
@@ -62,6 +72,7 @@
   when: karma_stat.stat.exists
 
 - name: Check again for shrinkwrap
+  when: not yarn_lock.stat.exists
   stat:
     path: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
   register: shrinkwrap_final
@@ -72,4 +83,6 @@
     mode: pull
     src: "{{ zuul_work_dir }}/npm-shrinkwrap.json"
     verify_host: true
-  when: shrinkwrap_final.stat.exists
+  when:
+    - not yarn_lock.stat.exists
+    - shrinkwrap_final.stat.exists
