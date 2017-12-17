@@ -243,7 +243,7 @@
       Responds to these variables:
 
       .. zuul:jobvar:: npm_command
-         :default: test
+         :default: build
 
          Command to pass to npm.
 
@@ -256,11 +256,16 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
+
+      .. zuul:jobvar: javascript_content_dir
+         :default: dist
+
+         Directory, relative to zuul_work_dir, holding build content.
     pre-run: playbooks/javascript/pre.yaml
     run: playbooks/javascript/run.yaml
     post-run: playbooks/javascript/post.yaml
     vars:
-      npm_command: test
+      npm_command: build
 
 - job:
     name: build-javascript-tarball
@@ -279,8 +284,42 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
+
+      .. zuul:jobvar: javascript_content_dir
+         :default: dist
+
+         Directory, relative to zuul_work_dir, holding build content.
     vars:
       npm_command: pack
+
+- job:
+    name: build-javascript-content
+    parent: nodejs-npm
+    description: |
+      Build javascript web content as it should be deployed.
+
+      Responds to these variables:
+
+      .. zuul:jobvar:: npm_command
+         :default: build
+
+         Command to pass to npm.
+
+      .. zuul:jobvar:: node_version
+         :default: 6
+
+         The version of Node to use.
+
+      .. zuul:jobvar: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Path to operate in.
+
+      .. zuul:jobvar: javascript_content_dir
+         :default: dist
+
+         Directory, relative to zuul_work_dir, holding build content.
+    success-url: html/
 
 - job:
     name: nodejs-npm-run-test
@@ -299,6 +338,11 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
+
+      .. zuul:jobvar: javascript_content_dir
+         :default: dist
+
+         Directory, relative to zuul_work_dir, holding build content.
     pre-run: playbooks/javascript/pre-test.yaml
     run: playbooks/javascript/run.yaml
     post-run: playbooks/javascript/post.yaml
@@ -322,6 +366,11 @@
          :default: {{ zuul.project.src_dir }}
 
          Path to operate in.
+
+      .. zuul:jobvar: javascript_content_dir
+         :default: dist
+
+         Directory, relative to zuul_work_dir, holding build content.
     vars:
       npm_command: lint
 
