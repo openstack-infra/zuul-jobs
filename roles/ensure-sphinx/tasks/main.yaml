@@ -23,19 +23,10 @@
               break
           fi
       done
-  failed_when: "'requirements.txt' not in requirements_file.stdout"
   register: requirements_file
 
 # TODO(dmsimard) Don't assume virtualenv is installed
-- name: Initialize virtual environment
-  pip:
-    requirements: "{{ requirements_file.stdout }}"
-    chdir: "{{ zuul_work_dir }}"
-    virtualenv: "{{ zuul_work_virtualenv }}"
-    virtualenv_python: "{{ sphinx_python }}"
-    extra_args: "{{ upper_constraints | default(omit) }}"
-
-- name: Install doc building packages
+- name: Install base doc building packages
   pip:
     name: "{{ item }}"
     chdir: "{{ zuul_work_dir }}"
@@ -43,3 +34,13 @@
     virtualenv_python: "{{ sphinx_python }}"
     extra_args: "{{ upper_constraints | default(omit) }}"
   with_items: "{{ doc_building_packages }}"
+
+# TODO(dmsimard) Don't assume virtualenv is installed
+- name: Install found doc requirements
+  pip:
+    requirements: "{{ requirements_file.stdout }}"
+    chdir: "{{ zuul_work_dir }}"
+    virtualenv: "{{ zuul_work_virtualenv }}"
+    virtualenv_python: "{{ sphinx_python }}"
+    extra_args: "{{ upper_constraints | default(omit) }}"
+  when: requirements_file.stdout_lines
