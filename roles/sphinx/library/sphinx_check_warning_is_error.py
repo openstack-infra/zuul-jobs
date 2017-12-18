@@ -47,6 +47,19 @@ import os
 from ansible.module_utils.basic import AnsibleModule
 
 
+# TODO(mordred) We should replace this python module with the 'ini' lookup
+# module. That runs on the executor, but the executor has a readable copy of
+# the setup.cfg for the project in question.
+# Just a simple:
+#   set_fact:
+#     setup_cfg_path: "{{ zuul.executor.work_root }}/"\
+#                     "{{ zuul.project.src_dir }}/setup.cfg }}"
+#   warning_is_error: "{{ lookup('ini', 'warning[_\_]is[_\-]error section="\
+#                     "build_sphinx re=True file=' + setup_cfg_path }}"
+#   autodoc_index_modules: "{{ lookup('ini', 'autodoc[_\_]index[_\-]modules"\
+#                          "section=build_sphinx re=True file=' + "\
+#                          "setup_cfg_path }}"
+# should do it. That's a bigger change that we should test aggressively.
 def main():
     module = AnsibleModule(
         argument_spec=dict(
@@ -55,25 +68,38 @@ def main():
     )
     project_dir = module.params['project_dir']
 
+    warning_is_error = False
+    # TODO(mordred) Remove autodoc_index_modules logic  when we get OpenStack
+    # projects off of the pbr autoindex
+    autodoc_index_modules = False
+
     if not os.path.exists(os.path.join(project_dir, 'setup.cfg')):
         module.exit_json(
             changed=False,
-            warning_is_error=False,
+            warning_is_error=warning_is_error,
+            autodoc_index_modules=autodoc_index_modules,
             msg="No setup.cfg, no action needed")
 
     try:
         c = configparser.ConfigParser()
         c.read(os.path.join(project_dir, 'setup.cfg'))
-        warning_is_error = c.getboolean('build_sphinx', 'warning-is-error')
     except Exception:
         module.exit_json(
             changed=False,
-            warning_is_error=False,
-            msg="Setting not found in setup.cfg, defaulting to false")
+            warning_is_error=warning_is_error,
+            autodoc_index_modules=autodoc_index_modules,
+            msg="Error reading setup.cfg, defaulting flags to false")
+
+    if (c.has_section('build_sphinx') and
+            c.has_option('build_sphinx', 'warning-is-error')):
+        warning_is_error = c.getboolean('build_sphinx', 'warning-is-error')
+    if c.has_section('pbr') and c.has_option('pbr', 'autodoc_index_modules'):
+        autodoc_index_modules = c.getboolean('pbr', 'autodoc_index_modules')
     module.exit_json(
         changed=False,
         warning_is_error=warning_is_error,
-        msg="warning_is_error setting found in build_sphinx section")
+        autodoc_index_modules=autodoc_index_modules,
+        msg="Doc building options found in setup.cfg")
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@
   when: sphinx_warning_is_error is not defined
   set_fact:
     sphinx_warning_is_error: "{{ check_result.warning_is_error }}"
+    sphinx_pbr_autodoc: "{{ check_result.autodoc_index_modules }}"
 
 - name: Run sphinx
   shell:
@@ -21,6 +22,19 @@
         {{ sphinx_source_dir }} {{ sphinx_build_dir }}/{{ item }}
     chdir: "{{ zuul_work_dir }}"
   with_items: "{{ sphinx_builders }}"
+  when: not sphinx_pbr_autodoc
+
+# TODO(mordred) Remove this when we get projects off of the pbr autoindex
+- name: Run sphinx using legacy pbr runner
+  shell:
+    executable: /bin/bash
+    cmd: |
+      # Source the activate file so that sphinx subcommands have the correct
+      # paths set.
+      source {{ zuul_work_virtualenv }}/bin/activate
+      python setup.py build_sphinx
+    chdir: "{{ zuul_work_dir }}"
+  when: sphinx_pbr_autodoc
 
 - name: Check for whereto
   stat:
