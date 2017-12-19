@@ -44,7 +44,7 @@
 - name: Copy text files to staging folder
   # remote_src copy does not work recursively, synchronise is restricted by
   # zuul, using command
-  command: cp -pR {{ item.source}} {{ stage_dir }}/{{ item.dest }}
+  command: cp -pRL {{ item.source}} {{ stage_dir }}/{{ item.dest }}
   with_items: "{{ all_sources }}"
 
 # NOTE(andreaf) The ansible module does not support recursive archive, so
