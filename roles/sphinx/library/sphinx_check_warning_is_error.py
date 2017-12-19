@@ -72,6 +72,7 @@ def main():
     # TODO(mordred) Remove autodoc_index_modules logic  when we get OpenStack
     # projects off of the pbr autoindex
     autodoc_index_modules = False
+    autodoc_tree_index_modules = False
 
     if not os.path.exists(os.path.join(project_dir, 'setup.cfg')):
         module.exit_json(
@@ -95,6 +96,12 @@ def main():
         warning_is_error = c.getboolean('build_sphinx', 'warning-is-error')
     if c.has_section('pbr') and c.has_option('pbr', 'autodoc_index_modules'):
         autodoc_index_modules = c.getboolean('pbr', 'autodoc_index_modules')
+    if (c.has_section('pbr') and
+            c.has_option('pbr', 'autodoc_tree_index_modules')):
+        autodoc_tree_index_modules = c.getboolean('pbr',
+                                                  'autodoc_tree_index_modules')
+    # Set it if either options is set and defer to pbr to figure it out.
+    autodoc_index_modules = autodoc_index_modules or autodoc_tree_index_modules
     module.exit_json(
         changed=False,
         warning_is_error=warning_is_error,
