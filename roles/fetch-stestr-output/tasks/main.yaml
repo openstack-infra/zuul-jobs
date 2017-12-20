@@ -12,8 +12,6 @@
   synchronize:
     dest: "{{ zuul.executor.log_root }}"
     mode: pull
-    rsync_opts:
-      - "--ignore-missing-args"
     src: "{{ zuul_work_dir }}/{{ item }}"
     verify_host: true
   with_items:
@@ -21,3 +19,5 @@
     - "*testrepository.subunit.gz"
   when:
     - stestr_stat.stat.exists
+  # some tox runs may not create test-results
+  failed_when: false
