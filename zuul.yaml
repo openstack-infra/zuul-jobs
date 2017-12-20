@@ -319,7 +319,7 @@
          :default: dist
 
          Directory, relative to zuul_work_dir, holding build content.
-    success-url: html/
+    success-url: npm/html/
 
 - job:
     name: nodejs-npm-run-test
