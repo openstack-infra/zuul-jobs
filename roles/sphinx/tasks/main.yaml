@@ -1,14 +1,36 @@
+- name: By default, we use standard doc dir
+  set_fact:
+    use_doc_dir: true
+
+- name: Check if sphinx_source_dir was changed
+  set_fact:
+    use_doc_dir: false
+  when: sphinx_source_dir != "doc/source"
+
 - name: Attempt to get warning-is-error from config file
-  when: sphinx_warning_is_error is not defined
+  when:
+    - use_doc_dir
+    - sphinx_warning_is_error is not defined
   sphinx_check_warning_is_error:
     project_dir: "{{ zuul_work_dir }}"
   register: check_result
 
 - name: Set sphinx_warning_is_error
-  when: sphinx_warning_is_error is not defined
+  when:
+    - use_doc_dir
+    - sphinx_warning_is_error is not defined
   set_fact:
     sphinx_warning_is_error: "{{ check_result.warning_is_error }}"
     sphinx_pbr_autodoc: "{{ check_result.autodoc_index_modules }}"
+
+- name: Set sphinx_warning_is_error
+  when:
+    - not use_doc_dir
+    - sphinx_warning_is_error is not defined
+  set_fact:
+    # Non-default dirs always enable warnings
+    sphinx_warning_is_error: true
+    sphinx_pbr_autodoc: false
 
 - name: Run sphinx
   shell:
@@ -22,7 +44,8 @@
         {{ sphinx_source_dir }} {{ sphinx_build_dir }}/{{ item }}
     chdir: "{{ zuul_work_dir }}"
   with_items: "{{ sphinx_builders }}"
-  when: not sphinx_pbr_autodoc
+  when:
+    - not use_doc_dir or not sphinx_pbr_autodoc
 
 # TODO(mordred) Remove this when we get projects off of the pbr autoindex
 - name: Run sphinx using legacy pbr runner
@@ -34,7 +57,9 @@
       source {{ zuul_work_virtualenv }}/bin/activate
       python setup.py build_sphinx
     chdir: "{{ zuul_work_dir }}"
-  when: sphinx_pbr_autodoc
+  when:
+    - use_doc_dir
+    - sphinx_pbr_autodoc
 
 - name: Check for whereto
   stat:
@@ -59,3 +84,4 @@
   when:
     - whereto.stat.exists
     - htaccess.stat.exists
+    - use_doc_dir
