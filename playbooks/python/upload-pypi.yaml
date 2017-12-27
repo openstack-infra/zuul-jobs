@@ -1,3 +1,4 @@
 - hosts: all
   roles:
     - role: upload-pypi
+      when: zuul_success | bool
