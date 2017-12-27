@@ -148,7 +148,7 @@
     name: python-upload-pypi
     parent: build-python-release
     description: |
-      Generate a and upload a python source tarball and binary wheel
+      Generate and upload a python source tarball and binary wheel
 
       Requires a variable ``pypi_info`` be set which is a dict containing
       at least a ``username`` and ``password`` attribute.
