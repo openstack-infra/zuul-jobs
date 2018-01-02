@@ -1,0 +1,15 @@
+---
+- name: Check for buildset artifacts
+  delegate_to: localhost
+  stat:
+    path: "{{ zuul.executor.log_root }}/buildset"
+  register: _buildset_artifacts
+
+- name: Define buildset artifacts location
+  delegate_to: localhost
+  zuul_return:
+    data:
+      buildset_artifacts_url: "{{ zuul_log_url }}/{{ zuul_log_path }}/buildset"
+  when: _buildset_artifacts.stat.exists
+  tags:
+    - skip_ansible_lint
