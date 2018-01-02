@@ -2,4 +2,5 @@
 zuul_executor_dest: "{{ zuul.executor.log_root }}"
 zuul_work_dir: "{{ zuul.project.src_dir }}"
 sphinx_build_dir: doc/build
-sphinx_output_src: "{{ zuul_work_dir }}/{{ sphinx_build_dir }}/html"
+sphinx_output_suffix: ""
+sphinx_output_src: "{{ zuul_work_dir }}/{{ sphinx_build_dir }}/html{{ sphinx_output_suffix }}"

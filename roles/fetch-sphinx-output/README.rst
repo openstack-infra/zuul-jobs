@@ -16,8 +16,15 @@ to the log root of the executor.
 
    Directory relative to zuul_work_dir where build output will be put.
 
+.. zuul:rolevar:: sphinx_output_suffix
+   :default: ''
+
+   Suffix to use for constructing the path. This is normally an
+   empty string. If set to '/' then, rsync will remove the last part
+   from the original path.
+
 .. zuul:rolevar:: sphinx_output_src
-   :default: {{ zuul_work_dir }}/{{ sphinx_build_dir }}/html
+   :default: {{ zuul_work_dir }}/{{ sphinx_build_dir }}/html{{ sphinx_output_suffix }}
 
    The location on the worker from which to fetch the generated sphinx
    content.  By default, the HTML doc build dir of the current
