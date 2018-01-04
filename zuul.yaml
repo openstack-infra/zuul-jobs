@@ -237,6 +237,7 @@
 
 - job:
     name: nodejs-npm
+    parent: unittests
     description: |
       Base job for javascript operations
 
@@ -323,6 +324,7 @@
 
 - job:
     name: nodejs-npm-run-test
+    parent: nodejs-npm
     description: |
       Run test using nodejs. This test also starts Xvfb for run time
       tests.
@@ -344,8 +346,6 @@
 
          Directory, relative to zuul_work_dir, holding build content.
     pre-run: playbooks/javascript/pre-test.yaml
-    run: playbooks/javascript/run.yaml
-    post-run: playbooks/javascript/post.yaml
     vars:
       npm_command: test
 
