@@ -138,6 +138,66 @@
       tox_envlist: bashate
 
 - job:
+    name: tox-nodejs-npm
+    parent: tox
+    description: |
+      Run tests using tox but with the javascript toolchain installed
+      and available as well. A combination of the tox and nodejs-npm
+      jobs. By default will run npm before running the tox environment listed.
+
+      Responds to these variables:
+
+      .. zuul:jobvar:: tox_envlist
+
+         Use the specified tox environments (``ALL`` selects all).
+
+      .. zuul:jobvar:: tox_environment
+
+         List of user defined environmental variables to pass to bash
+         shell.
+
+      .. zuul:jobvar:: tox_extra_args
+
+         String containing extra arguments to append to the tox command line.
+
+      .. zuul:jobvar: tox_constraints_file
+
+         Path to a pip constraints file. Will be provided to tox in the
+         UPPER_CONSTRAINTS_FILE environment variable if it exists.
+
+      .. zuul:jobvar: tox_install_siblings
+         :default: true
+
+         Override tox requirements that have corresponding zuul git repos
+         on the node by installing the git versions into the tox virtualenv.
+
+      .. zuul:jobvar:: npm_command
+         :default: build
+
+         Command to pass to npm.
+
+      .. zuul:jobvar:: node_version
+         :default: 6
+
+         The version of Node to use.
+
+
+      .. zuul:jobvar: javascript_content_dir
+         :default: dist
+
+         Directory, relative to zuul_work_dir, holding build content.
+
+      .. zuul:jobvar: zuul_work_dir
+         :default: {{ zuul.project.src_dir }}
+
+         Path to operate in.
+    pre-run: playbooks/javascript/pre.yaml
+    run: playbooks/tox/npm.yaml
+    post-run: playbooks/javascript/post.yaml
+    vars:
+      npm_command: build
+
+- job:
     name: build-python-release
     description: |
       Build a source tarball and a bdist wheel for uploading.
