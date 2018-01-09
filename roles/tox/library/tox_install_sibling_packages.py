@@ -60,6 +60,7 @@ except ImportError:
 import os
 import subprocess
 import tempfile
+import traceback
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -156,53 +157,61 @@ def main():
 
     changed = False
 
-    sibling_python_packages = get_sibling_python_packages(projects)
-    for name, root in sibling_python_packages.items():
-        log.append("Sibling {name} at {root}".format(name=name, root=root))
-    found_sibling_packages = []
-    for package in get_installed_packages(tox_python):
-        log.append(
-            "Found {name} python package installed".format(name=package.name))
-        if package.name == package_name:
-            # We don't need to re-process ourself. We've filtered ourselves
-            # from the source dir list, but let's be sure nothing is weird.
+    try:
+        sibling_python_packages = get_sibling_python_packages(projects)
+        for name, root in sibling_python_packages.items():
+            log.append("Sibling {name} at {root}".format(name=name, root=root))
+        found_sibling_packages = []
+        for package in get_installed_packages(tox_python):
             log.append(
-                "Skipping {name} because it's us".format(name=package.name))
-            continue
-        if package.name in sibling_python_packages:
+                "Found {name} python package installed".format(
+                    name=package.name))
+            if package.name == package_name:
+                # We don't need to re-process ourself. We've filtered ourselves
+                # from the source dir list, but let's be sure nothing is weird.
+                log.append(
+                    "Skipping {name} because it's us".format(
+                        name=package.name))
+                continue
+            if package.name in sibling_python_packages:
+                log.append(
+                    "Package {name} on system in {root}".format(
+                        name=package.name,
+                        root=sibling_python_packages[package.name]))
+                changed = True
+
+                log.append("Uninstalling {name}".format(name=package.name))
+                uninstall_output = subprocess.check_output(
+                    [tox_python, '-m', 'pip', 'uninstall', '-y', package.name],
+                    stderr=subprocess.STDOUT)
+                log.extend(uninstall_output.decode('utf-8').split('\n'))
+                found_sibling_packages.append(package.name)
+
+        args = [tox_python, '-m', 'pip', 'install']
+
+        if constraints:
+            constraints_file = write_new_constraints_file(
+                constraints, found_sibling_packages)
+            args.extend(['-c', constraints_file])
+
+        for sibling_package in found_sibling_packages:
             log.append(
-                "Package {name} on system in {root}".format(
-                    name=package.name,
-                    root=sibling_python_packages[package.name]))
-            changed = True
+                "Installing {name} from {root}".format(
+                    name=sibling_package,
+                    root=sibling_python_packages[sibling_package]))
+            args.append('-e')
+            args.append(sibling_python_packages[sibling_package])
 
-            log.append("Uninstalling {name}".format(name=package.name))
-            uninstall_output = subprocess.check_output(
-                [tox_python, '-m', 'pip', 'uninstall', '-y', package.name],
-                stderr=subprocess.STDOUT)
-            log.extend(uninstall_output.decode('utf-8').split('\n'))
-            found_sibling_packages.append(package.name)
-
-    args = [tox_python, '-m', 'pip', 'install']
-
-    if constraints:
-        constraints_file = write_new_constraints_file(
-            constraints, found_sibling_packages)
-        args.extend(['-c', constraints_file])
-
-    for sibling_package in found_sibling_packages:
-        log.append(
-            "Installing {name} from {root}".format(
-                name=sibling_package,
-                root=sibling_python_packages[sibling_package]))
-        args.append('-e')
-        args.append(sibling_python_packages[sibling_package])
-
-    install_output = subprocess.check_output(args)
-    log.extend(install_output.decode('utf-8').split('\n'))
-
-    log_text = "\n".join(log)
-    module.append_to_file(log_file, log_text)
+        install_output = subprocess.check_output(args)
+        log.extend(install_output.decode('utf-8').split('\n'))
+    except Exception as e:
+        tb = traceback.format_exc()
+        log.append(str(e))
+        log.append(tb)
+        module.fail_json(msg=str(e), log="\n".join(log))
+    finally:
+        log_text = "\n".join(log)
+        module.append_to_file(log_file, log_text)
     module.exit_json(changed=changed, msg=log_text)
 
 
