@@ -64,8 +64,10 @@ import traceback
 
 from ansible.module_utils.basic import AnsibleModule
 
+log = list()
 
-def get_sibling_python_packages(projects):
+
+def get_sibling_python_packages(projects, tox_python):
     '''Finds all python packages that zuul has cloned.
 
     If someone does a require_project: and then runs a tox job, it can be
@@ -75,12 +77,30 @@ def get_sibling_python_packages(projects):
 
     for project in projects:
         root = project['src_dir']
+        package_name = None
         setup_cfg = os.path.join(root, 'setup.cfg')
+        found_python = False
         if os.path.exists(setup_cfg):
+            found_python = True
             c = configparser.ConfigParser()
             c.read(setup_cfg)
             package_name = c.get('metadata', 'name')
             packages[package_name] = root
+        if not package_name and os.path.exists(os.path.join(root, 'setup.py')):
+            found_python = True
+            # It's a python package but doesn't use pbr, so we need to run
+            # python setup.py --name to get setup.py to tell us what the
+            # package name is.
+            package_name = subprocess.check_output(
+                [os.path.abspath(tox_python), 'setup.py', '--name'],
+                cwd=os.path.abspath(root), stderr=subprocess.STDOUT)
+            if package_name:
+                package_name = package_name.strip()
+                packages[package_name] = root
+        if found_python and not package_name:
+            log.append(
+                "Could not find package name for {root}".format(
+                    root=root))
     return packages
 
 
@@ -149,7 +169,6 @@ def main():
     log_file = '{log_dir}/{envlist}-siblings.txt'.format(
         log_dir=log_dir, envlist=envlist)
 
-    log = list()
     log.append(
         "Processing siblings for {name} from {project_dir}".format(
             name=package_name,
@@ -158,7 +177,8 @@ def main():
     changed = False
 
     try:
-        sibling_python_packages = get_sibling_python_packages(projects)
+        sibling_python_packages = get_sibling_python_packages(
+            projects, tox_python)
         for name, root in sibling_python_packages.items():
             log.append("Sibling {name} at {root}".format(name=name, root=root))
         found_sibling_packages = []
