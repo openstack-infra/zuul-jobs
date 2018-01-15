@@ -1,0 +1,48 @@
+- name: Check for stestr directory
+  stat:
+    path: "{{ zuul_work_dir }}/.stestr"
+  register: stestr_stat
+
+- name: Generate stestr subunit file
+  shell:
+    cmd: ".tox/{{ tox_envlist }}/bin/stestr last --subunit > ./testrepository.subunit"
+    chdir: "{{ zuul_work_dir }}"
+  when:
+    - tox_envlist is defined
+    - stestr_stat.stat.exists
+
+- name: Generate stestr subunit file
+  shell:
+    cmd: "stestr last --subunit > ./testrepository.subunit"
+    chdir: "{{ zuul_work_dir }}"
+  when:
+    - tox_envlist is not defined
+    - stestr_stat.stat.exists
+
+- name: Check for testr directory
+  stat:
+    path: "{{ zuul_work_dir }}/.stestr"
+  register: testr_stat
+  when: not stestr_stat.stat.exists
+
+- name: Generate testrepository.subunit file
+  shell:
+    cmd: ".tox/{{ tox_envlist }}/bin/testr last --subunit > ./testrepository.subunit"
+    chdir: "{{ zuul_work_dir }}"
+  when:
+    - tox_envlist is defined
+    - not stestr_stat.stat.exists
+    - testr_stat.stat.exists
+
+- name: Generate testrepository.subunit file
+  shell:
+    cmd: "testr last --subunit > ./testrepository.subunit"
+    chdir: "{{ zuul_work_dir }}"
+  when:
+    - tox_envlist is not defined
+    - not stestr_stat.stat.exists
+    - testr_stat.stat.exists
+
+- name: Process and fetch subunit results
+  include: process.yaml
+  when: stestr_stat.stat.exists or testr_stat.stat.exists
