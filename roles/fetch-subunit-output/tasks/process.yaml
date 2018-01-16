@@ -1,0 +1,22 @@
+- name: Generate testr_results.html file
+  # TODO(pabelanger): We cannot depend on /usr/os-testr-env here!!!
+  command: "/usr/os-testr-env/bin/subunit2html ./testrepository.subunit testr_results.html"
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Compress testrepository files
+  archive:
+    path: "{{ zuul_work_dir }}/{{ item }}"
+  with_items:
+    - testrepository.subunit
+    - testr_results.html
+
+- name: Collect test-results
+  synchronize:
+    dest: "{{ zuul.executor.log_root }}"
+    mode: pull
+    src: "{{ zuul_work_dir }}/{{ item }}"
+    verify_host: true
+  with_items:
+    - "*testr_results.html.gz"
+    - "*testrepository.subunit.gz"
