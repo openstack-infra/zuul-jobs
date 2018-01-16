@@ -1,3 +1,17 @@
+# TODO(mordred) tox_envlist can be a list. If it is, we should look for each
+# command in each envlist dir until we find one that has it.
+- name: Set paths to testr and stestr commands from tox
+  set_fact:
+    testr_command: .tox/{{ tox_envlist }}/bin/testr
+    stestr_command: .tox/{{ tox_envlist }}/bin/stestr
+  when: tox_envlist is defined
+
+- name: Set paths to testr and stestr commands from system
+  set_fact:
+    testr_command: testr
+    stestr_command: stestr
+  when: tox_envlist is not defined
+
 # NOTE(mordred) Check for the failing file in the .stestr directory instead of
 # just the directory. An stestr run that fails due to python parsing errors
 # will leave a directory but with no test results, which will result in an
@@ -9,19 +23,9 @@
 
 - name: Generate stestr subunit file
   shell:
-    cmd: ".tox/{{ tox_envlist }}/bin/stestr last --subunit > ./testrepository.subunit"
+    cmd: "{{ stestr_command }} last --subunit > ./testrepository.subunit"
     chdir: "{{ zuul_work_dir }}"
-  when:
-    - tox_envlist is defined
-    - stestr_stat.stat.exists
-
-- name: Generate stestr subunit file
-  shell:
-    cmd: "stestr last --subunit > ./testrepository.subunit"
-    chdir: "{{ zuul_work_dir }}"
-  when:
-    - tox_envlist is not defined
-    - stestr_stat.stat.exists
+  when: stestr_stat.stat.exists
 
 - name: Check for testr directory
   stat:
@@ -31,19 +35,9 @@
 
 - name: Generate testrepository.subunit file
   shell:
-    cmd: ".tox/{{ tox_envlist }}/bin/testr last --subunit > ./testrepository.subunit"
+    cmd: "{{ testr_command }} last --subunit > ./testrepository.subunit"
     chdir: "{{ zuul_work_dir }}"
   when:
-    - tox_envlist is defined
-    - not stestr_stat.stat.exists
-    - testr_stat.stat.exists
-
-- name: Generate testrepository.subunit file
-  shell:
-    cmd: "testr last --subunit > ./testrepository.subunit"
-    chdir: "{{ zuul_work_dir }}"
-  when:
-    - tox_envlist is not defined
     - not stestr_stat.stat.exists
     - testr_stat.stat.exists
 
