@@ -12,7 +12,7 @@ on the worker to the log root of the executor.
    root.
 
 .. zuul:rolevar:: coverage_output_src
-   :default: {{ zuul.project.canonical_name }}/cover/
+   :default: {{ zuul.project.src_dir }}/cover/
 
    The location on the worker from which to fetch the coverage
    output detail.  By default, the ``cover`` dir of the current

@@ -1,6 +1,20 @@
-- name: Collect coverage details output
-  synchronize:
-    dest: "{{ zuul_executor_dest }}"
-    mode: pull
-    src: "{{ coverage_output_src }}"
-    verify_host: true
+- when: zuul_success | default(true) | bool
+  block:
+
+    - name: Check to see if coverage report exists
+      stat:
+        path: "{{ coverage_output_src }}"
+      register: coverage_report_stat
+
+    - name: Collect coverage details output
+      synchronize:
+        dest: "{{ zuul_executor_dest }}"
+        mode: pull
+        src: "{{ coverage_output_src }}"
+        verify_host: true
+      when: coverage_report_stat.stat.exists
+
+    - name: Fail if coverage report not found
+      fail:
+        msg: "Coverage report was not found even though tests succeeded"
+      when: not coverage_report_stat.stat.exists
