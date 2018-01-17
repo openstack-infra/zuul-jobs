@@ -1,6 +1,10 @@
+# NOTE(mordred) Check for the failing file in the .stestr directory instead of
+# just the directory. An stestr run that fails due to python parsing errors
+# will leave a directory but with no test results, which will result in an
+# error in the subunit generation phase.
 - name: Check for stestr directory
   stat:
-    path: "{{ zuul_work_dir }}/.stestr"
+    path: "{{ zuul_work_dir }}/.stestr/failing"
   register: stestr_stat
 
 - name: Generate stestr subunit file
