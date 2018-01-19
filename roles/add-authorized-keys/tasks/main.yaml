@@ -1,0 +1,7 @@
+- name: Enable access via build key on all nodes
+  authorized_key:
+    user: "{{ ansible_ssh_user }}"
+    state: present
+    key: "{{ item.public_key }}"
+  with_items:
+    - "{{ public_keys }}"
