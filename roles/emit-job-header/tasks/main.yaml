@@ -8,6 +8,7 @@
       debug:
         msg: |
           # Job Information
+          Ansible Version: {{ ansible_version['full'] }}
           Job: {{ zuul.job }}
           Pipeline: {{ zuul.pipeline }}
           Executor: {{ zuul.executor.hostname }}
