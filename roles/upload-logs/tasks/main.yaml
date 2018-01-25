@@ -2,9 +2,9 @@
   include_role:
     name: set-zuul-log-path-fact
 
-# NOTE(mordred) Temporary hack to only upload logs on failures to work around
-# unfortunately timed disk outage.
-- when: not zuul_success|bool
+# Always upload (true), never upload (false) or only on failure ('failure')
+- when: zuul_site_upload_logs | default(true) | bool or
+        (zuul_site_upload_logs == 'failure' and not zuul_success | bool)
   block:
 
     - name: Create log directories
