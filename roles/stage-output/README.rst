@@ -31,7 +31,7 @@ intended to be used before output fetching in a base job's post-playbook.
 .. zuul:rolevar:: extensions_to_txt
    :default: null
 
-   A list of file extensions to be replaced with .txt when staging.
+   A dict of file extensions to be replaced with .txt when staging.
    This can be useful to ensure that text files with an extension not
    registered in the web server may be viewed via browser when uploaded
    to a file server.
@@ -43,8 +43,9 @@ intended to be used before output fetching in a base job's post-playbook.
    Example:
 
      extensions_to_txt:
-     - conf
-     - log
+       conf: True
+       log: True
+       txt: False
 
      zuul.conf --(staged as)--> zuul_conf.txt
 
