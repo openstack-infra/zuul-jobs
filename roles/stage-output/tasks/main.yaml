@@ -5,26 +5,9 @@
   register: sources
   no_log: true
 
-- name: Build the replace regex when the input is a list
+- name: Build the replace regex
   set_fact:
     extensions_regex: "{{ extensions_to_txt | join('|') | default('__do_not_replace__') }}"
-  when: extensions_to_txt | type_debug == 'list'
-
-- name: Output a warning when input is a list
-  debug:
-    msg: "WARNING: extensions_to_txt is a list, values defined by parents will be overwritten"
-  when: extensions_to_txt | type_debug == 'list'
-
-- name: Build a list when replace regex is a dict
-  set_fact:
-    extensions_regex: "{{ extensions_regex | default('___') }}|{{ item.key }}"
-  with_dict: extensions_to_txt
-  when:
-    - extensions_to_txt | type_debug == 'dict'
-    - item.value == True
-  # NOTE(andreaf) Even if this is only executed for type 'dict', with_dict is
-  # still invoked somehow and it's causing an error when the input is a list
-  ignore_errors: yes
 
 - debug:
     var: extensions_regex
