@@ -1,22 +1,30 @@
+- name: Find subunit2html
+  include: find-subunit-html.yaml
+
 - name: Generate testr_results.html file
-  # TODO(pabelanger): We cannot depend on /usr/os-testr-env here!!!
-  command: "/usr/os-testr-env/bin/subunit2html ./testrepository.subunit testr_results.html"
+  command: "{{ subunit_html_command }} ./testrepository.subunit testr_results.html"
   args:
     chdir: "{{ zuul_work_dir }}"
+  when: subunit_html_command is defined
 
-- name: Compress testrepository files
+- name: Find subunit files
+  find:
+    paths:
+      - "{{ ansible_user_dir }}/{{ zuul_work_dir }}"
+    patterns:
+      - testr_results.html
+      - testrepository.subunit
+  register: subunit_files
+
+- name: Compress subunit files
   archive:
-    path: "{{ zuul_work_dir }}/{{ item }}"
-  with_items:
-    - testrepository.subunit
-    - testr_results.html
+    path: "{{ item.path }}"
+  with_items: "{{ subunit_files.files }}"
 
 - name: Collect test-results
   synchronize:
     dest: "{{ zuul.executor.log_root }}"
     mode: pull
-    src: "{{ zuul_work_dir }}/{{ item }}"
+    src: "{{ item.path }}.gz"
     verify_host: true
-  with_items:
-    - "*testr_results.html.gz"
-    - "*testrepository.subunit.gz"
+  with_items: "{{ subunit_files.files }}"
