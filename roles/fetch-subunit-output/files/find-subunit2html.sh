@@ -42,4 +42,4 @@ fi
 # /usr/os-testr-env/bin/subunit2html, we can remove this.
 PATH="$PATH:/usr/os-testr-env/bin"
 
-type -p $command
+type -p subunit2html
