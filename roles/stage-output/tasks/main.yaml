@@ -3,6 +3,7 @@
     path: "{{ item.key }}"
   with_dict: "{{ zuul_copy_output }}"
   register: sources
+  no_log: true
 
 - name: Build the replace regex when the input is a list
   set_fact:
@@ -42,6 +43,7 @@
     - item.stat.exists
     - item.item.value
   register: results
+  no_log: true
 
 - name: Build a list of source, dest dictionaries for text files
   set_fact:
