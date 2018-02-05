@@ -17,6 +17,19 @@
   tags:
     - skip_ansible_lint
 
+- name: Show git status of src repos in workspace
+  # Show the full git status output for each repo to debug failures
+  # when determining HEAD in the next task.
+  shell: "echo '{{ item.key }}:'; git status"
+  args:
+    chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
+  with_dict: "{{ zuul.projects }}"
+  delegate_to: localhost
+  # ANSIBLE0006: Skip linting since it triggers on the "git" command,
+  # but status is not supported by ansible git module.
+  tags:
+    - skip_ansible_lint
+
 - name: Determine local HEAD of projects
   # Output yaml-valid dict data for projects and their current HEAD
   shell: "echo '{{ item.key }}:' $(git status | head -1 |awk '{ print $NF }')"
