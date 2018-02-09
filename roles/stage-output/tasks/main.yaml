@@ -5,12 +5,38 @@
   register: sources
   no_log: true
 
-- name: Build the replace regex
-  set_fact:
-    extensions_regex: "{{ extensions_to_txt | join('|') | default('__do_not_replace__') }}"
+- name: Output a warning when input is not a dict and not empty
+  debug:
+    msg: "WARNING: extensions_to_txt is a list, values defined by parents will be overwritten"
+  when:
+    - extensions_to_txt is not mapping
+    - extensions_to_txt
 
-- debug:
-    var: extensions_regex
+- name: Build the extensions list when input is not a dict (including empty)
+  set_fact:
+    extension_list: >
+      {% set extensions = ['__does_not_match__'] -%}
+      {% if extensions_to_txt -%}
+        {% set extensions = extensions_to_txt -%}
+      {% endif -%}
+      {{- extensions -}}
+  when: extensions_to_txt is not mapping
+
+- name: Build the extensions list when input is a dict
+  set_fact:
+    extension_list: >
+      {% set extensions = [] -%}
+      {% for extension, extension_bool in extensions_to_txt.items() -%}
+        {% if extension_bool -%}
+          {% set _ = extensions.append(extension) -%}
+        {% endif -%}
+      {% endfor -%}
+      {{- extensions -}}
+  when: extensions_to_txt is mapping
+
+- name: Build the extensions regular expression
+  set_fact:
+    extensions_regex: "{{ extension_list | join('|') }}"
 
 # TODO(andreaf) We might want to enforce that item.value is a valid value
 # in docs, artifacts, logs. Null case already handled.
