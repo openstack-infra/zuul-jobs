@@ -36,16 +36,18 @@
 
 - name: Build the extensions regular expression
   set_fact:
-    extensions_regex: "{{ extension_list | join('|') }}"
+    extensions_regex: "^(.*)\\.({{ extension_list | join('|') }})$"
 
 # TODO(andreaf) We might want to enforce that item.value is a valid value
 # in docs, artifacts, logs. Null case already handled.
-# We don't check if the item is a file before renaming, but it is not likely
-# to have directories with log, yaml or conf extension.
+# NOTE(andreaf) Files or folders that start with a '.' are renamed to starting
+# with an '_' else they would not be visible in the logs folder once uploaded.
+# Extension changes are handled later via find as we want to rename files
+# included of folders specified in `zuul_copy_output`.
 - name: Set source and destination for files and folders
   set_fact:
     source: "{{ item.stat.path }}"
-    dest: "{{ item.item.value }}/{{ item.stat.path|basename|regex_replace('\\.(' + extensions_regex + ')$', '_\\1.txt') }}"
+    dest: "{{ item.item.value }}/{{ item.stat.path|basename|regex_replace('^(\\..*)$', '_\\1') }}"
     type: "{{ item.item.value }}"
   with_items: "{{ sources.results }}"
   when:
@@ -54,11 +56,11 @@
   register: results
   no_log: true
 
-- name: Build a list of source, dest dictionaries for text files
+- name: Build a list of source, dest dictionaries
   set_fact:
     all_sources: "{{ results.results | selectattr('ansible_facts', 'defined') | map(attribute='ansible_facts') | list }}"
 
-- name: ensure target folders exist
+- name: Ensure target folders exist
   become: true
   file:
     path: "{{ stage_dir }}/{{ item }}"
@@ -69,11 +71,25 @@
     - artifacts
     - logs
 
-- name: Copy text files to staging folder
+- name: Copy files and folders to staging folder
   # remote_src copy does not work recursively, synchronise is restricted by
   # zuul, using command
   command: cp -pRL {{ item.source}} {{ stage_dir }}/{{ item.dest }}
   with_items: "{{ all_sources }}"
+
+- name: Discover log files that match extension_list
+  find:
+    paths: "{{ stage_dir }}/logs"
+    patterns: "{{ extensions_regex }}"
+    use_regex: true
+    recurse: true
+    file_type: 'file'
+  register: log_files_to_rename
+
+- name: Rename log files that match extension_list
+  shell: "mv {{ item.path }} {{ item.path | regex_replace(extensions_regex, '\\1_\\2.txt') }}"
+  with_items: "{{ log_files_to_rename.files }}"
+  chdir: "{{ stage_dir }}/logs"
 
 # NOTE(andreaf) The ansible module does not support recursive archive, so
 # using gzip is the only option here. The good bit is that gzip itself is
