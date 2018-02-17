@@ -3,6 +3,7 @@
 
 - job:
     name: unittests
+    abstract: true
     description: |
       Perform setup common to all unit test jobs.
 
@@ -290,6 +291,7 @@
 
 - job:
     name: multinode
+    abstract: true
     description: |
       Do additional setup needed for multi-node jobs such as setting up
       overlay networks and setting up known-hosts and ssh keys
