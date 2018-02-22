@@ -5,9 +5,7 @@
   register: bindep_command_stat
 
 - name: Check for system bindep
-  args:
-    executable: /bin/bash
-  command: type -p bindep
+  command: /bin/bash -c "type -p bindep"
   failed_when: false
   register: bindep_command_type
   when: >-
@@ -18,4 +16,4 @@
 - name: Define bindep_command fact
   set_fact:
     bindep_command: "{{ bindep_command_type.stdout }}"
-  when: bindep_command_type|succeeded and not bindep_command_type|skipped
+  when: not bindep_command_type|skipped and bindep_command_type.rc == 0
