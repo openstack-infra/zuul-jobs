@@ -12,13 +12,13 @@
     - ara_save_database | bool
 
 - name: Check for ARA install
-  command: which ara
+  command: bash -c "type -p ara"
   ignore_errors: yes
   register: ara_command_type
   when: ara_db_stat.stat.exists
 
 - when:
-    - ara_command_type | succeeded
+    - ara_command_type.rc == 0
     - not ara_command_type | skipped
   block:
     # Always generate (true), never (false) or only on failure ('failure')
