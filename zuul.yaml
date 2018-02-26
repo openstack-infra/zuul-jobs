@@ -457,3 +457,14 @@
     success-url: html/
     vars:
       npm_command: docs
+
+- job:
+    name: run-test-command
+    parent: unittests
+    description: |
+      Run simple command as test.
+
+      To use this, set the ``test_command`` variable.
+    run: playbooks/run-test-command/run.yaml
+    vars:
+      test_command: "exit 1"
