@@ -23,3 +23,8 @@
     - peers
   roles:
     - multi-node-bridge
+
+- name: Copy the build ssh key to authorized_keys on all hosts for root
+  hosts: all
+  roles:
+    - copy-build-sshkey
