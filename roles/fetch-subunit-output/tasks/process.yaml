@@ -10,7 +10,7 @@
 - name: Find subunit files
   find:
     paths:
-      - "{{ ansible_user_dir }}/{{ zuul_work_dir }}"
+      - "{{ zuul_work_dir }}"
     patterns:
       - testr_results.html
       - testrepository.subunit
