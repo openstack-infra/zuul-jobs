@@ -2,8 +2,16 @@
   generate_all_known_hosts:
     hostvars: "{{ hostvars }}"
 
-- name: add known_host record for every public key of every other ip, hostname
+- name: add known_host record for every public key of every other ip, hostname for ansible_user
   known_hosts:
     name: "{{ item.name }}"
     key: "{{ item.key }}"
+  with_items: "{{ all_known_hosts }}"
+
+- name: add default known_host record for every user
+  become: true
+  known_hosts:
+    name: "{{ item.name }}"
+    key: "{{ item.key }}"
+    path: /etc/ssh/ssh_known_hosts
   with_items: "{{ all_known_hosts }}"
