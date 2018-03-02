@@ -1,1 +1,7 @@
 package_mirror: "http://{{ mirror_fqdn }}/opensuse"
+wheels_slug: "{%- if ansible_distribution == 'openSUSE Tumbleweed' -%}
+                 opensuse-tumbleweed-{{ ansible_architecture | lower }}
+              {%- else -%}
+                 {{ ansible_distribution | lower }}-{{ ansible_distribution_version }}-{{ ansible_architecture | lower }}
+              {%- endif -%}"
+wheel_mirror: "http://{{ mirror_fqdn }}/wheel/{{ wheels_slug }}"

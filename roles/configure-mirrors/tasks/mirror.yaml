@@ -1,12 +1,3 @@
-- name: Install /etc/pip.conf configuration
-  become: yes
-  template:
-    dest: /etc/pip.conf
-    group: root
-    mode: 0644
-    owner: root
-    src: etc/pip.conf.j2
-
 - name: Install .pydistutils.cfg configuration in homedir
   template:
     dest: ~/.pydistutils.cfg
@@ -19,6 +10,15 @@
     - "{{ ansible_distribution }}.yaml"
     - "{{ ansible_os_family }}.yaml"
     - "default.yaml"
+
+- name: Install /etc/pip.conf configuration
+  become: yes
+  template:
+    dest: /etc/pip.conf
+    group: root
+    mode: 0644
+    owner: root
+    src: etc/pip.conf.j2
 
 - name: Setup distribution specific packaging mirrors
   include: "{{ item }}"
