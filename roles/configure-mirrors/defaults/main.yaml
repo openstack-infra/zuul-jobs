@@ -1,3 +1,4 @@
 mirror_fqdn: "{{ zuul_site_mirror_fqdn|default(omit) }}"
 pypi_mirror: "http://{{ mirror_fqdn }}/pypi/simple"
+set_apt_mirrors_trusted: False
 wheel_mirror: "http://{{ mirror_fqdn }}/wheel/{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}-{{ ansible_architecture | lower }}"
