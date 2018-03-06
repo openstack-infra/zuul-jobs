@@ -54,8 +54,29 @@
     - skip_ansible_lint
 
 - name: Set commits_since_tag fact
+  when: commits_since_tag_output.rc == 0
   set_fact:
     commits_since_tag: "{{ commits_since_tag_output.stdout }}"
+
+# Some repos, like storyboard-webclient, do not have any tags. git describe
+# throws an error in those repos. To be consistent, do a commit count the
+# hard way.
+- block:
+  when: not commits_since_tag_output.rc != 0
+
+    - name: Get commits since the beginning
+      command: git rev-list HEAD --count
+      register: commits_since_beginning
+      args:
+        chdir: "{{ zuul_work_dir }}"
+      # ANSIBLE0006: Skip linting since it triggers on the "git" command,
+      # but rev-list is not supported by ansible git module.
+      tags:
+        - skip_ansible_lint
+
+    - name: Set commits_since_tag fact
+      set_fact:
+        commits_since_tag: "{{ commits_since_beginning.stdout }}"
 
 - name: Set project_ver to scm_tag if there are no commits
   when: not commits_since_tag
