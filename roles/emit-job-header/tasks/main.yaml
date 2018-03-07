@@ -12,7 +12,6 @@
           Job: {{ zuul.job }}
           Pipeline: {{ zuul.pipeline }}
           Executor: {{ zuul.executor.hostname }}
-          Provider: {{ nodepool.provider |default('N/A') }}
           {% if zuul.change_url is defined %}
           Triggered by: {{ zuul.change_url }}
           {% endif %}
