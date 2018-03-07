@@ -61,8 +61,8 @@
 # Some repos, like storyboard-webclient, do not have any tags. git describe
 # throws an error in those repos. To be consistent, do a commit count the
 # hard way.
-- block:
-  when: not commits_since_tag_output.rc != 0
+- when: not commits_since_tag_output.rc != 0
+  block:
 
     - name: Get commits since the beginning
       command: git rev-list HEAD --count
