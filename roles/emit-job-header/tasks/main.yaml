@@ -1,7 +1,8 @@
 # We don't want this to run for every host, it should only run once.
 - run_once: yes
   block:
-    - include_role:
+    - name: Setup log path fact
+      include_role:
         name: set-zuul-log-path-fact
 
     - name: Print job information
