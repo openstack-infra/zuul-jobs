@@ -1,11 +1,20 @@
-- name: Set zuul-log-path fact
-  include_role:
-    name: set-zuul-log-path-fact
+# We don't want this to run for every host, it should only run once.
+- run_once: yes
+  block:
+    - include_role:
+        name: set-zuul-log-path-fact
 
-- debug:
-    msg: "Job {{ zuul.job }} triggered from {{ zuul.change_url }}"
-  when: zuul.change_url is defined
-
-- debug:
-    msg: "At completion, logs for this job will be available at {{ zuul_log_url }}/{{ zuul_log_path }}"
-  when: zuul_log_url is defined and zuul_log_path is defined
+    - name: Print job information
+      debug:
+        msg: |
+          # Job Information
+          Job: {{ zuul.job }}
+          Pipeline: {{ zuul.pipeline }}
+          Executor: {{ zuul.executor.hostname }}
+          Provider: {{ nodepool.provider |default('N/A') }}
+          {% if zuul.change_url is defined %}
+          Triggered by: {{ zuul.change_url }}
+          {% endif %}
+          {% if zuul_log_url is defined and zuul_log_path is defined %}
+          Log URL (when completed): {{ zuul_log_url }}/{{ zuul_log_path }}
+          {% endif %}
