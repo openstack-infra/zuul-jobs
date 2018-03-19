@@ -200,30 +200,42 @@ def main():
                         root=sibling_python_packages[package.name]))
                 changed = True
 
-                log.append("Uninstalling {name}".format(name=package.name))
-                uninstall_output = subprocess.check_output(
-                    [tox_python, '-m', 'pip', 'uninstall', '-y', package.name],
-                    stderr=subprocess.STDOUT)
-                log.extend(uninstall_output.decode('utf-8').split('\n'))
                 found_sibling_packages.append(package.name)
-
-        args = [tox_python, '-m', 'pip', 'install']
 
         if constraints:
             constraints_file = write_new_constraints_file(
                 constraints, found_sibling_packages)
-            args.extend(['-c', constraints_file])
+
+        for sibling_package in found_sibling_packages:
+            log.append("Uninstalling {name}".format(name=sibling_package))
+            uninstall_output = subprocess.check_output(
+                [tox_python, '-m',
+                 'pip', 'uninstall', '-y', sibling_package],
+                stderr=subprocess.STDOUT)
+            log.extend(uninstall_output.decode('utf-8').split('\n'))
+
+            args = [tox_python, '-m', 'pip', 'install']
+            if constraints:
+                args.extend(['-c', constraints_file])
+            log.append(
+                "Installing {name} from {root} for deps".format(
+                    name=sibling_package,
+                    root=sibling_python_packages[sibling_package]))
+            args.append(sibling_python_packages[sibling_package])
+
+            install_output = subprocess.check_output(args)
+            log.extend(install_output.decode('utf-8').split('\n'))
 
         for sibling_package in found_sibling_packages:
             log.append(
                 "Installing {name} from {root}".format(
                     name=sibling_package,
                     root=sibling_python_packages[sibling_package]))
-            args.append('-e')
-            args.append(sibling_python_packages[sibling_package])
 
-        install_output = subprocess.check_output(args)
-        log.extend(install_output.decode('utf-8').split('\n'))
+            install_output = subprocess.check_output(
+                [tox_python, '-m', 'pip', 'install', '--no-deps',
+                 sibling_python_packages[sibling_package]])
+            log.extend(install_output.decode('utf-8').split('\n'))
     except Exception as e:
         tb = traceback.format_exc()
         log.append(str(e))
