@@ -3,8 +3,12 @@
     ipv4_addresses: >
       {% set hosts = [] -%}
       {% for host, vars in hostvars.items() -%}
-      {% set _ = hosts.append(vars['nodepool']['private_ipv4']) -%}
-      {% set _ = hosts.append(vars['nodepool']['public_ipv4']) -%}
+      {% if vars['nodepool']['private_ipv4'] -%}
+        {% set _ = hosts.append(vars['nodepool']['private_ipv4']) -%}
+      {% endif -%}
+      {% if vars['nodepool']['public_ipv4'] -%}
+        {% set _ = hosts.append(vars['nodepool']['public_ipv4']) -%}
+      {% endif -%}
       {% endfor -%}
       {{- hosts | sort | unique -}}
     ipv6_addresses: >
