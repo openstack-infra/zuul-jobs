@@ -90,6 +90,8 @@
   shell: "mv {{ item.path }} {{ item.path | regex_replace(extensions_regex, '\\1_\\2.txt') }}"
   with_items: "{{ log_files_to_rename.files }}"
   chdir: "{{ stage_dir }}/logs"
+  tags:
+   - skip_ansible_lint
 
 # NOTE(andreaf) The ansible module does not support recursive archive, so
 # using gzip is the only option here. The good bit is that gzip itself is
@@ -104,3 +106,5 @@
   when:
     - stage_compress_logs
     - item.type == 'logs'
+  tags:
+   - skip_ansible_lint
