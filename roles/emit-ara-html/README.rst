@@ -1,3 +1,8 @@
+**THIS ROLE IS DEPRECATED**, please use the ``ara-report`` role instead.
+``ara-report`` provides the same default behavior with the generation of a HTML
+report and provides additional functionality that can be used to dynamically
+load databases for improved performance and scalability.
+
 Have ARA generate html logs if ARA and ARA data are both present.
 
 **Role Variables**

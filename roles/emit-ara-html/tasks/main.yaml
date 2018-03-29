@@ -1,3 +1,9 @@
+- name: Warn about deprecated role
+  debug:
+    msg: |
+      The emit-ara-html role is deprecated.
+      Please use the ara-report role instead.
+
 - name: Check for ARA db
   stat:
     path: "{{ zuul.executor.work_root }}/.ara/ansible.sqlite"
