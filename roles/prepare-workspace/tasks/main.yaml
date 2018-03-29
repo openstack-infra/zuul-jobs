@@ -1,6 +1,9 @@
 # TODO(pabelanger): Handle cleanup on static nodes
 - name: Start zuul_console daemon.
   zuul_console:
+  tags:
+    # Avoid "no action detected in task" linter error
+    - skip_ansible_lint
 
 - name: Synchronize src repos to workspace directory.
   synchronize:
