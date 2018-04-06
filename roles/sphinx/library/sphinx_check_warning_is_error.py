@@ -68,7 +68,7 @@ def main():
     )
     project_dir = module.params['project_dir']
 
-    warning_is_error = False
+    warning_is_error = True
     # TODO(mordred) Remove autodoc_index_modules logic  when we get OpenStack
     # projects off of the pbr autoindex
     autodoc_index_modules = False
@@ -91,9 +91,11 @@ def main():
             autodoc_index_modules=autodoc_index_modules,
             msg="Error reading setup.cfg, defaulting flags to false")
 
-    if (c.has_section('build_sphinx') and
-            c.has_option('build_sphinx', 'warning-is-error')):
-        warning_is_error = c.getboolean('build_sphinx', 'warning-is-error')
+    if c.has_section('build_sphinx'):
+        if c.has_option('build_sphinx', 'warning-is-error'):
+            warning_is_error = c.getboolean('build_sphinx', 'warning-is-error')
+        else:
+            warning_is_error = False
     if c.has_section('pbr') and c.has_option('pbr', 'autodoc_index_modules'):
         autodoc_index_modules = c.getboolean('pbr', 'autodoc_index_modules')
     if (c.has_section('pbr') and
