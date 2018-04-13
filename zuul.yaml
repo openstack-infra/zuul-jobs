@@ -236,7 +236,7 @@
          libraries.
 
       .. zuul:jobvar:: sphinx_python
-          :default: python2
+         :default: python2
 
          Version of python to use, either ``python2`` or ``python3``.
 
