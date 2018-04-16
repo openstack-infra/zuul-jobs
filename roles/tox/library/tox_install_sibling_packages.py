@@ -52,11 +52,6 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-try:
-    import pip
-except ImportError:
-    pip = None
-
 import os
 import subprocess
 import tempfile
@@ -105,14 +100,12 @@ def get_sibling_python_packages(projects, tox_python):
 
 
 def get_installed_packages(tox_python):
-    if pip is None:
-        raise RuntimeError("pip python module is required")
-    with tempfile.NamedTemporaryFile(delete=False) as tmp_requirements:
-        tmp_requirements.write(subprocess.check_output(
-            [tox_python, '-m', 'pip', 'freeze']))
-        tmp_requirements.file.flush()
-        return pip.req.req_file.parse_requirements(
-            tmp_requirements.name, session=pip.download.PipSession())
+    # We use the output of pip freeze here as that is pip's stable public
+    # interface.
+    frozen_pkgs = subprocess.check_output(
+        [tox_python, '-m', 'pip', '-qqq', 'freeze']
+    )
+    return [x.split('==')[0] for x in frozen_pkgs.split('\n') if '==' in x]
 
 
 def write_new_constraints_file(constraints, packages):
@@ -182,25 +175,25 @@ def main():
         for name, root in sibling_python_packages.items():
             log.append("Sibling {name} at {root}".format(name=name, root=root))
         found_sibling_packages = []
-        for package in get_installed_packages(tox_python):
+        for dep_name in get_installed_packages(tox_python):
             log.append(
                 "Found {name} python package installed".format(
-                    name=package.name))
-            if package.name == package_name:
+                    name=dep_name))
+            if dep_name == package_name:
                 # We don't need to re-process ourself. We've filtered ourselves
                 # from the source dir list, but let's be sure nothing is weird.
                 log.append(
                     "Skipping {name} because it's us".format(
-                        name=package.name))
+                        name=dep_name))
                 continue
-            if package.name in sibling_python_packages:
+            if dep_name in sibling_python_packages:
                 log.append(
                     "Package {name} on system in {root}".format(
-                        name=package.name,
-                        root=sibling_python_packages[package.name]))
+                        name=dep_name,
+                        root=sibling_python_packages[dep_name]))
                 changed = True
 
-                found_sibling_packages.append(package.name)
+                found_sibling_packages.append(dep_name)
 
         if constraints:
             constraints_file = write_new_constraints_file(
