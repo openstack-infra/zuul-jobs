@@ -1,0 +1,5 @@
+- name: Copy ansible inventory to logs dir
+  delegate_to: localhost
+  copy:
+    src: "{{ inventory_file }}"
+    dest: "{{ zuul_info_dir }}"
