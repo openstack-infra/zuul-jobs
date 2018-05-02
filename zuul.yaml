@@ -86,6 +86,16 @@
       tox_envlist: py35
 
 - job:
+    name: tox-py36
+    parent: tox
+    description: |
+      Run unit tests for a Python project under cPython version 3.6.
+
+      Uses tox with the ``py36`` environment.
+    vars:
+      tox_envlist: py36
+
+- job:
     name: tox-docs
     parent: tox
     description: |
