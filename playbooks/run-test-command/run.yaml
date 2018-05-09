@@ -1,0 +1,7 @@
+- hosts: all
+
+  tasks:
+    - name: Run test_command
+      command: '{{ test_command }}'
+      args:
+        chdir: '{{ zuul.project.src_dir }}'
