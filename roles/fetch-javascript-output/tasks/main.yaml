@@ -1,11 +1,13 @@
 - name: Set log path for multiple nodes
   set_fact:
     log_path: "{{ zuul.executor.log_root }}/{{ inventory_hostname }}/npm"
+    cover_path: "{{ zuul.executor.log_root }}/{{ inventory_hostname }}/cover/"
   when: groups['all'] | length > 1
 
 - name: Set log path for single node
   set_fact:
     log_path: "{{ zuul.executor.log_root }}/npm"
+    cover_path: "{{ zuul.executor.log_root }}/cover/"
   when: log_path is not defined
 
 - name: Ensure local tox dir
@@ -118,3 +120,23 @@
     copy_links: "{{ javascript_copy_links }}"
     verify_host: true
   when: javascript_output.stat.exists
+
+- name: Check to see if coverage report exists
+  stat:
+    path: "{{ coverage_output_src }}"
+  register: coverage_report_stat
+
+- name: Ensure cover tox dir
+  file:
+    path: "{{ cover_path }}"
+    state: directory
+  delegate_to: localhost
+  when: coverage_report_stat.stat.exists
+
+- name: Collect coverage details output
+  synchronize:
+    dest: "{{ cover_path }}"
+    mode: pull
+    src: "{{ coverage_output_src }}"
+    verify_host: true
+  when: coverage_report_stat.stat.exists
