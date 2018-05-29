@@ -93,7 +93,7 @@ def get_sibling_python_packages(projects, tox_python):
             # package name is.
             package_name = subprocess.check_output(
                 [os.path.abspath(tox_python), 'setup.py', '--name'],
-                cwd=os.path.abspath(root), stderr=subprocess.STDOUT)
+                cwd=os.path.abspath(root))
             if package_name:
                 package_name = package_name.strip()
                 packages[package_name] = root
