@@ -52,6 +52,7 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
+import pkg_resources as prAPI
 import os
 import subprocess
 import tempfile
@@ -120,6 +121,26 @@ def write_new_constraints_file(constraints, packages):
         return constraints_file.name
 
 
+def _get_package_root(name, sibling_packages):
+    '''
+    Returns a package root from the sibling packages dict.
+
+    If name is not found in sibling_packages, tries again using the 'filename'
+    form of the name returned by the setuptools package resource API.
+
+    :param name: package name
+    :param sibling_packages: dict of python packages that zuul has cloned
+    :returns: the package root (str)
+    :raises: KeyError
+    '''
+    try:
+        pkg_root = sibling_packages[name]
+    except KeyError:
+        pkg_root = sibling_packages[prAPI.to_filename(name)]
+
+    return pkg_root
+
+
 def main():
     module = AnsibleModule(
         argument_spec=dict(
@@ -179,7 +200,8 @@ def main():
             log.append(
                 "Found {name} python package installed".format(
                     name=dep_name))
-            if dep_name == package_name:
+            if (dep_name == package_name or
+                prAPI.to_filename(dep_name) == package_name):
                 # We don't need to re-process ourself. We've filtered ourselves
                 # from the source dir list, but let's be sure nothing is weird.
                 log.append(
@@ -192,7 +214,16 @@ def main():
                         name=dep_name,
                         root=sibling_python_packages[dep_name]))
                 changed = True
-
+                found_sibling_packages.append(dep_name)
+            elif prAPI.to_filename(dep_name) in sibling_python_packages:
+                real_name = prAPI.to_filename(dep_name)
+                log.append(
+                    "Package {name} ({pkg_name}) on system in {root}".format(
+                        name=dep_name,
+                        pkg_name=real_name,
+                        root=sibling_python_packages[real_name]))
+                changed = True
+                # need to use dep_name here for later constraint file rewrite
                 found_sibling_packages.append(dep_name)
 
         if constraints:
@@ -210,24 +241,29 @@ def main():
             args = [tox_python, '-m', 'pip', 'install']
             if constraints:
                 args.extend(['-c', constraints_file])
+
+            pkg_root = _get_package_root(sibling_package,
+                                         sibling_python_packages)
             log.append(
                 "Installing {name} from {root} for deps".format(
                     name=sibling_package,
-                    root=sibling_python_packages[sibling_package]))
-            args.append(sibling_python_packages[sibling_package])
+                    root=pkg_root))
+            args.append(pkg_root)
 
             install_output = subprocess.check_output(args)
             log.extend(install_output.decode('utf-8').split('\n'))
 
         for sibling_package in found_sibling_packages:
+            pkg_root = _get_package_root(sibling_package,
+                                         sibling_python_packages)
             log.append(
                 "Installing {name} from {root}".format(
                     name=sibling_package,
-                    root=sibling_python_packages[sibling_package]))
+                    root=pkg_root))
 
             install_output = subprocess.check_output(
                 [tox_python, '-m', 'pip', 'install', '--no-deps',
-                 sibling_python_packages[sibling_package]])
+                 pkg_root])
             log.extend(install_output.decode('utf-8').split('\n'))
     except Exception as e:
         tb = traceback.format_exc()
