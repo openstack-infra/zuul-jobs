@@ -39,7 +39,7 @@
   failed_when:
     - error_on_failure is defined
     - error_on_failure
-    - requirements_install|failed
+    - requirements_install is failed
 
 # Build an sdist. This is needed for pbr projects that may expect
 # the ChangeLog to have been generated.
@@ -54,7 +54,7 @@
   failed_when:
     - error_on_failure is defined
     - error_on_failure
-    - sdist_results|failed
+    - sdist_results is failed
 
 # Try installing current repo in case it needs to be available for
 # example for version number calculation. Ignore any failures here.
@@ -71,4 +71,4 @@
   failed_when:
     - error_on_failure is defined
     - error_on_failure
-    - install_package_results|failed
+    - install_package_results is failed

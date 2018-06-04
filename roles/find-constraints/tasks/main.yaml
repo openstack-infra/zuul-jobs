@@ -15,4 +15,4 @@
 - name: Record file location
   set_fact:
     upper_constraints: "-c {{ constraints_file|realpath }}"
-  when: not stat_results|skipped and stat_results.stat.exists
+  when: not stat_results is skipped and stat_results.stat.exists
