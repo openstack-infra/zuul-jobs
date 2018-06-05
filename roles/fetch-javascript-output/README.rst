@@ -12,3 +12,9 @@ Collect outputs from a javascript build
 
    Directory, relative to zuul_work_dir, in which javascript output content
    is to be found.
+
+.. zuul:rolevar:: javascript_copy_links
+   :default: true
+
+   Whether to copy the data pointed to by symlinks in the built content, or
+   to copy them as symbolic links.

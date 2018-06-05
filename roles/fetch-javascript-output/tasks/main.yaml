@@ -115,6 +115,6 @@
     src: "{{ zuul_work_dir }}/{{ javascript_content_dir }}/"
     dest: "{{ log_path }}/html/"
     mode: pull
-    copy_links: true
+    copy_links: "{{ javascript_copy_links }}"
     verify_host: true
   when: javascript_output.stat.exists
