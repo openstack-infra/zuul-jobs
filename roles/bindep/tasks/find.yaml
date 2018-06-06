@@ -17,17 +17,17 @@
 - name: Define bindep_file fact
   set_fact:
     bindep_file: "{{ bindep_other_file_stat.stat.path }}"
-  when: not bindep_other_file_stat|skipped and  bindep_other_file_stat.stat.exists
+  when: not bindep_other_file_stat is skipped and  bindep_other_file_stat.stat.exists
 
 - name: Look for bindep fallback file
   stat:
     path: "{{ bindep_fallback }}"
   register: bindep_fallback_file_stat
   when: bindep_fallback is defined
-        and not bindep_other_file_stat|skipped
+        and not bindep_other_file_stat is skipped
         and not bindep_other_file_stat.stat.exists
 
 - name: Define bindep_file fact
   set_fact:
     bindep_file: "{{ bindep_fallback_file_stat.stat.path }}"
-  when: not bindep_fallback_file_stat|skipped and  bindep_fallback_file_stat.stat.exists
+  when: not bindep_fallback_file_stat is skipped and  bindep_fallback_file_stat.stat.exists
