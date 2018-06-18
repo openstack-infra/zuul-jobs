@@ -45,6 +45,8 @@
   block:
     - name: Verify if the bridge address is set
       shell: ip addr show dev {{ bridge_name }} | grep -q {{ bridge_address_prefix }}.{{ offset }}/{{ bridge_address_subnet }}
+      environment:
+        PATH: '{{ ansible_env.PATH }}:/bin:/sbin:/usr/sbin'
       register: ip_addr_var
       failed_when: False
       changed_when: False
@@ -52,6 +54,8 @@
     - name: Set the bridge address
       become: yes
       command: ip addr add {{ bridge_address_prefix }}.{{ offset }}/{{ bridge_address_subnet }} dev {{ bridge_name }}
+      environment:
+        PATH: '{{ ansible_env.PATH }}:/bin:/sbin:/usr/sbin'
       when: ip_addr_var.rc == 1
 
 - name: Bring subnode bridge interface up
