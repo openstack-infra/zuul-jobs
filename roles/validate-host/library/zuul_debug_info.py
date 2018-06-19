@@ -18,6 +18,7 @@
 import os
 import shlex
 import subprocess
+import traceback
 
 
 command_map = {
@@ -68,19 +69,25 @@ def main():
             ret['traceroute_v6'] = run_command(
                 'traceroute6 -n {host}'.format(host=traceroute_host))
             passed = True
-        except (subprocess.CalledProcessError, OSError):
+        except (subprocess.CalledProcessError, OSError) as e:
+            ret['traceroute_v6_exception'] = traceback.format_exc(e)
+            ret['traceroute_v6_output'] = e.output
+            ret['traceroute_v6_return'] = e.returncode
             pass
         try:
             ret['traceroute_v4'] = run_command(
                 'traceroute -n {host}'.format(host=traceroute_host))
             passed = True
-        except (subprocess.CalledProcessError, OSError):
+        except (subprocess.CalledProcessError, OSError) as e:
+            ret['traceroute_v4_exception'] = traceback.format_exc(e)
+            ret['traceroute_v4_output'] = e.output
+            ret['traceroute_v4_return'] = e.returncode
             pass
         if not passed:
             module.fail_json(
                 msg="No viable v4 or v6 route found to {traceroute_host}."
                     " The build node is assumed to be invalid.".format(
-                        traceroute_host=traceroute_host))
+                        traceroute_host=traceroute_host), **ret)
 
     for key, command in command_map.items():
         try:
