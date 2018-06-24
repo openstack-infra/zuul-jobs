@@ -71,6 +71,7 @@
     - ara_installed.rc == 0
     - ara_db.stat.exists
     - ara_report_type == 'database'
+    - ara_report_run | bool or (ara_report_run == 'failure' and not zuul_success | default(false) | bool)
   block:
     - name: Create the ARA database report directory
       file:
