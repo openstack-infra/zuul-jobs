@@ -1,8 +1,10 @@
-- include: common.yaml
-
 # Note (dmsimard)
 # We explicitely declare a PATH environment variable because '/sbin' is not in
 # PATH when using 'become: yes' on some distributions
+- include: common.yaml
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/sbin:/usr/sbin"
+
 - include: switch.yaml
   environment:
     PATH: "{{ ansible_env.PATH }}:/sbin:/usr/sbin"
