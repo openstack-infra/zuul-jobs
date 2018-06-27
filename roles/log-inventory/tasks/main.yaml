@@ -1,8 +1,3 @@
-- name: Set inventory_file fact
-  set_fact:
-    inventory_file: "{{ zuul.executor.inventory_file }}"
-  when: inventory_file is not defined
-
 - name: Ensure Zuul Ansible directory exists
   delegate_to: localhost
   run_once: true
@@ -10,8 +5,11 @@
     path: "{{ zuul_info_dir }}"
     state: directory
 
+# We don't use the ansible inventory_file variable because it is not defined
+# for nodeless job running on the executor directly:
+# https://docs.ansible.com/ansible/latest/porting_guides/porting_guide_2.4.html#inventory
 - name: Copy ansible inventory to logs dir
   delegate_to: localhost
   copy:
-    src: "{{ inventory_file }}"
+    src: "{{ zuul.executor.inventory_file }}"
     dest: "{{ zuul_info_dir }}"
