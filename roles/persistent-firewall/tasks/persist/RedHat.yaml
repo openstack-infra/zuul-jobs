@@ -10,6 +10,13 @@
     content: "{{ ip6tables_rules.stdout }}"
     dest: "/etc/sysconfig/ip6tables"
 
+# This provides the systemd unit file for iptables which might not be installed
+- name: Ensure iptables-services is installed
+  become: yes
+  package:
+    name: iptables-services
+    state: present
+
 - name: Ensure iptables is started
   become: yes
   service:
