@@ -1,3 +1,8 @@
+- name: Set inventory_file fact
+  set_fact:
+    inventory_file: "{{ zuul.executor.inventory_file }}"
+  when: inventory_file is not defined
+
 - name: Ensure Zuul Ansible directory exists
   delegate_to: localhost
   run_once: true
