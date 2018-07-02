@@ -1,0 +1,38 @@
+- name: Check for webhook id
+  fail:
+    msg: You must define the webhook  id.  Get this from the webhook info page on RTD
+  when: rtd_webhook_id is not defined
+
+- name: Check for an authentication type
+  fail:
+    msg: Must set either rtd_username or rtd_integration_token
+  when: (rtd_username is not defined) and (rtd_integration_token is not defined)
+
+- when: rtd_username is defined
+  block:
+    - name: Require password
+      fail:
+        msg: rtd_password is required when using rtd_username
+      when: rtd_password is not defined
+
+    - name: Trigger readthedocs build webhook via authentication
+      uri:
+        method: POST
+        url: 'https://readthedocs.org/api/v2/webhook/{{ rtd_project_name }}/{{ rtd_webhook_id }}/'
+        user: '{{ rtd_username }}'
+        password: '{{ rtd_password }}'
+        # NOTE(ianw): testing it seems the API doesn't respond with
+        # 401 so this is required
+        force_basic_auth: yes
+
+- when: rtd_integration_token is defined and
+        rtd_username is not defined
+  block:
+    - name: Trigger readthedocs build webhook via token
+      uri:
+        method: POST
+        url: 'https://readthedocs.org/api/v2/webhook/{{ rtd_project_name }}/{{ rtd_webhook_id }}/'
+        body_format: form-urlencoded
+        body:
+          token: '{{ rtd_integration_token }}'
+          follow_redirects: all
