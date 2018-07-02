@@ -34,9 +34,12 @@ inventory in order to work:
    VXLAN Network Identifier offset (openvswitch key).
 
 .. zuul:rolevar:: bridge_mtu
-   :default: 1450
+   :default: Smallest mtu less 50 bytes for vxlan overhead
 
-   Bridge interface MTU.
+   Bridge interface MTU. By default we determine this value by checking
+   all interfaces on host, taking the smallest MTU and subtracting by
+   50 for vxlan overhead. Can be overridden explicitly if this does not
+   work.
 
 .. zuul:rolevar:: bridge_name
    :default: br-infra

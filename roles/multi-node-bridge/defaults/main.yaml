@@ -1,5 +1,4 @@
 bridge_vni_offset: 1000000
-bridge_mtu: 1450
 bridge_name: br-infra
 
 bridge_authorize_internal_traffic: false
