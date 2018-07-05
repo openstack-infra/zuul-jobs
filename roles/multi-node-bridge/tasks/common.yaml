@@ -5,18 +5,17 @@
     - "{{ ansible_os_family }}.yaml"
     - "default.yaml"
 
-# RHEL and CentOS requires repositories provided by RDO in order to install
+# CentOS requires repositories provided by centos in order to install
 # openvswitch, set them up.
-- name: Set-up RDO repositories
+- name: Enable centos-release-openstack-queens
   become: yes
   package:
-    name: "{{ rdo_repository }}"
+    name: centos-release-openstack-queens
     state: installed
   when:
-    - rdo_repository is defined
     - ansible_os_family == "RedHat"
     - ansible_distribution != "Fedora"
-  register: rdo_repos
+  register: centos_ovs
 
 - name: Install openvswitch
   become: yes
@@ -31,13 +30,13 @@
     state: started
     enabled: yes
 
-# If we've installed RDO repositories for openvswitch earlier, remove them
-- name: Ensure RDO repositories are removed
+# If we've installed repositories for openvswitch earlier, remove them
+- name: Ensure centos-release-openstack-queens is removed
   become: yes
   package:
-    name: "rdo-release"
+    name: "centos-release-openstack-queens"
     state: absent
-  when: rdo_repos | changed
+  when: centos_ovs | changed
 
 - name: Authorize the multi-node-bridge network
   become: yes
