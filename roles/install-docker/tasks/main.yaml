@@ -1,0 +1,30 @@
+- name: Set mirror_fqdn fact
+  when:
+    - mirror_fqdn is not defined
+    - zuul_site_mirror_fqdn is defined
+  set_fact:
+    mirror_fqdn: "{{ zuul_site_mirror_fqdn }}"
+
+- name: Set up docker mirrors
+  include: mirror.yaml
+  when: mirror_fqdn is defined
+  static: no
+
+- name: Install docker-ce from upstream
+  include: upstream.yaml
+  when: use_upstream_docker
+
+- name: Install docker-engine from distro
+  include: distro.yaml
+  when: not use_upstream_docker
+
+- name: Add user to docker group
+  become: yes
+  user:
+    name: "{{ ansible_user }}"
+    groups:
+      - docker
+    append: yes
+
+- name: reset ssh connection to pick up docker group
+  meta: reset_connection
