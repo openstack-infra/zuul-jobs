@@ -1,0 +1,2 @@
+use_upstream_docker: True
+docker_update_channel: stable
