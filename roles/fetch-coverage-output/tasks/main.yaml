@@ -1,7 +1,7 @@
 - name: Check to see if coverage report exists
   stat:
     path: "{{ coverage_output_src }}"
-    register: coverage_report_stat
+  register: coverage_report_stat
 
 - when:
     - zuul_success | default(true) | bool
