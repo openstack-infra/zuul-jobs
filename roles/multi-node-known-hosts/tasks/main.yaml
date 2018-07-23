@@ -6,7 +6,7 @@
   known_hosts:
     name: "{{ item.name }}"
     key: "{{ item.key }}"
-  with_items: "{{ all_known_hosts }}"
+  with_items: "{{ ansible_facts.all_known_hosts }}"
 
 - name: add default known_host record for every user
   become: true
@@ -14,4 +14,4 @@
     name: "{{ item.name }}"
     key: "{{ item.key }}"
     path: /etc/ssh/ssh_known_hosts
-  with_items: "{{ all_known_hosts }}"
+  with_items: "{{ ansible_facts.all_known_hosts }}"
