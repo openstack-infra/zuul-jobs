@@ -1,0 +1,24 @@
+- name: Require yarn_command variable
+  fail:
+    msg: yarn_command is required for this role
+  when: yarn_command is not defined
+
+- name: Run yarn lifecycle command
+  when: yarn_command in yarn_lifecycle_phases
+  command: "yarn {{ yarn_command }} --verbose"
+  # Need to set DISPLAY to the value that will be set when the virtual
+  # framebuffer is set up for doing browser tests.
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"
+
+- name: Run yarn custom command
+  when: yarn_command not in yarn_lifecycle_phases
+  command: "yarn run {{ yarn_command }} --verbose"
+  # Need to set DISPLAY to the value that will be set when the virtual
+  # framebuffer is set up for doing browser tests.
+  environment:
+    DISPLAY: ':99'
+  args:
+    chdir: "{{ zuul_work_dir }}"
