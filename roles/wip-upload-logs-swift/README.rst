@@ -1,0 +1,48 @@
+Upload logs to a swift container
+
+This uploads logs to an OpenStack Object Store (Swift) container.
+
+.. warning::
+
+   Do not use this role, the API is not complete.
+
+**Role Variables**
+
+.. zuul:rolevar:: zuul_site_upload_logs
+   :default: true
+
+   Controls when logs are uploaded. true, the default, means always
+   upload logs. false means never upload logs. 'failure' means to only
+   upload logs when the job has failed.
+
+   .. note:: Intended to be set by admins via site-variables.
+
+.. zuul:rolevar:: zuul_log_cloud_config
+
+   Complex argument which contains the cloud configuration in
+   os-cloud-config (clouds.yaml) format.  It is expected that this
+   argument comes from a `Secret`.
+
+.. zuul:rolevar:: zuul_log_partition
+   :default: false
+
+   If set to true, then the first component of the log path will be
+   removed from the object name and added to the container name, so
+   that logs for different changes are distributed across a large
+   number of containers.
+
+.. zuul:rolevar:: zuul_log_container
+   :default: logs
+
+   This role will create containers which do not already exist.  If
+   partitioning is not enabled, this is the name of the container
+   which will be used.  If partitioning is enabled, then this will be
+   used as the prefix for the container name which will be separated
+   from the partition name by an underscore.  For example, "logs_42"
+   would be the container name for partition 42.
+
+.. zuul:rolevar:: zuul_log_container_public
+   :default: true
+
+   If the container is created, should it be created with global read
+   ACLs.  If the container already exists, it will not be modified.
