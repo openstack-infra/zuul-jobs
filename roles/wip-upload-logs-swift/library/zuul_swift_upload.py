@@ -475,7 +475,6 @@ def run(cloud, container, files,
 
     # Scan the files.
     for file_path in files:
-        file_path = os.path.normpath(file_path)
         file_list.add(file_path)
 
     # (Possibly) make indexes.
