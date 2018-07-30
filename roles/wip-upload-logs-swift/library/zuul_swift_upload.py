@@ -392,6 +392,21 @@ class Uploader(object):
                 # No more work to do
                 return
 
+    @staticmethod
+    def _is_text_type(mimetype):
+        # We want to compress all text types.
+        if mimetype.startswith('text/'):
+            return True
+
+        # Further compress types that typically contain text but are no
+        # text sub type.
+        compress_types = [
+            'application/json',
+        ]
+        if mimetype in compress_types:
+            return True
+        return False
+
     def _post_file(self, fd):
         relative_path = os.path.join(self.prefix, fd.relative_path)
         headers = {}
@@ -404,7 +419,7 @@ class Uploader(object):
         for attempt in range(3):
             try:
                 if not fd.folder:
-                    if fd.encoding is None and fd.mimetype.startswith('text/'):
+                    if fd.encoding is None and self._is_text_type(fd.mimetype):
                         headers['content-encoding'] = 'deflate'
                         data = DeflateFilter(open(fd.full_path, 'rb'))
                     else:
