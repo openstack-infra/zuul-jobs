@@ -423,6 +423,8 @@ class Uploader(object):
                         headers['content-encoding'] = 'deflate'
                         data = DeflateFilter(open(fd.full_path, 'rb'))
                     else:
+                        if fd.encoding:
+                            headers['content-encoding'] = fd.encoding
                         data = open(fd.full_path, 'rb')
                 else:
                     data = ''
