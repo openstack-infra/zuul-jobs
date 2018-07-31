@@ -413,6 +413,7 @@ class Uploader(object):
         # text sub type.
         compress_types = [
             'application/json',
+            'image/svg+xml',
         ]
         if mimetype in compress_types:
             return True
