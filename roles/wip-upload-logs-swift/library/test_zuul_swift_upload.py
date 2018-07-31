@@ -14,17 +14,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-from .zuul_swift_upload import FileList, Indexer
 import os
 
+import testtools
+import fixtures
 from bs4 import BeautifulSoup
+
+from .zuul_swift_upload import FileList, Indexer
+
 
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__),
                            'test-fixtures')
 
 
-class TestFileList(unittest.TestCase):
+class SymlinkFixture(fixtures.Fixture):
+    links = [
+        ('bad_symlink', '/etc'),
+        ('bad_symlink_file', '/etc/issue'),
+        ('good_symlink', 'controller'),
+        ('recursive_symlink', '.'),
+        ('symlink_file', 'job-output.json'),
+        ('symlink_loop_a', 'symlink_loop'),
+        ('symlink_loop/symlink_loop_b', '..'),
+    ]
+
+    def _setUp(self):
+        self._cleanup()
+        for (src, target) in self.links:
+            path = os.path.join(FIXTURE_DIR, 'links', src)
+            os.symlink(target, path)
+        self.addCleanup(self._cleanup)
+
+    def _cleanup(self):
+        for (src, target) in self.links:
+            path = os.path.join(FIXTURE_DIR, 'links', src)
+            if os.path.exists(path):
+                os.unlink(path)
+
+
+class TestFileList(testtools.TestCase):
 
     def assert_files(self, result, files):
         self.assertEqual(len(result), len(files))
@@ -96,6 +124,25 @@ class TestFileList(unittest.TestCase):
         self.assert_files(fl, [
             ('', 'application/directory', None),
             ('inventory.yaml', 'text/plain', None),
+        ])
+
+    def test_symlinks(self):
+        '''Test symlinks'''
+        fl = FileList()
+        self.useFixture(SymlinkFixture())
+        fl.add(os.path.join(FIXTURE_DIR, 'links/'))
+        self.assert_files(fl, [
+            ('', 'application/directory', None),
+            ('controller', 'application/directory', None),
+            ('good_symlink', 'application/directory', None),
+            ('recursive_symlink', 'application/directory', None),
+            ('symlink_loop', 'application/directory', None),
+            ('symlink_loop_a', 'application/directory', None),
+            ('job-output.json', 'application/json', None),
+            ('symlink_file', 'text/plain', None),
+            ('controller/service_log.txt', 'text/plain', None),
+            ('symlink_loop/symlink_loop_b', 'application/directory', None),
+            ('symlink_loop/placeholder', 'text/plain', None),
         ])
 
     def test_index_files(self):
