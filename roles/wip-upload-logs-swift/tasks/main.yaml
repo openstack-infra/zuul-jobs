@@ -26,6 +26,7 @@
         prefix: "{{ zuul_log_path }}"
         files:
           - "{{ zuul.executor.log_root }}/"
+        delete_after: "{{zuul_log_delete_after | default(omit) }}"
       register: upload_results
 
 - name: Return log URL to Zuul
