@@ -43,6 +43,7 @@ mimetypes.init()
 mimetypes.add_type('text/plain', '.yaml')
 
 MAX_UPLOAD_THREADS = 24
+POST_RETRIES = 3
 
 # Map mime types to apache icons
 APACHE_MIME_ICON_MAP = {
@@ -82,6 +83,13 @@ class FileDetail(object):
     """
 
     def __init__(self, full_path, relative_path, filename=None):
+        """
+        Args:
+            full_path (str): The absolute path to the file on disk.
+            relative_path (str): The relative path from the artifacts source
+                                 used for links.
+            filename (str): An optional alternate filename in links.
+        """
         self.full_path = full_path
         if filename is None:
             self.filename = os.path.basename(full_path)
@@ -90,10 +98,8 @@ class FileDetail(object):
         self.relative_path = relative_path
 
         if self.full_path and os.path.isfile(self.full_path):
-            mime = 'text/plain'
             mime_guess, encoding = mimetypes.guess_type(self.full_path)
-            mime = mime_guess if mime_guess else mime
-            self.mimetype = mime
+            self.mimetype = mime_guess if mime_guess else 'text/plain'
             self.encoding = encoding
             self.folder = False
         else:
@@ -163,8 +169,8 @@ class FileList(object):
                     filename = os.path.basename(f)
                     full_path = os.path.join(path, filename)
                     relative_name = os.path.relpath(full_path, parent_dir)
-                    fd = FileDetail(full_path, relative_name)
-                    file_list.append(fd)
+                    file_detail = FileDetail(full_path, relative_name)
+                    file_list.append(file_detail)
 
         self.file_list += file_list
 
@@ -375,11 +381,11 @@ class Uploader(object):
     def post_thread(self, queue):
         while True:
             try:
-                fd = queue.get_nowait()
+                file_detail = queue.get_nowait()
                 logging.debug("%s: processing job %s",
                               threading.current_thread(),
-                              fd)
-                self._post_file(fd)
+                              file_detail)
+                self._post_file(file_detail)
             except requests.exceptions.RequestException:
                 # Do our best to attempt to upload all the files
                 logging.exception("Error posting file after multiple attempts")
@@ -407,25 +413,26 @@ class Uploader(object):
             return True
         return False
 
-    def _post_file(self, fd):
-        relative_path = os.path.join(self.prefix, fd.relative_path)
+    def _post_file(self, file_detail):
+        relative_path = os.path.join(self.prefix, file_detail.relative_path)
         headers = {}
         if self.delete_after:
             headers['x-delete-after'] = str(self.delete_after)
-        headers['content-type'] = fd.mimetype
+        headers['content-type'] = file_detail.mimetype
 
         USE_SHADE = True
 
-        for attempt in range(3):
+        for attempt in range(1, POST_RETRIES + 1):
             try:
-                if not fd.folder:
-                    if fd.encoding is None and self._is_text_type(fd.mimetype):
+                if not file_detail.folder:
+                    if (file_detail.encoding is None and
+                        self._is_text_type(file_detail.mimetype)):
                         headers['content-encoding'] = 'deflate'
-                        data = DeflateFilter(open(fd.full_path, 'rb'))
+                        data = DeflateFilter(open(file_detail.full_path, 'rb'))
                     else:
-                        if fd.encoding:
-                            headers['content-encoding'] = fd.encoding
-                        data = open(fd.full_path, 'rb')
+                        if file_detail.encoding:
+                            headers['content-encoding'] = file_detail.encoding
+                        data = open(file_detail.full_path, 'rb')
                 else:
                     data = ''
                     relative_path = relative_path.rstrip('/')
@@ -444,11 +451,9 @@ class Uploader(object):
                         headers=headers)
                 break
             except requests.exceptions.RequestException:
-                if attempt < 2:
-                    logging.exception(
-                        "File posting error on attempt %d" % attempt)
-                    continue
-                else:
+                logging.exception(
+                    "File posting error on attempt %d" % attempt)
+                if attempt >= POST_RETRIES:
                     raise
 
 
