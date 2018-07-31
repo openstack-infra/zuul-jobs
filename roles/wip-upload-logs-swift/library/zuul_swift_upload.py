@@ -179,8 +179,10 @@ class Indexer(object):
     """generates index.html files if requested."""
 
     def __init__(self, create_parent_links=True,
+                 create_topdir_parent_link=False,
                  append_footer='index_footer.html'):
         self.create_parent_links = create_parent_links
+        self.create_topdir_parent_link = create_topdir_parent_link
         self.append_footer = append_footer
         self.index_filename = 'index.html'
 
@@ -203,10 +205,13 @@ class Indexer(object):
             # Don't add the pseudo-top-directory
             if files and files[0].full_path is None:
                 files = files[1:]
+                if self.create_topdir_parent_link:
+                    files = [parent_file_detail] + files
+            elif self.create_parent_links:
+                files = [parent_file_detail] + files
 
             # Do generate a link to the parent directory
-            full_path = self.make_index_file([parent_file_detail] + files,
-                                             'Index of %s' % (folder,))
+            full_path = self.make_index_file(files, 'Index of %s' % (folder,))
 
             if full_path:
                 filename = os.path.basename(full_path)
@@ -449,10 +454,9 @@ class Uploader(object):
 
 
 def run(cloud, container, files,
-        indexes=True, parent_links=True, partition=False,
-        footer='index_footer.html',
-        delete_after=15552000, prefix=None,
-        public=True, dry_run=False):
+        indexes=True, parent_links=True, topdir_parent_link=False,
+        partition=False, footer='index_footer.html', delete_after=15552000,
+        prefix=None, public=True, dry_run=False):
 
     if prefix:
         prefix = prefix.lstrip('/')
@@ -465,6 +469,7 @@ def run(cloud, container, files,
     # Create the objects to make sure the arguments are sound.
     file_list = FileList()
     indexer = Indexer(create_parent_links=parent_links,
+                      create_topdir_parent_link=topdir_parent_link,
                       append_footer=footer)
 
     # Scan the files.
@@ -500,6 +505,7 @@ def ansible_main():
             partition=dict(type='bool', default=False),
             indexes=dict(type='bool', default=True),
             parent_links=dict(type='bool', default=True),
+            topdir_parent_link=dict(type='bool', default=False),
             public=dict(type='bool', default=True),
             footer=dict(type='str'),
             delete_after=dict(type='int'),
@@ -511,6 +517,7 @@ def ansible_main():
     url = run(p.get('cloud'), p.get('container'), p.get('files'),
               indexes=p.get('indexes'),
               parent_links=p.get('parent_links'),
+              topdir_parent_link=p.get('topdir_parent_link'),
               partition=p.get('partition'),
               footer=p.get('footer'),
               delete_after=p.get('delete_after', 15552000),
@@ -531,6 +538,10 @@ def cli_main():
                         help='do not generate any indexes at all')
     parser.add_argument('--no-parent-links', action='store_true',
                         help='do not include links back to a parent dir')
+    parser.add_argument('--create-topdir-parent-link', action='store_true',
+                        help='include a link in the root directory of the '
+                             'files to the parent directory which may be the '
+                             'index of all results')
     parser.add_argument('--no-public', action='store_true',
                         help='do not create the container as public')
     parser.add_argument('--partition', action='store_true',
@@ -573,6 +584,7 @@ def cli_main():
     url = run(args.cloud, args.container, args.files,
               indexes=not args.no_indexes,
               parent_links=not args.no_parent_links,
+              topdir_parent_link=args.create_topdir_parent_link,
               partition=args.partition,
               footer=append_footer,
               delete_after=args.delete_after,

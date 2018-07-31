@@ -131,12 +131,10 @@ class TestFileList(unittest.TestCase):
         page = BeautifulSoup(page, 'html.parser')
         rows = page.find_all('tr')[1:]
 
-        self.assertEqual(len(rows), 2)
-        self.assertEqual(rows[0].find('a').get('href'), '../')
-        self.assertEqual(rows[0].find('a').text, '../')
+        self.assertEqual(len(rows), 1)
 
-        self.assertEqual(rows[1].find('a').get('href'), 'logs/')
-        self.assertEqual(rows[1].find('a').text, 'logs/')
+        self.assertEqual(rows[0].find('a').get('href'), 'logs/')
+        self.assertEqual(rows[0].find('a').text, 'logs/')
 
         subdir_index = self.find_file(fl, 'logs/controller/subdir/index.html')
         page = open(subdir_index.full_path).read()
@@ -178,6 +176,59 @@ class TestFileList(unittest.TestCase):
         page = open(top_index.full_path).read()
         page = BeautifulSoup(page, 'html.parser')
         rows = page.find_all('tr')[1:]
+
+        self.assertEqual(len(rows), 3)
+
+        self.assertEqual(rows[0].find('a').get('href'), 'controller/')
+        self.assertEqual(rows[0].find('a').text, 'controller/')
+
+        self.assertEqual(rows[1].find('a').get('href'), 'zuul-info/')
+        self.assertEqual(rows[1].find('a').text, 'zuul-info/')
+
+        subdir_index = self.find_file(fl, 'controller/subdir/index.html')
+        page = open(subdir_index.full_path).read()
+        page = BeautifulSoup(page, 'html.parser')
+        rows = page.find_all('tr')[1:]
+        self.assertEqual(rows[0].find('a').get('href'), '../')
+        self.assertEqual(rows[0].find('a').text, '../')
+
+        self.assertEqual(rows[1].find('a').get('href'), 'subdir.txt')
+        self.assertEqual(rows[1].find('a').text, 'subdir.txt')
+
+    def test_topdir_parent_link(self):
+        '''Test index generation creates topdir parent link'''
+        fl = FileList()
+        fl.add(os.path.join(FIXTURE_DIR, 'logs/'))
+        ix = Indexer(create_parent_links=True,
+                     create_topdir_parent_link=True)
+        fl = ix.make_indexes(fl)
+
+        self.assert_files(fl, [
+            ('', 'application/directory', None),
+            ('controller', 'application/directory', None),
+            ('zuul-info', 'application/directory', None),
+            ('job-output.json', 'application/json', None),
+            ('index.html', 'text/html', None),
+            ('controller/subdir', 'application/directory', None),
+            ('controller/compressed.gz', 'text/plain', 'gzip'),
+            ('controller/journal.xz', 'text/plain', 'xz'),
+            ('controller/service_log.txt', 'text/plain', None),
+            ('controller/syslog', 'text/plain', None),
+            ('controller/index.html', 'text/html', None),
+            ('controller/subdir/subdir.txt', 'text/plain', None),
+            ('controller/subdir/index.html', 'text/html', None),
+            ('zuul-info/inventory.yaml', 'text/plain', None),
+            ('zuul-info/zuul-info.controller.txt', 'text/plain', None),
+            ('zuul-info/index.html', 'text/html', None),
+        ])
+
+        top_index = self.find_file(fl, 'index.html')
+        page = open(top_index.full_path).read()
+        page = BeautifulSoup(page, 'html.parser')
+        rows = page.find_all('tr')[1:]
+
+        self.assertEqual(len(rows), 4)
+
         self.assertEqual(rows[0].find('a').get('href'), '../')
         self.assertEqual(rows[0].find('a').text, '../')
 
@@ -196,3 +247,51 @@ class TestFileList(unittest.TestCase):
 
         self.assertEqual(rows[1].find('a').get('href'), 'subdir.txt')
         self.assertEqual(rows[1].find('a').text, 'subdir.txt')
+
+    def test_no_parent_links(self):
+        '''Test index generation creates topdir parent link'''
+        fl = FileList()
+        fl.add(os.path.join(FIXTURE_DIR, 'logs/'))
+        ix = Indexer(create_parent_links=False,
+                     create_topdir_parent_link=False)
+        fl = ix.make_indexes(fl)
+
+        self.assert_files(fl, [
+            ('', 'application/directory', None),
+            ('controller', 'application/directory', None),
+            ('zuul-info', 'application/directory', None),
+            ('job-output.json', 'application/json', None),
+            ('index.html', 'text/html', None),
+            ('controller/subdir', 'application/directory', None),
+            ('controller/compressed.gz', 'text/plain', 'gzip'),
+            ('controller/journal.xz', 'text/plain', 'xz'),
+            ('controller/service_log.txt', 'text/plain', None),
+            ('controller/syslog', 'text/plain', None),
+            ('controller/index.html', 'text/html', None),
+            ('controller/subdir/subdir.txt', 'text/plain', None),
+            ('controller/subdir/index.html', 'text/html', None),
+            ('zuul-info/inventory.yaml', 'text/plain', None),
+            ('zuul-info/zuul-info.controller.txt', 'text/plain', None),
+            ('zuul-info/index.html', 'text/html', None),
+        ])
+
+        top_index = self.find_file(fl, 'index.html')
+        page = open(top_index.full_path).read()
+        page = BeautifulSoup(page, 'html.parser')
+        rows = page.find_all('tr')[1:]
+
+        self.assertEqual(len(rows), 3)
+
+        self.assertEqual(rows[0].find('a').get('href'), 'controller/')
+        self.assertEqual(rows[0].find('a').text, 'controller/')
+
+        self.assertEqual(rows[1].find('a').get('href'), 'zuul-info/')
+        self.assertEqual(rows[1].find('a').text, 'zuul-info/')
+
+        subdir_index = self.find_file(fl, 'controller/subdir/index.html')
+        page = open(subdir_index.full_path).read()
+        page = BeautifulSoup(page, 'html.parser')
+        rows = page.find_all('tr')[1:]
+
+        self.assertEqual(rows[0].find('a').get('href'), 'subdir.txt')
+        self.assertEqual(rows[0].find('a').text, 'subdir.txt')
