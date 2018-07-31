@@ -452,7 +452,7 @@ def run(cloud, container, files,
         indexes=True, parent_links=True, partition=False,
         footer='index_footer.html',
         delete_after=15552000, prefix=None,
-        public=True):
+        public=True, dry_run=False):
 
     if prefix:
         prefix = prefix.lstrip('/')
@@ -466,8 +466,6 @@ def run(cloud, container, files,
     file_list = FileList()
     indexer = Indexer(create_parent_links=parent_links,
                       append_footer=footer)
-    uploader = Uploader(cloud, container, prefix, delete_after,
-                        public)
 
     # Scan the files.
     for file_path in files:
@@ -481,7 +479,14 @@ def run(cloud, container, files,
     for x in file_list:
         logging.debug(x)
 
+    # Do no connect to swift or do any uploading in a dry run
+    if dry_run:
+        # No URL is known, so return nothing
+        return
+
     # Upload.
+    uploader = Uploader(cloud, container, prefix, delete_after,
+                        public)
     uploader.upload(file_list)
     return uploader.url
 
@@ -542,6 +547,9 @@ def cli_main():
     parser.add_argument('--prefix',
                         help='Prepend this path to the object names when '
                              'uploading')
+    parser.add_argument('--dry-run', action='store_true',
+                        help='do not attempt to create containers or upload, '
+                             'useful with --verbose for debugging')
     parser.add_argument('cloud',
                         help='Name of the cloud to use when uploading')
     parser.add_argument('container',
@@ -569,7 +577,8 @@ def cli_main():
               footer=append_footer,
               delete_after=args.delete_after,
               prefix=args.prefix,
-              public=not args.no_public)
+              public=not args.no_public,
+              dry_run=args.dry_run)
     print(url)
 
 
