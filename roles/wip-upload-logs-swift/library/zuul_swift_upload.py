@@ -420,8 +420,6 @@ class Uploader(object):
             headers['x-delete-after'] = str(self.delete_after)
         headers['content-type'] = file_detail.mimetype
 
-        USE_SHADE = True
-
         for attempt in range(1, POST_RETRIES + 1):
             try:
                 if not file_detail.folder:
@@ -436,19 +434,12 @@ class Uploader(object):
                 else:
                     data = ''
                     relative_path = relative_path.rstrip('/')
-                    if USE_SHADE:
-                        if relative_path == '':
-                            relative_path = '/'
-                if USE_SHADE:
-                    self.cloud.create_object(self.container,
-                                             name=relative_path,
-                                             data=data,
-                                             **headers)
-                else:
-                    self.cloud.object_store.put(
-                        os.path.join('/', self.container, relative_path),
-                        data=data,
-                        headers=headers)
+                    if relative_path == '':
+                        relative_path = '/'
+                self.cloud.create_object(self.container,
+                                         name=relative_path,
+                                         data=data,
+                                         **headers)
                 break
             except requests.exceptions.RequestException:
                 logging.exception(
