@@ -43,7 +43,7 @@ mimetypes.init()
 mimetypes.add_type('text/plain', '.yaml')
 
 MAX_UPLOAD_THREADS = 24
-POST_RETRIES = 3
+POST_ATTEMPTS = 3
 
 # Map mime types to apache icons
 APACHE_MIME_ICON_MAP = {
@@ -425,7 +425,7 @@ class Uploader(object):
             headers['x-delete-after'] = str(self.delete_after)
         headers['content-type'] = file_detail.mimetype
 
-        for attempt in range(1, POST_RETRIES + 1):
+        for attempt in range(1, POST_ATTEMPTS + 1):
             try:
                 if not file_detail.folder:
                     if (file_detail.encoding is None and
@@ -449,7 +449,7 @@ class Uploader(object):
             except requests.exceptions.RequestException:
                 logging.exception(
                     "File posting error on attempt %d" % attempt)
-                if attempt >= POST_RETRIES:
+                if attempt >= POST_ATTEMPTS:
                     raise
 
 
