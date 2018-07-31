@@ -1,6 +1,7 @@
 - name: Set zuul-log-path fact
   include_role:
     name: set-zuul-log-path-fact
+  when: zuul_log_path is not defined
 
 # Always upload (true), never upload (false) or only on failure ('failure')
 - when: zuul_site_upload_logs | default(true) | bool or
