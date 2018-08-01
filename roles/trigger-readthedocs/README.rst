@@ -16,20 +16,23 @@ Trigger readthedocs build for a project
    This may come from a secret, however it can not be triggered
    without authentication.
 
-.. zuul:rolevar:: rtd_integration_token
+.. zuul:rolevar:: rtd_credentials
 
-   The webhook integration token.  You'll find this value on the
-   project's "Integrations" dashboard page in RTD.  This is expected
-   to come from a secret.  This can be used instead of
-   username/password combo.
-
-.. zuul:rolevar:: rtd_username
-
-   The readthedocs username.  If set, this will be used to
-   authenticate in preference to any token set via
-   ``rtd_integration_token``.
-
-.. zuul:rolevar:: rtd_password
-
-   Password for ``rtd_username``.  Must be set if password is set.
+   Complex argument which contains the RTD authentication credentials.
    This is expected to come from a secret.
+
+  .. zuul:rolevar:: integration_token
+
+     The webhook integration token.  You'll find this value on the
+     project's "Integrations" dashboard page in RTD.  This can be used
+     instead of username/password combo.
+
+  .. zuul:rolevar:: username
+
+     The readthedocs username.  If set, this will be used to
+     authenticate in preference to any token set via
+     ``rtd_integration_token``.
+
+  .. zuul:rolevar:: password
+
+     Password for ``username``.  Must be set if username is set.
