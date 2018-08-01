@@ -20,12 +20,6 @@ in subsequent tasks or roles.
     the project short name will be added to the hostvars of the host
     as ``zuul_fileserver_project_path``.
 
-  .. zuul:rolevar:: fileserver_leading_path
-
-    This is an optional variable that will be inserted between the base
-    of the path (provided by the `path` variable) and the
-    ``zuul.project.short_name`` final path element.
-
   .. zuul:rolevar:: ssh_known_hosts
 
     String containing known host signature for the remote host.
@@ -38,3 +32,9 @@ in subsequent tasks or roles.
      :default: ansible_user
 
     Remote ssh user name to use.
+
+.. zuul:rolevar:: fileserver_leading_path
+
+   This is an optional variable that will be inserted between the base
+   of the path (provided by the `path` variable) and the
+   ``zuul.project.short_name`` final path element.
