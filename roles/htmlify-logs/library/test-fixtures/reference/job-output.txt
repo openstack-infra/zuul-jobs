@@ -1,0 +1,112 @@
+<html>
+<head>
+<style>
+a {color: #000; text-decoration: none}
+a:hover {text-decoration: underline}
+#selector, #selector a {color: #888}
+#selector a:hover {color: #c00}
+.highlight {
+    background-color: rgb(255, 255, 204);
+}
+</style>
+</head>
+<body>
+<pre>
+<a name="l1" class="l1" href="#l1">2018-08-01 00:43:51.328884 | Job console starting...</a>
+<a name="l2" class="l2" href="#l2">2018-08-01 00:44:01.742989 | PRE-RUN START: [trusted : git.openstack.org/openstack-infra/project-config/playbooks/base/pre.yaml@master]</a>
+<a name="l3" class="l3" href="#l3">2018-08-01 00:44:04.693529 | </a>
+<a name="l4" class="l4" href="#l4">2018-08-01 00:44:04.693765 | PLAY [localhost]</a>
+<a name="l5" class="l5" href="#l5">2018-08-01 00:44:04.736664 | </a>
+<a name="l6" class="l6" href="#l6">2018-08-01 00:44:04.736863 | TASK [emit-job-header : Setup log path fact]</a>
+<a name="l7" class="l7" href="#l7">2018-08-01 00:44:04.804077 | localhost | ok</a>
+<a name="l8" class="l8" href="#l8">2018-08-01 00:44:04.870027 | </a>
+<a name="l9" class="l9" href="#l9">2018-08-01 00:44:04.870264 | TASK [set-zuul-log-path-fact : Set log path for a change]</a>
+<a name="l10" class="l10" href="#l10">2018-08-01 00:44:04.942854 | localhost | skipping: Conditional result was False</a>
+<a name="l11" class="l11" href="#l11">2018-08-01 00:44:04.970178 | </a>
+<a name="l12" class="l12" href="#l12">2018-08-01 00:44:04.970405 | TASK [set-zuul-log-path-fact : Set log path for a ref update]</a>
+<a name="l13" class="l13" href="#l13">2018-08-01 00:44:05.067095 | localhost | ok</a>
+<a name="l14" class="l14" href="#l14">2018-08-01 00:44:05.094186 | </a>
+<a name="l15" class="l15" href="#l15">2018-08-01 00:44:05.094430 | TASK [set-zuul-log-path-fact : Set log path for a periodic job]</a>
+<a name="l16" class="l16" href="#l16">2018-08-01 00:44:05.152841 | localhost | skipping: Conditional result was False</a>
+<a name="l17" class="l17" href="#l17">2018-08-01 00:44:05.188754 | </a>
+<a name="l18" class="l18" href="#l18">2018-08-01 00:44:05.189030 | TASK [emit-job-header : Print job information]</a>
+<a name="l19" class="l19" href="#l19">2018-08-01 00:44:05.317656 | # Job Information</a>
+<a name="l20" class="l20" href="#l20">2018-08-01 00:44:05.318162 | Ansible Version: 2.5.7</a>
+<a name="l21" class="l21" href="#l21">2018-08-01 00:44:05.318269 | Job: trigger-readthedocs-webhook</a>
+<a name="l22" class="l22" href="#l22">2018-08-01 00:44:05.318371 | Pipeline: post</a>
+<a name="l23" class="l23" href="#l23">2018-08-01 00:44:05.318469 | Executor: ze09.openstack.org</a>
+<a name="l24" class="l24" href="#l24">2018-08-01 00:44:05.318567 | Triggered by: https://git.openstack.org/cgit/openstack/gerrit-dash-creator/commit/?id=ee5167a518de07c325f326df212c92e5c1e786a9</a>
+<a name="l25" class="l25" href="#l25">2018-08-01 00:44:05.318663 | Log URL (when completed): http://logs.openstack.org/ee/ee5167a518de07c325f326df212c92e5c1e786a9/post/trigger-readthedocs-webhook/f677f03</a>
+<a name="l26" class="l26" href="#l26">2018-08-01 00:44:05.349043 | </a>
+<a name="l27" class="l27" href="#l27">2018-08-01 00:44:05.349250 | PLAY [all]</a>
+<a name="l28" class="l28" href="#l28">2018-08-01 00:44:05.385083 | </a>
+<a name="l29" class="l29" href="#l29">2018-08-01 00:44:05.385308 | TASK [Gather network facts]</a>
+<a name="l30" class="l30" href="#l30">2018-08-01 00:44:07.104842 | ubuntu-xenial | ok</a>
+<a name="l31" class="l31" href="#l31">2018-08-01 00:44:07.167964 | </a>
+<a name="l32" class="l32" href="#l32">2018-08-01 00:44:07.168193 | TASK [add-build-sshkey : Check to see if ssh key was already created for this build]</a>
+<a name="l33" class="l33" href="#l33">2018-08-01 00:44:07.760495 | ubuntu-xenial -&gt; localhost | ok</a>
+<a name="l34" class="l34" href="#l34">2018-08-01 00:44:07.799900 | </a>
+<a name="l35" class="l35" href="#l35">2018-08-01 00:44:07.800163 | TASK [add-build-sshkey : Create Temp SSH key]</a>
+<a name="l36" class="l36" href="#l36">2018-08-01 00:44:08.445211 | ubuntu-xenial -&gt; localhost | Generating public/private rsa key pair.</a>
+<a name="l37" class="l37" href="#l37">2018-08-01 00:44:08.445859 | ubuntu-xenial -&gt; localhost | Your identification has been saved in /var/lib/zuul/builds/f677f0312811438a8db3fa38953649c7/work/f677f0312811438a8db3fa38953649c7_id_rsa.</a>
+<a name="l38" class="l38" href="#l38">2018-08-01 00:44:08.445989 | ubuntu-xenial -&gt; localhost | Your public key has been saved in /var/lib/zuul/builds/f677f0312811438a8db3fa38953649c7/work/f677f0312811438a8db3fa38953649c7_id_rsa.pub.</a>
+<a name="l39" class="l39" href="#l39">2018-08-01 00:44:08.446099 | ubuntu-xenial -&gt; localhost | The key fingerprint is:</a>
+<a name="l40" class="l40" href="#l40">2018-08-01 00:44:08.446205 | ubuntu-xenial -&gt; localhost | SHA256:ZNugwiDo1mjkhNQt/GnNoH3XQgo+uU/jA8NtHUKCPiY zuul@ze09</a>
+<a name="l41" class="l41" href="#l41">2018-08-01 00:44:08.446320 | ubuntu-xenial -&gt; localhost | The key's randomart image is:</a>
+<a name="l42" class="l42" href="#l42">2018-08-01 00:44:08.446424 | ubuntu-xenial -&gt; localhost | +---[RSA 1024]----+</a>
+<a name="l43" class="l43" href="#l43">2018-08-01 00:44:08.446527 | ubuntu-xenial -&gt; localhost | | .o o            |</a>
+<a name="l44" class="l44" href="#l44">2018-08-01 00:44:08.446630 | ubuntu-xenial -&gt; localhost | |+  = = . .       |</a>
+<a name="l45" class="l45" href="#l45">2018-08-01 00:44:08.446732 | ubuntu-xenial -&gt; localhost | |+oo * X * .      |</a>
+<a name="l46" class="l46" href="#l46">2018-08-01 00:44:08.446834 | ubuntu-xenial -&gt; localhost | |=EoB O X B .     |</a>
+<a name="l47" class="l47" href="#l47">2018-08-01 00:44:08.446936 | ubuntu-xenial -&gt; localhost | | *o.* * S +      |</a>
+<a name="l48" class="l48" href="#l48">2018-08-01 00:44:08.447037 | ubuntu-xenial -&gt; localhost | |o    * = .       |</a>
+<a name="l49" class="l49" href="#l49">2018-08-01 00:44:08.447138 | ubuntu-xenial -&gt; localhost | |      B .        |</a>
+<a name="l50" class="l50" href="#l50">2018-08-01 00:44:08.447239 | ubuntu-xenial -&gt; localhost | |       +         |</a>
+<a name="l51" class="l51" href="#l51">2018-08-01 00:44:08.447339 | ubuntu-xenial -&gt; localhost | |        .        |</a>
+<a name="l52" class="l52" href="#l52">2018-08-01 00:44:08.447440 | ubuntu-xenial -&gt; localhost | +----[SHA256]-----+</a>
+<a name="l53" class="l53" href="#l53">2018-08-01 00:44:08.447643 | ubuntu-xenial -&gt; localhost | ok: Runtime: 0:00:00.022230</a>
+<a name="l54" class="l54" href="#l54">here is a line with some &lt;escapes&gt;</a>
+</pre>
+</body>
+<script>
+var old_highlight;
+
+function remove_highlight() {
+    if (old_highlight) {
+        items = document.getElementsByClassName(old_highlight);
+        for (var i = 0; i < items.length; i++) {
+            items[i].className = items[i].className.replace('highlight','');
+        }
+    }
+}
+
+function update_selector(highlight) {
+    var selector = document.getElementById('selector');
+    if (selector) {
+        var links = selector.getElementsByTagName('a');
+        for (var i = 0; i < links.length; i++) {
+            links[i].hash = "#" + highlight;
+        }
+    }
+}
+
+function highlight_by_hash(event) {
+    var highlight = window.location.hash.substr(1);
+    // handle changes to highlighting separate from reload
+    if (event) {
+         highlight = event.target.hash.substr(1);
+    }
+    remove_highlight();
+    if (highlight) {
+        elements = document.getElementsByClassName(highlight);
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].className += " highlight";
+        }
+        update_selector(highlight);
+        old_highlight = highlight;
+    }
+}
+document.onclick = highlight_by_hash;
+highlight_by_hash();
+</script>
+</html>
