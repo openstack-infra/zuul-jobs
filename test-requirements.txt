@@ -11,7 +11,7 @@ bashate>=0.2
 zuul-sphinx>=0.1.1
 stestr>=1.0.0 # Apache-2.0
 # For upload-logs-swift:
-openstacksdk
+openstacksdk>=0.17.1
 requests
 requestsexceptions
 bs4
