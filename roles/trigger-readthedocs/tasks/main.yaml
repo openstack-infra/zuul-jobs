@@ -13,7 +13,7 @@
     - name: Require password
       fail:
         msg: password is required when using rtd_credentials.username
-      when: rtd_credentials.rtd_password is not defined
+      when: rtd_credentials.password is not defined
 
     - name: Trigger readthedocs build webhook via authentication
       uri:
