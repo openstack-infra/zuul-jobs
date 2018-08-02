@@ -15,6 +15,12 @@
         msg: password is required when using rtd_credentials.username
       when: rtd_credentials.password is not defined
 
+    - debug:
+        msg: 'https://readthedocs.org/api/v2/webhook/{{ rtd_project_name}}/{{ rtd_webhook_id}}/'
+
+    - debug:
+        msg: 'username <{{ rtd_credentials.username }}>'
+
     - name: Trigger readthedocs build webhook via authentication
       uri:
         method: POST
@@ -24,8 +30,6 @@
         # NOTE(ianw): testing it seems the API doesn't respond with
         # 401 so this is required
         force_basic_auth: yes
-      # avoid logging any credentials
-      no_log: true
 
 - when: rtd_credentials.integration_token is defined and
         rtd_credentials.username is not defined
