@@ -130,6 +130,15 @@ class FileList(object):
     def __len__(self):
         return len(self.file_list)
 
+    @staticmethod
+    def _path_in_tree(root, path):
+        full_path = os.path.realpath(os.path.abspath(
+            os.path.expanduser(path)))
+        if not full_path.startswith(root):
+            logging.debug("Skipping path outside root: %s" % (path,))
+            return False
+        return True
+
     def add(self, file_path):
         """
         Generate a list of files to upload to swift. Recurses through
@@ -143,6 +152,9 @@ class FileList(object):
             relative_path = os.path.basename(file_path)
             file_list.append(FileDetail(file_path, relative_path))
         elif os.path.isdir(file_path):
+            original_root = os.path.realpath(os.path.abspath(
+                os.path.expanduser(file_path)))
+
             parent_dir = os.path.dirname(file_path)
             if not file_path.endswith('/'):
                 filename = os.path.basename(file_path)
@@ -150,6 +162,9 @@ class FileList(object):
                 relative_name = os.path.relpath(full_path, parent_dir)
                 file_list.append(FileDetail(full_path, relative_name,
                                             filename))
+            # TODO: this will copy the result of symlinked files, but
+            # it won't follow directory symlinks.  If we add that, we
+            # should ensure that we don't loop.
             for path, folders, files in os.walk(file_path):
                 # Sort folder in-place so that we recurse in order.
                 files.sort(key=lambda x: x.lower())
@@ -158,16 +173,18 @@ class FileList(object):
                 # and the one being currently walked.
                 relative_path = os.path.relpath(path, parent_dir)
 
-                for f in folders:
-                    filename = os.path.basename(f)
+                for filename in folders:
                     full_path = os.path.join(path, filename)
+                    if not self._path_in_tree(original_root, full_path):
+                        continue
                     relative_name = os.path.relpath(full_path, parent_dir)
                     file_list.append(FileDetail(full_path, relative_name,
                                                 filename))
 
-                for f in files:
-                    filename = os.path.basename(f)
+                for filename in files:
                     full_path = os.path.join(path, filename)
+                    if not self._path_in_tree(original_root, full_path):
+                        continue
                     relative_name = os.path.relpath(full_path, parent_dir)
                     file_detail = FileDetail(full_path, relative_name)
                     file_list.append(file_detail)
