@@ -2,10 +2,6 @@ Upload logs to a swift container
 
 This uploads logs to an OpenStack Object Store (Swift) container.
 
-.. warning::
-
-   Do not use this role, the API is not complete.
-
 **Role Variables**
 
 .. zuul:rolevar:: zuul_site_upload_logs
