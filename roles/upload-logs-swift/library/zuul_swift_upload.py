@@ -47,23 +47,74 @@ POST_ATTEMPTS = 3
 
 # Map mime types to apache icons
 APACHE_MIME_ICON_MAP = {
-    '_default': '/icons/unknown.png',
-    'application/gzip': '/icons/compressed.png',
-    'application/directory': '/icons/folder.png',
-    'text/html': '/icons/text.png',
-    'text/plain': '/icons/text.png',
+    '_default': 'unknown.png',
+    'application/gzip': 'compressed.png',
+    'application/directory': 'folder.png',
+    'text/html': 'text.png',
+    'text/plain': 'text.png',
 }
 
 # Map mime types to apache icons
 APACHE_FILE_ICON_MAP = {
-    '..': '/icons/back.png',
+    '..': 'back.png',
 }
+
+# These icon files are from the Apache project and are in the public
+# domain.
+ICON_IMAGES = {
+    'back.png': 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAAElBMVEX/'
+                '///M//+ZmZlmZmYzMzMAAACei5rnAAAAAnRSTlP/AOW3MEoAAABWSURB'
+                'VHjabdBBCgAhDEPRRpv7X3kwEMsQ//IRRC08urjRHbha5VLFUsVSxVI9'
+                'lmDh5hMpHD6n0EgoiZG0DNINpnWlcVXaRix76e1/8dddcL6nG0Ri9gHj'
+                'tgSXKYeLBgAAAABJRU5ErkJggg==',
+    'compressed.png': 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAADAFBM'
+                      'VEX//////8z//5n//2b//zP//wD/zP//zMz/zJn/zGb/zDP/zAD/'
+                      'mf//mcz/mZn/mWb/mTP/mQD/Zv//Zsz/Zpn/Zmb/ZjP/ZgD/M///'
+                      'M8z/M5n/M2b/MzP/MwD/AP//AMz/AJn/AGb/ADP/AADM///M/8zM'
+                      '/5nM/2bM/zPM/wDMzP/MzMzMzJnMzGbMzDPMzADMmf/MmczMmZnM'
+                      'mWbMmTPMmQDMZv/MZszMZpnMZmbMZjPMZgDMM//MM8zMM5nMM2bM'
+                      'MzPMMwDMAP/MAMzMAJnMAGbMADPMAACZ//+Z/8yZ/5mZ/2aZ/zOZ'
+                      '/wCZzP+ZzMyZzJmZzGaZzDOZzACZmf+ZmcyZmZmZmWaZmTOZmQCZ'
+                      'Zv+ZZsyZZpmZZmaZZjOZZgCZM/+ZM8yZM5mZM2aZMzOZMwCZAP+Z'
+                      'AMyZAJmZAGaZADOZAABm//9m/8xm/5lm/2Zm/zNm/wBmzP9mzMxm'
+                      'zJlmzGZmzDNmzABmmf9mmcxmmZlmmWZmmTNmmQBmZv9mZsxmZplm'
+                      'ZmZmZjNmZgBmM/9mM8xmM5lmM2ZmMzNmMwBmAP9mAMxmAJlmAGZm'
+                      'ADNmAAAz//8z/8wz/5kz/2Yz/zMz/wAzzP8zzMwzzJkzzGYzzDMz'
+                      'zAAzmf8zmcwzmZkzmWYzmTMzmQAzZv8zZswzZpkzZmYzZjMzZgAz'
+                      'M/8zM8wzM5kzM2YzMzMzMwAzAP8zAMwzAJkzAGYzADMzAAAA//8A'
+                      '/8wA/5kA/2YA/zMA/wAAzP8AzMwAzJkAzGYAzDMAzAAAmf8AmcwA'
+                      'mZkAmWYAmTMAmQAAZv8AZswAZpkAZmYAZjMAZgAAM/8AM8wAM5kA'
+                      'M2YAMzMAMwAAAP8AAMwAAJkAAGYAADPuAADdAAC7AACqAACIAAB3'
+                      'AABVAABEAAAiAAARAAAA7gAA3QAAuwAAqgAAiAAAdwAAVQAARAAA'
+                      'IgAAEQAAAO4AAN0AALsAAKoAAIgAAHcAAFUAAEQAACIAABHu7u7d'
+                      '3d27u7uqqqqIiIh3d3dVVVVEREQiIiIREREAAAD7CIKZAAAAJXRS'
+                      'TlP///////////////////////////////////////////////8A'
+                      'P89CTwAAAGtJREFUeNp9z9ENgDAIhOEOco+dybVuEXasFMRDY/x5'
+                      '+xJCO6Znu6kSx7BhXyjtKBWWNlwW88Loid7hFRKBXiIYCMfMEYUQ'
+                      'QohC3CjFA5nIjqx1CqlDLGR/EhM5O06yvin0ftGOyIS7lV14AsQN'
+                      'aR7rMEBYAAAAAElFTkSuQmCC',
+    'folder.png': 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAAElBMVEX/'
+                  '////zJnM//+ZZjMzMzMAAADCEvqoAAAAA3RSTlP//wDXyg1BAAAASElE'
+                  'QVR42s3KQQ6AQAhDUaXt/a/sQDrRJu7c+NmQB0e99B3lnqjT6cYx6zSI'
+                  'bV40n3D7psYMoBoz4w8/EdNYQsbGEjNxYSljXTEsA9O1pLTvAAAAAElF'
+                  'TkSuQmCC',
+    'text.png': 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAAD1BMVEX/'
+                '///M//+ZmZkzMzMAAABVsTOVAAAAAnRSTlP/AOW3MEoAAABISURBVHja'
+                'tcrRCgAgCENRbf7/N7dKomGvngjhMsPLD4NdMPwia438NRIyxsaL/XQZ'
+                'hyxpkC6zyjLXGVXnkhqWJWIIrOgeinECLlUCjBCqNQoAAAAASUVORK5C'
+                'YII=',
+    'unknown.png': 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAAD1BMVEX/'
+                   '///M//+ZmZkzMzMAAABVsTOVAAAAAnRSTlP/AOW3MEoAAABYSURBVHja'
+                   'ncvRDoAgDEPRruX/v1kmNHPBxMTLyzgD6FmsILg56g2hQnJkOco4yZhq'
+                   'tN5nYd5Zq0LsHblwxwP9GTCWsaGtoelANKzOlz/RfaLYUmLE6E28ALlN'
+                   'AupSdoFsAAAAAElFTkSuQmCC'}
 
 
 def get_mime_icon(mime, filename=''):
-    return (APACHE_FILE_ICON_MAP.get(filename) or
+    icon = (APACHE_FILE_ICON_MAP.get(filename) or
             APACHE_MIME_ICON_MAP.get(mime) or
             APACHE_MIME_ICON_MAP['_default'])
+    return "data:image/png;base64,%s" % ICON_IMAGES[icon]
 
 
 def sizeof_fmt(num, suffix='B'):
