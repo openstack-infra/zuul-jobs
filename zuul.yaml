@@ -296,6 +296,7 @@
       - bindep.txt
       - doc/requirements.txt
       - test-requirements.txt
+      - tox.ini
 
 - job:
     name: trigger-readthedocs
