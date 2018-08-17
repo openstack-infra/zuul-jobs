@@ -37,12 +37,18 @@ import time
 import zlib
 import collections
 
-from ansible.module_utils.basic import AnsibleModule
 import openstack
 import requests
 import requests.exceptions
 import requestsexceptions
 
+from ansible.module_utils.basic import AnsibleModule
+
+try:
+    # Python 3.3+
+    from collections.abc import Sequence
+except ImportError:
+    from collections import Sequence
 
 mimetypes.init()
 mimetypes.add_type('text/plain', '.yaml')
@@ -175,16 +181,16 @@ class FileDetail():
         return '<%s %s>' % (t, self.relative_path)
 
 
-class FileList():
+class FileList(Sequence):
     def __init__(self):
         self.file_list = []
         self.file_list.append(FileDetail(None, '', ''))
 
-    def __iter__(self):
-        return iter(self.file_list)
+    def __getitem__(self, item):
+        return self.file_list.__getitem__(item)
 
     def __len__(self):
-        return len(self.file_list)
+        return self.file_list.__len__()
 
     @staticmethod
     def _path_in_tree(root, path):
