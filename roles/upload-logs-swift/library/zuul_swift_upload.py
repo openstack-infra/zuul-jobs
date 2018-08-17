@@ -282,87 +282,23 @@ class FileList(Sequence):
 
 
 class Indexer():
-    """generates index.html files if requested."""
+    """Index a FileList
 
-    def __init__(self, file_list, create_parent_links=True,
-                 create_topdir_parent_link=False,
-                 append_footer='index_footer.html'):
+    Functions to generate indexes and other collated data for a
+    FileList
 
+     - make_indexes() : make index.html in folders
+    """
+    def __init__(self, file_list):
         '''
         Args:
-            file_list (FileList): A FileList object to be updated
-             with index files for each directory.
-            create_parent_links (bool):
-            create_topdir_parent_link (bool):
-            append_footer (str):
+            file_list (FileList): A FileList object with all files
+             to be indexed.
         '''
         assert isinstance(file_list, FileList)
         self.file_list = file_list
-        self.create_parent_links = create_parent_links
-        self.create_topdir_parent_link = create_topdir_parent_link
-        self.append_footer = append_footer
-        self.index_filename = 'index.html'
 
-    def make_indexes(self):
-        '''Make index files
-
-        Return:
-            No value, the self.file_list will be updated
-        '''
-        folders = collections.OrderedDict()
-        for f in self.file_list:
-            if f.folder:
-                folders[f.relative_path] = []
-                folder = os.path.dirname(os.path.dirname(
-                    f.relative_path + '/'))
-                if folder == '/':
-                    folder = ''
-            else:
-                folder = os.path.dirname(f.relative_path)
-            folders[folder].append(f)
-
-        indexes = {}
-        parent_file_detail = FileDetail(None, '..', '..')
-        for folder, files in folders.items():
-            # Don't add the pseudo-top-directory
-            if files and files[0].full_path is None:
-                files = files[1:]
-                if self.create_topdir_parent_link:
-                    files = [parent_file_detail] + files
-            elif self.create_parent_links:
-                files = [parent_file_detail] + files
-
-            # Do generate a link to the parent directory
-            full_path = self.make_index_file(files, 'Index of %s' % (folder,),
-                                             self.file_list.get_tempdir())
-
-            if full_path:
-                filename = os.path.basename(full_path)
-                relative_name = os.path.join(folder, filename)
-                indexes[folder] = FileDetail(full_path, relative_name)
-
-        # This appends the index file at the end of the group of files
-        # for each directory.
-        new_list = []
-        last_dirname = None
-        for f in reversed(list(self.file_list)):
-            if f.folder:
-                relative_path = f.relative_path + '/'
-            else:
-                relative_path = f.relative_path
-            dirname = os.path.dirname(relative_path)
-            if dirname == '/':
-                dirname = ''
-            if dirname != last_dirname:
-                index = indexes.pop(dirname, None)
-                if index:
-                    new_list.append(index)
-                    last_dirname = dirname
-            new_list.append(f)
-        new_list.reverse()
-        self.file_list.file_list = new_list
-
-    def make_index_file(self, folder_links, title, tempdir):
+    def _make_index_file(self, folder_links, title, tempdir, append_footer):
         """Writes an index into a file for pushing"""
         for file_details in folder_links:
             # Do not generate an index file if one exists already.
@@ -370,12 +306,13 @@ class Indexer():
             # content like python coverage info.
             if self.index_filename == file_details.filename:
                 return
-        index_content = self.generate_log_index(folder_links, title)
+        index_content = self._generate_log_index(
+            folder_links, title, append_footer)
         fd = open(os.path.join(tempdir, self.index_filename), 'w')
         fd.write(index_content)
         return os.path.join(tempdir, self.index_filename)
 
-    def generate_log_index(self, folder_links, title):
+    def _generate_log_index(self, folder_links, title, append_footer):
         """Create an index of logfiles and links to them"""
 
         output = '<html><head><title>%s</title></head><body>\n' % title
@@ -403,8 +340,8 @@ class Indexer():
             output += '<td style="text-align: right">%s</td>' % size
             output += '</tr>\n'
 
-            if (self.append_footer and
-                self.append_footer in file_details.filename):
+            if (append_footer and
+                append_footer in file_details.filename):
                 file_details_to_append = file_details
 
         output += '</table>'
@@ -419,6 +356,78 @@ class Indexer():
 
         output += '</body></html>\n'
         return output
+
+    def make_indexes(self, create_parent_links=True,
+                     create_topdir_parent_link=False,
+                     append_footer='index_footer.html'):
+        '''Make index.html files
+
+        Iterate the file list and crete index.html files for folders
+
+        Args:
+          create_parent_links (bool): Create parent links
+          create_topdir_parent_link (bool): Create topdir parent link
+          append_footer (str): Filename of a footer to append to each
+             generated page
+
+        Return:
+            No value, the self.file_list will be updated
+        '''
+        self.index_filename = 'index.html'
+
+        folders = collections.OrderedDict()
+        for f in self.file_list:
+            if f.folder:
+                folders[f.relative_path] = []
+                folder = os.path.dirname(os.path.dirname(
+                    f.relative_path + '/'))
+                if folder == '/':
+                    folder = ''
+            else:
+                folder = os.path.dirname(f.relative_path)
+            folders[folder].append(f)
+
+        indexes = {}
+        parent_file_detail = FileDetail(None, '..', '..')
+        for folder, files in folders.items():
+            # Don't add the pseudo-top-directory
+            if files and files[0].full_path is None:
+                files = files[1:]
+                if create_topdir_parent_link:
+                    files = [parent_file_detail] + files
+            elif create_parent_links:
+                files = [parent_file_detail] + files
+
+            # Do generate a link to the parent directory
+            full_path = self._make_index_file(files, 'Index of %s' % (folder,),
+                                              self.file_list.get_tempdir(),
+                                              append_footer)
+
+            if full_path:
+                filename = os.path.basename(full_path)
+                relative_name = os.path.join(folder, filename)
+                indexes[folder] = FileDetail(full_path, relative_name)
+
+        # This appends the index file at the end of the group of files
+        # for each directory.
+        new_list = []
+        last_dirname = None
+        for f in reversed(list(self.file_list)):
+            if f.folder:
+                relative_path = f.relative_path + '/'
+            else:
+                relative_path = f.relative_path
+            dirname = os.path.dirname(relative_path)
+            if dirname == '/':
+                dirname = ''
+            if dirname != last_dirname:
+                index = indexes.pop(dirname, None)
+                if index:
+                    new_list.append(index)
+                    last_dirname = dirname
+            new_list.append(f)
+        new_list.reverse()
+        self.file_list.file_list = new_list
 
 
 class DeflateFilter():
@@ -585,18 +594,17 @@ def run(cloud, container, files,
 
     # Create the objects to make sure the arguments are sound.
     with FileList() as file_list:
-        indexer = Indexer(file_list,
-                          create_parent_links=parent_links,
-                          create_topdir_parent_link=topdir_parent_link,
-                          append_footer=footer)
-
         # Scan the files.
         for file_path in files:
             file_list.add(file_path)
 
+        indexer = Indexer(file_list)
+
         # (Possibly) make indexes.
         if indexes:
-            indexer.make_indexes()
+            indexer.make_indexes(create_parent_links=parent_links,
+                                 create_topdir_parent_link=topdir_parent_link,
+                                 append_footer=footer)
 
         logging.debug("List of files prepared to upload:")
         for x in file_list:
