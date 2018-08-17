@@ -156,8 +156,8 @@ class TestFileList(testtools.TestCase):
         '''Test index generation'''
         with FileList() as fl:
             fl.add(os.path.join(FIXTURE_DIR, 'logs'))
-            ix = Indexer()
-            ix.make_indexes(fl)
+            ix = Indexer(fl)
+            ix.make_indexes()
 
             self.assert_files(fl, [
                 ('', 'application/directory', None),
@@ -207,8 +207,8 @@ class TestFileList(testtools.TestCase):
         '''Test index generation with a trailing slash'''
         with FileList() as fl:
             fl.add(os.path.join(FIXTURE_DIR, 'logs/'))
-            ix = Indexer()
-            ix.make_indexes(fl)
+            ix = Indexer(fl)
+            ix.make_indexes()
 
             self.assert_files(fl, [
                 ('', 'application/directory', None),
@@ -257,9 +257,10 @@ class TestFileList(testtools.TestCase):
         '''Test index generation creates topdir parent link'''
         with FileList() as fl:
             fl.add(os.path.join(FIXTURE_DIR, 'logs/'))
-            ix = Indexer(create_parent_links=True,
+            ix = Indexer(fl,
+                         create_parent_links=True,
                          create_topdir_parent_link=True)
-            ix.make_indexes(fl)
+            ix.make_indexes()
 
             self.assert_files(fl, [
                 ('', 'application/directory', None),
@@ -311,9 +312,10 @@ class TestFileList(testtools.TestCase):
         '''Test index generation creates topdir parent link'''
         with FileList() as fl:
             fl.add(os.path.join(FIXTURE_DIR, 'logs/'))
-            ix = Indexer(create_parent_links=False,
+            ix = Indexer(fl,
+                         create_parent_links=False,
                          create_topdir_parent_link=False)
-            ix.make_indexes(fl)
+            ix.make_indexes()
 
             self.assert_files(fl, [
                 ('', 'application/directory', None),
