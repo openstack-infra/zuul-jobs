@@ -85,8 +85,8 @@ highlight_by_hash();
 
 def run(inpath, outpath):
     if inpath.endswith('.gz'):
-        infile = gzip.open(inpath, 'r')
-        outfile = gzip.open(outpath, 'w')
+        infile = gzip.open(inpath, 'rt')
+        outfile = gzip.open(outpath, 'wt')
     else:
         infile = open(inpath, 'r')
         outfile = open(outpath, 'w')
