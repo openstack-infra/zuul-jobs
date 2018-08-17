@@ -14,12 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
+# Make coding more python3-ish
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
+import os
 import testtools
 import fixtures
-from bs4 import BeautifulSoup
 
+from bs4 import BeautifulSoup
 from .zuul_swift_upload import FileList, Indexer
 
 

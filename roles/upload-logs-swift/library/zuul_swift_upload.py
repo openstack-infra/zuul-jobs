@@ -15,6 +15,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# Make coding more python3-ish
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
+
 """
 Utility to upload files to swift
 """
@@ -127,7 +132,7 @@ def sizeof_fmt(num, suffix='B'):
     return "%.1f%s%s" % (num, 'Y', suffix)
 
 
-class FileDetail(object):
+class FileDetail():
     """
     Used to generate indexes with links or as the file path
     to push to swift.
@@ -170,7 +175,7 @@ class FileDetail(object):
         return '<%s %s>' % (t, self.relative_path)
 
 
-class FileList(object):
+class FileList():
     def __init__(self):
         self.file_list = []
         self.file_list.append(FileDetail(None, '', ''))
@@ -243,7 +248,7 @@ class FileList(object):
         self.file_list += file_list
 
 
-class Indexer(object):
+class Indexer():
     """generates index.html files if requested."""
 
     def __init__(self, create_parent_links=True,
@@ -373,7 +378,7 @@ class Indexer(object):
         return output
 
 
-class DeflateFilter(object):
+class DeflateFilter():
     chunk_size = 16384
 
     def __init__(self, infile):
@@ -401,7 +406,7 @@ class DeflateFilter(object):
         return ret
 
 
-class Uploader(object):
+class Uploader():
     def __init__(self, cloud, container, prefix=None, delete_after=None,
                  public=True):
         if isinstance(cloud, dict):
