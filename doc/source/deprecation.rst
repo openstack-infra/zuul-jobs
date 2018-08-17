@@ -32,6 +32,18 @@ Before deprecating a feature in Zuul which is used by `zuul-jobs`, the
 usage of the feature must be removed from `zuul-jobs` according to the
 deprecation policy described above.
 
+Python Version Policy
+=====================
+
+``zuul-jobs`` targets Python 2.7 onwards and Python 3.5 onwards (note
+this differs slightly from Ansible upstream, where the policy is 2.6
+onwards unless libraries depend on newer features.  `zuul-jobs` does
+not support Python 2.6).
+
+Library code should be written to be compatible with both.  There are
+some tips on this in `Ansible and Python 3
+<https://docs.ansible.com/ansible/2.5/dev_guide/developing_python_3.html>`__.
+
 .. _zuul-announce: http://lists.zuul-ci.org/cgi-bin/mailman/listinfo/zuul-announce
 .. _zuul-discuss: http://lists.zuul-ci.org/cgi-bin/mailman/listinfo/zuul-discuss
 
