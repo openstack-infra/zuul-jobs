@@ -28,9 +28,9 @@ FIXTURE_DIR = os.path.join(os.path.dirname(__file__),
 
 class TestHTMLify(testtools.TestCase):
 
-    def _test_file(self, fn):
+    def _test_file(self, fn, ref_fn):
         in_path = os.path.join(FIXTURE_DIR, 'in', fn)
-        ref_path = os.path.join(FIXTURE_DIR, 'reference', fn)
+        ref_path = os.path.join(FIXTURE_DIR, 'reference', ref_fn)
         out_root = self.useFixture(fixtures.TempDir()).path
         out_path = os.path.join(out_root, fn)
         run(in_path, out_path)
@@ -45,4 +45,5 @@ class TestHTMLify(testtools.TestCase):
         self.assertEqual(reference_data, generated_data)
 
     def test_htmlify(self):
-        self._test_file('job-output.txt')
+        self._test_file('job-output.txt', 'job-output.txt')
+        self._test_file('job-output.txt.gz', 'job-output.txt')
