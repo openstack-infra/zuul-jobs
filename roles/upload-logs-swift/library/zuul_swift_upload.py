@@ -182,9 +182,20 @@ class FileDetail():
 
 
 class FileList(Sequence):
+    '''A collection of FileDetail objects
+
+    This is a list-like group of FileDetail objects, intended to be
+    used as a context manager around the upload process.
+    '''
     def __init__(self):
         self.file_list = []
         self.file_list.append(FileDetail(None, '', ''))
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
 
     def __getitem__(self, item):
         return self.file_list.__getitem__(item)
@@ -266,6 +277,16 @@ class Indexer():
         self.index_filename = 'index.html'
 
     def make_indexes(self, file_list):
+        '''Make index files
+
+        Args:
+            file_list (FileList): A FileList object to be updated
+             with index files for each directory.
+        Return:
+            No value, the file_list will be updated
+        '''
+        assert isinstance(file_list, FileList)
+
         folders = collections.OrderedDict()
         for f in file_list:
             if f.folder:
@@ -299,8 +320,7 @@ class Indexer():
 
         # This appends the index file at the end of the group of files
         # for each directory.
-        ret_file_list = FileList()
-        newlist = []
+        new_list = []
         last_dirname = None
         for f in reversed(list(file_list)):
             if f.folder:
@@ -313,13 +333,11 @@ class Indexer():
             if dirname != last_dirname:
                 index = indexes.pop(dirname, None)
                 if index:
-                    newlist.append(index)
+                    new_list.append(index)
                     last_dirname = dirname
-            newlist.append(f)
-        newlist.reverse()
-        ret_file_list.file_list = newlist
-
-        return ret_file_list
+            new_list.append(f)
+        new_list.reverse()
+        file_list.file_list = new_list
 
     def make_index_file(self, folder_links, title):
         """Writes an index into a file for pushing"""
@@ -547,33 +565,33 @@ def run(cloud, container, files,
             prefix = '/'.join(parts[1:])
 
     # Create the objects to make sure the arguments are sound.
-    file_list = FileList()
-    indexer = Indexer(create_parent_links=parent_links,
-                      create_topdir_parent_link=topdir_parent_link,
-                      append_footer=footer)
+    with FileList() as file_list:
+        indexer = Indexer(create_parent_links=parent_links,
+                          create_topdir_parent_link=topdir_parent_link,
+                          append_footer=footer)
 
-    # Scan the files.
-    for file_path in files:
-        file_list.add(file_path)
+        # Scan the files.
+        for file_path in files:
+            file_list.add(file_path)
 
-    # (Possibly) make indexes.
-    if indexes:
-        file_list = indexer.make_indexes(file_list)
+        # (Possibly) make indexes.
+        if indexes:
+            indexer.make_indexes(file_list)
 
-    logging.debug("List of files prepared to upload:")
-    for x in file_list:
-        logging.debug(x)
+        logging.debug("List of files prepared to upload:")
+        for x in file_list:
+            logging.debug(x)
 
-    # Do no connect to swift or do any uploading in a dry run
-    if dry_run:
-        # No URL is known, so return nothing
-        return
+        # Do no connect to swift or do any uploading in a dry run
+        if dry_run:
+            # No URL is known, so return nothing
+            return
 
-    # Upload.
-    uploader = Uploader(cloud, container, prefix, delete_after,
-                        public)
-    uploader.upload(file_list)
-    return uploader.url
+        # Upload.
+        uploader = Uploader(cloud, container, prefix, delete_after,
+                            public)
+        uploader.upload(file_list)
+        return uploader.url
 
 
 def ansible_main():
