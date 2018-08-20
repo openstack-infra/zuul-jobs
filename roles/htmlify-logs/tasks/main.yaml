@@ -12,3 +12,4 @@
     input: "{{ item.path }}"
     output: "{{ item.path | regex_replace('\\.txt', '.html') }}"
   loop: "{{ htmlify_files.files }}"
+  no_log: true
