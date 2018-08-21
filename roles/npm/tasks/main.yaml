@@ -10,6 +10,7 @@
   # framebuffer is set up for doing browser tests.
   environment:
     DISPLAY: ':99'
+    CI: 'true'
   args:
     chdir: "{{ zuul_work_dir }}"
 
@@ -20,5 +21,6 @@
   # framebuffer is set up for doing browser tests.
   environment:
     DISPLAY: ':99'
+    CI: 'true'
   args:
     chdir: "{{ zuul_work_dir }}"
