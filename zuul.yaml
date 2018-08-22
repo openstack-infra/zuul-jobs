@@ -97,14 +97,22 @@
 
 - job:
     name: tox-docs
-    parent: tox
+    # This is not parented to tox since we do not need
+    # the roles from its parent unittests.
     description: |
       Run documentation unit tests.
 
       Uses tox with the ``docs`` environment.
     vars:
       tox_envlist: docs
-    post-run: playbooks/tox/docs-post.yaml
+      bindep_profile: compile doc
+    run: playbooks/tox/run.yaml
+    pre-run:
+        - playbooks/tox-docs/pre.yaml
+        - playbooks/tox/pre.yaml
+    post-run:
+        - playbooks/tox/docs-post.yaml
+        - playbooks/tox/post.yaml
     success-url: html/
 
 - job:

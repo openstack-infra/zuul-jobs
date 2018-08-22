@@ -1,3 +1,5 @@
 ---
 bindep_dir: "{{ zuul.project.src_dir }}"
 bindep_profile: compile test
+
+zuul_work_dir: "{{ zuul.project.src_dir }}"
