@@ -21,6 +21,6 @@ with the inventory for the job.
 .. zuul:rolevar:: write_inventory_exclude_hostvars
    :type: list
 
-   A list of facts about the host to include.  By default, all
+   A list of facts about the host to exclude.  By default, all
    variables about a host will be included.  To exclude certain
    variables, list them here.
