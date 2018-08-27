@@ -20,6 +20,7 @@ from ansible.module_utils.basic import AnsibleModule
 
 # The list of variables we might include
 VARS = [
+    'ansible_python_interpreter',
     'ansible_connection',
     'ansible_host',
     'ansible_port',
