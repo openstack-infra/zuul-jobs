@@ -56,6 +56,14 @@ xenial:
     region: GRA1
 """)
 
+GROUPS_INPUT = yaml.safe_load("""
+all: []
+ungrouped: []
+puppet:
+  - bionic
+  - xenial
+""")
+
 
 class TestWriteInventory(testtools.TestCase):
     def assertOutput(self, dest, ref):
@@ -67,10 +75,18 @@ class TestWriteInventory(testtools.TestCase):
         '''Test passing all variables'''
         dest = self.useFixture(fixtures.TempDir()).path
         dest = os.path.join(dest, 'out.yaml')
-        run(dest, INPUT, None, None)
+        run(dest, INPUT, GROUPS_INPUT, None, None)
 
         self.assertOutput(dest, {
             'all': {
+                'children': {
+                    'puppet': {
+                        'hosts': {
+                            'bionic': None,
+                            'xenial': None,
+                        },
+                    },
+                },
                 'hosts': {
                     'bionic': {
                         "ansible_connection": "ssh",
@@ -92,10 +108,18 @@ class TestWriteInventory(testtools.TestCase):
         '''Test incuding vars'''
         dest = self.useFixture(fixtures.TempDir()).path
         dest = os.path.join(dest, 'out.yaml')
-        run(dest, INPUT, ['ansible_host'], None)
+        run(dest, INPUT, GROUPS_INPUT, ['ansible_host'], None)
 
         self.assertOutput(dest, {
             'all': {
+                'children': {
+                    'puppet': {
+                        'hosts': {
+                            'bionic': None,
+                            'xenial': None,
+                        },
+                    },
+                },
                 'hosts': {
                     'bionic': {
                         "ansible_host": "104.130.217.77",
@@ -111,10 +135,18 @@ class TestWriteInventory(testtools.TestCase):
         '''Test passing all variables'''
         dest = self.useFixture(fixtures.TempDir()).path
         dest = os.path.join(dest, 'out.yaml')
-        run(dest, INPUT, None, ['ansible_user'])
+        run(dest, INPUT, GROUPS_INPUT, None, ['ansible_user'])
 
         self.assertOutput(dest, {
             'all': {
+                'children': {
+                    'puppet': {
+                        'hosts': {
+                            'bionic': None,
+                            'xenial': None,
+                        },
+                    },
+                },
                 'hosts': {
                     'bionic': {
                         "ansible_connection": "ssh",

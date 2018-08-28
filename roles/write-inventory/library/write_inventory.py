@@ -28,9 +28,23 @@ VARS = [
 ]
 
 
-def run(dest, hostvars, include, exclude):
+def run(dest, hostvars, groups, include, exclude):
+    children = {}
+    for group, hostnames in groups.items():
+        if group == 'all' or group == 'ungrouped':
+            continue
+        children[group] = {}
+        children[group]['hosts'] = {}
+        for host in hostnames:
+            children[group]['hosts'][host] = None
+
     out_all = {}
-    out = {'all': {'hosts': out_all}}
+    out = {
+        'all': {
+            'children': children,
+            'hosts': out_all
+        }
+    }
     for host, hvars in hostvars.items():
         d = {}
         for v in VARS:
@@ -54,6 +68,7 @@ def ansible_main():
         argument_spec=dict(
             dest=dict(required=True, type='path'),
             hostvars=dict(required=True, type='raw'),
+            groups=dict(required=True, type='raw'),
             include_hostvars=dict(type='list'),
             exclude_hostvars=dict(type='list'),
         )
@@ -63,10 +78,11 @@ def ansible_main():
 
     dest = p.get('dest')
     hostvars = p.get('hostvars')
+    groups = p.get('groups')
     include = p.get('include_hostvars')
     exclude = p.get('exclude_hostvars')
 
-    run(dest, hostvars, include, exclude)
+    run(dest, hostvars, groups, include, exclude)
 
     module.exit_json(changed=True)
 
