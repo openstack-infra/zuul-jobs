@@ -1,9 +1,15 @@
+- name: Check for gettext installed
+  command: bash -c "type gettext"
+  ignore_errors: yes
+  register: gettext_exists
+
 # TODO(mordred) Make this a list of known binary depends that sphinx needs
 - name: Install gettext package
   package:
     name: gettext
     state: present
   become: yes
+  when: gettext_exists.rc != 0
 
 - name: Find Constraints File
   include_role:
