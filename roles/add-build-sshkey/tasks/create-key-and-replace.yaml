@@ -29,8 +29,11 @@
     mode: 0644
     force: no
 
-- name: Remove all keys from local agent
-  command: ssh-add -D
+- name: Remove master key from local agent
+  # The master key has a filename, all others (e.g., per-project keys)
+  # have "(stdin)" as a comment.
+  sshagent_remove_keys:
+    remove: '^(?!\(stdin\)).*'
   delegate_to: localhost
   run_once: true
 
