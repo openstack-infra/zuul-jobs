@@ -307,13 +307,6 @@
       - tox.ini
 
 - job:
-    name: trigger-readthedocs
-    description: Send a trigger to the readthedocs url to tell it to build docs
-    nodeset:
-      nodes: []
-    run: playbooks/python/readthedocs.yaml
-
-- job:
     name: multinode
     abstract: true
     description: |
