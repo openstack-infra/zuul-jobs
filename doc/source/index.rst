@@ -4,7 +4,7 @@
    :maxdepth: 1
 
    install
-   deprecation
+   policy
    jobs
    roles
 
