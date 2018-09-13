@@ -24,10 +24,11 @@
       debug:
         msg: |
           # Node Information
-          Hostname: {{ hostvars[item]['ansible_hostname'] }}
+          Hostname: {{ hostvars[item]['ansible_hostname']|default('unknown') }}
           Provider: {{ hostvars[item]['nodepool']['provider'] }}
           Label: {{ hostvars[item]['nodepool']['label'] }}
           {% if hostvars[item]['nodepool']['interface_ip'] is defined %}
           Interface IP: {{ hostvars[item]['nodepool']['interface_ip'] }}
           {% endif %}
       loop: "{{ query('inventory_hostnames', 'all,!localhost') }}"
+      ignore_errors: yes
