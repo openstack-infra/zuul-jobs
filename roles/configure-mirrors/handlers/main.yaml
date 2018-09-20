@@ -27,3 +27,7 @@
   with_items:
     - zypper clean
     - zypper refresh
+
+- name: Update Gentoo cache
+  become: yes
+  command: emerge-webrsync
