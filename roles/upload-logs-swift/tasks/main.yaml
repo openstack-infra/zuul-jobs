@@ -34,7 +34,7 @@
   zuul_return:
     data:
       zuul:
-        log_url: "{{ upload_results.url }}"
+        log_url: "{{ upload_results.url }}/"
   when: upload_results is defined
   tags:
     # Avoid "no action detected in task" linter error
