@@ -1,3 +1,4 @@
 - name: Update Gentoo repository
+  command: echo "Syncs the Gentoo repository"
   notify:
     - Update Gentoo cache
