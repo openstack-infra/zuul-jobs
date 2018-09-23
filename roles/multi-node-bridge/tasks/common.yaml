@@ -17,6 +17,17 @@
     - ansible_distribution != "Fedora"
   register: centos_ovs
 
+- name: Set package.use values for OVS on Gentoo
+  become: yes
+  lineinfile:
+    path: /etc/portage/package.use/ovs
+    line: "{{ item.line }}"
+  with_items:
+    - { line: 'dev-python/twisted conch  # for openvswitch' }
+    - { line: 'net-misc/openvswitch -modules  # ovs/gre are staticly built' }
+  when:
+    - ansible_distribution == 'Gentoo'
+
 - name: Install openvswitch
   become: yes
   package:
