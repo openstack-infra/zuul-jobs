@@ -22,6 +22,7 @@
   lineinfile:
     path: /etc/portage/package.use/ovs
     line: "{{ item.line }}"
+    create: yes
   with_items:
     - { line: 'dev-python/twisted conch  # for openvswitch' }
     - { line: 'net-misc/openvswitch -modules  # ovs/gre are staticly built' }
