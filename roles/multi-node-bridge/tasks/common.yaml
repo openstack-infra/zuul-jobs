@@ -73,8 +73,11 @@
         # created through this system. This makes our MTU determination mostly
         # idempotent allowing us to create multiple overlays without
         # perpetually smaller MTUs.
+        # find is used instead of ls as we can select the 'link' type with find
+        # only the link type is needed because files do not have interface
+        # properties and directories are not used for this area of /sys
         SMALLEST_MTU=""
-        for X in $(ls /sys/class/net) ; do
+        for X in $(find /sys/class/net/ -maxdepth 1 -type l -exec basename {} ';') ; do
             MAC_TYPE=$(cat "/sys/class/net/${X}/addr_assign_type")
             if [ "$MAC_TYPE" -ne "0" ] ; then
                 # Type 0 is a permanent address implying a "real"
