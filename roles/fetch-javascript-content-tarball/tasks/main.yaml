@@ -1,3 +1,12 @@
+- name: Create tarball
+  shell: "tar czf {{ zuul_work_dir }}/build.tgz *"
+  args:
+    chdir: "{{ zuul_work_dir }}/{{ create_tarball_directory }}"
+  when: create_tarball_directory is defined
+  tags:
+    # Ignore ANSIBLE0006: tar used in place of unarchive module
+    - skip_ansible_lint
+
 - name: Rename tarball for uploading
   shell: |
     mkdir -p dist
