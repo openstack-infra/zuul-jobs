@@ -1,2 +1,3 @@
 zuul_work_dir: "{{ zuul.project.src_dir }}"
 release_python: "python"
+bdist_wheel_xargs: ""
