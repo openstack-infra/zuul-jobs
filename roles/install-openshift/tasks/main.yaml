@@ -1,0 +1,44 @@
+- name: Install origin repository
+  yum:
+    name: "{{ origin_repo }}"
+  become: yes
+
+- name: Install requirements
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - origin
+    - docker
+  become: yes
+
+- name: Fix docker start options
+  lineinfile:
+    dest: /etc/sysconfig/docker
+    regexp: "^OPTIONS="
+    line: "OPTIONS='--selinux-enabled --log-driver=journald --signature-verification=false --insecure-registry 172.30.0.0/16'"
+  become: yes
+
+# See: https://github.com/openshift/origin/issues/15038
+- name: Fix rhel secret issue
+  file:
+    path: /usr/share/rhel/secrets
+    state: absent
+  become: yes
+
+- name: Start docker service
+  service:
+    name: docker
+    state: started
+  become: yes
+
+- name: Pull origin images
+  command: "docker pull docker.io/openshift/{{ item }}:{{ origin_version }}"
+  with_items:
+    - origin-web-console
+    - origin-docker-registry
+    - origin-haproxy-router
+    - origin-deployer
+    - origin-sti-builder
+    - origin-pod
+    - origin
+  become: yes

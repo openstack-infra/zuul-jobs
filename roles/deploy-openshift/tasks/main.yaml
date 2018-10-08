@@ -1,0 +1,24 @@
+---
+- name: Deploy local openshift cluster
+  command: "oc cluster up --insecure-skip-tls-verify=true --public-hostname={{ ansible_hostname }}"
+  become: yes
+
+- name: Create zuul user .kube directory
+  file:
+    path: "{{ ansible_user_dir }}/.kube"
+    state: directory
+
+- name: Setup zuul user kube config
+  copy:
+    src: /root/.kube/config
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+    owner: "{{ ansible_env.USER }}"
+    mode: 0600
+    remote_src: yes
+  become: yes
+
+- name: Login as system:admin
+  command: oc login -u system:admin
+
+- name: Who am i
+  command: oc whoami -c
