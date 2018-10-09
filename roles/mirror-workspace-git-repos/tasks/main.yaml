@@ -12,6 +12,13 @@
     chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
   with_dict: "{{ zuul.projects }}"
   delegate_to: localhost
+  # We occasionally see git pushes in the middle of this loop fail then
+  # subsequent pushes for other repos succeed. The entire loop ends up
+  # failing because one of the pushes failed. Mitigate this by retrying
+  # on failure.
+  register: git_push
+  until: git_push is success
+  retries: 3
   # ANSIBLE0006: Skip linting since it triggers on the "git" command,
   # but push is not supported by ansible git module.
   tags:
