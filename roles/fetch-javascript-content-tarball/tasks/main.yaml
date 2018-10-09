@@ -1,5 +1,5 @@
 - name: Create tarball
-  shell: "tar czf {{ zuul_work_dir }}/build.tgz *"
+  shell: "tar czf {{ ansible_user_dir }}/{{ zuul_work_dir }}/build.tgz *"
   args:
     chdir: "{{ zuul_work_dir }}/{{ create_tarball_directory }}"
   when: create_tarball_directory is defined
