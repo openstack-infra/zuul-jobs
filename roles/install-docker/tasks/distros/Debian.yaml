@@ -1,5 +1,5 @@
 - name: Install docker
   become: yes
   package:
-    name: docker-engine
+    name: docker.io
     state: present
