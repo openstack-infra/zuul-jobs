@@ -1,0 +1,6 @@
+- name: Login into Ansible Galaxy
+  command: "{{ ansible_galaxy_executable }} -s {{ ansible_galaxy_server }} login --github-token {{ galaxy_info.token }}"
+  no_log: True
+
+- name: Import role into Ansible Galaxy
+  command: "{{ ansible_galaxy_executable }} -s {{ ansible_galaxy_server }} import --branch {{ ansible_galaxy_branch }} {{ zuul.project['name'].split('/')[0] }} {{ zuul.project['short_name'] }}"
