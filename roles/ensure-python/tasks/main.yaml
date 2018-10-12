@@ -1,0 +1,6 @@
+- name: Install specified version of python interpreter and development files
+  when: python_version is defined
+  package:
+    name: python{{ python_version }}-dev
+    state: present
+  become: yes
