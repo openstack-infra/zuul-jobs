@@ -40,7 +40,7 @@ intended to be used before output fetching in a base job's post-playbook.
    `zuul_copy_output` and it won't be applied to files contained in
    folders listed in `zuul_copy_output`.
 
-   Example:
+   Example::
 
      extensions_to_txt:
        conf: True

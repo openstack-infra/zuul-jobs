@@ -1,6 +1,6 @@
 Build sdist and wheel for Python projects.
 
-** Role Variables **
+**Role Variables**
 
 .. zuul:rolevar:: release_python
    :default: python
