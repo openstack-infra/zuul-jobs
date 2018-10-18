@@ -57,6 +57,3 @@
       zuul:
         log_url: "{{ zuul_log_url }}/{{ zuul_log_path }}/"
   when: zuul_log_url is defined
-  tags:
-    # Avoid "no action detected in task" linter error
-    - skip_ansible_lint
