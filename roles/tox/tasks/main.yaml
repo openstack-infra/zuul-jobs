@@ -36,26 +36,3 @@
     chdir: "{{ zuul_work_dir }}"
   environment: "{{ tox_environment|combine(tox_constraints_env|default({})) }}"
   command: "{{ tox_executable }} -e{{ tox_envlist }} {{ tox_extra_args }}"
-  failed_when: false
-  register: tox_output
-
-- name: Look for output
-  tox_parse_output:
-    tox_output: '{{ tox_output.stdout }}'
-  register: file_comments
-
-- name: Return file comments to Zuul
-  when: file_comments.file_comments
-  delegate_to: localhost
-  zuul_return:
-    data:
-      zuul:
-        file_comments: '{{ file_comments.file_comments }}'
-  tags:
-    # Avoid "no action detected in task" linter error
-    - skip_ansible_lint
-
-- name: Return tox status
-  fail:
-    msg: 'tox exited with return code {{ tox_output.rc }}'
-  when: tox_output.rc != 0
