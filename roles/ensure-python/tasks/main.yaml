@@ -1,5 +1,7 @@
 - name: Install specified version of python interpreter and development files
-  when: python_version is defined
+  when:
+    - python_version is defined
+    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   package:
     name: python{{ python_version }}-dev
     state: present
