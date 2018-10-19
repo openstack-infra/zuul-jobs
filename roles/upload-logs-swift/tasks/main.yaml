@@ -36,6 +36,3 @@
       zuul:
         log_url: "{{ upload_results.url }}/"
   when: upload_results is defined
-  tags:
-    # Avoid "no action detected in task" linter error
-    - skip_ansible_lint
