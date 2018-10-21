@@ -1,5 +1,7 @@
+# NOTE: gettext command is provided by gettext-base package,
+# so we need to check a command provided by gettext package.
 - name: Check for gettext installed
-  command: bash -c "type gettext"
+  command: bash -c "type msgmerge"
   ignore_errors: yes
   register: gettext_exists
 
