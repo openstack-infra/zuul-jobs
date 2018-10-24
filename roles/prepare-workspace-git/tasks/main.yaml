@@ -1,0 +1,56 @@
+- name: Find locally cached git repos
+  stat:
+    path: "{{ cached_repos_root }}/{{ item.canonical_name }}"
+  with_items: "{{ zuul.projects.values() | list }}"
+  register: cached_repos
+
+# We do a bare clone here first so that we skip creating a working copy that
+# will be overwritten later anyway.
+- name: Clone cached repo to workspace
+  shell: |
+    set -e
+    git clone --bare {{ cached_repos_root }}/{{ item.0.canonical_name }} {{ ansible_user_dir }}/{{ item.0.src_dir}}/.git
+    cd {{ ansible_user_dir }}/{{ item.0.src_dir }}
+    git config --local --bool core.bare false
+  args:
+    creates: "{{ ansible_user_dir }}/{{ item.0.src_dir}}"
+  when: item.1.stat.exists
+  with_together:
+    - "{{ zuul.projects.values() | list }}"
+    - "{{ cached_repos.results }}"
+  # ANSIBLE0006: If we use the git module, we get warning
+  # ANSIBLE0004 since we  do not give an explicit version
+  tags:
+    - skip_ansible_lint
+
+- name: Initialize non-cached repos
+  command: "git init {{ ansible_user_dir }}/{{ item.0.src_dir}}"
+  args:
+    creates: "{{ ansible_user_dir }}/{{ item.0.src_dir}}"
+  when: not item.1.stat.exists
+  with_together:
+    - "{{ zuul.projects.values() | list }}"
+    - "{{ cached_repos.results }}"
+  # ANSIBLE0006: If we use the git module, we get warning
+  # ANSIBLE0004 since we  do not give an explicit version
+  tags:
+    - skip_ansible_lint
+
+- name: Remove origin from local git repos and replace it by the zuul fake origin
+  # To be idempotent, remove origin only if it's found in the local list.
+  shell: |
+    set -e
+    git remote -v | grep origin && git remote rm origin || true
+    git remote add origin file:///dev/null
+  args:
+    chdir: "{{ ansible_user_dir }}/{{ item.src_dir}}"
+  with_items: "{{ zuul.projects.values() | list }}"
+  # ANSIBLE0006: git remote is not supported by ansible module
+  tags:
+    - skip_ansible_lint
+
+# TODO(tobiash): we might want to deprecate the role mirror-workspace-git-repos
+# and move it here.
+- name: Synchronize repos
+  import_role:
+    name: mirror-workspace-git-repos
