@@ -11,7 +11,7 @@
 - name: Ensure twine is installed
   block:
     - name: Ensure twine is installed
-      command: pip install twine!=1.12.0 --user
+      command: pip install twine!=1.12.0 readme_renderer[md]!=23.0 --user
 
     - name: Set pypi_twine_executable
       set_fact:
