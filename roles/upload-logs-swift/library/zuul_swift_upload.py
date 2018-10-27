@@ -28,7 +28,10 @@ import argparse
 import logging
 import mimetypes
 import os
-import queue as queuelib
+try:
+    import queue as queuelib
+except ImportError:
+    import Queue as queuelib
 import stat
 import sys
 import tempfile
