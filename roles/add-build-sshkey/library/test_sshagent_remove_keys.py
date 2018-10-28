@@ -78,7 +78,7 @@ class TestAgent(testtools.TestCase):
         l = a.list()
         self.assertEqual(2, len(l))
 
-        run('^(?!\(stdin\)).*')  # noqa
+        run(r'^(?!\(stdin\)).*')
 
         l = a.list()
         self.assertEqual(1, len(l))
