@@ -5,7 +5,7 @@
 
 - name: Download Minikube
   get_url:
-    url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    url: https://storage.googleapis.com/minikube/releases/{{ minikube_version }}/minikube-linux-amd64
     dest: /tmp/minikube
     mode: 0755
   when: stat_result.stat.exists == False
