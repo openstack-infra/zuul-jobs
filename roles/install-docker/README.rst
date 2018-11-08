@@ -24,3 +24,11 @@ An ansible role to install docker and configure it to use mirrors if available.
    Which update channel to use for upstream docker. The two choices are
    ``stable``, which is the default and updates quarterly, and ``edge``
    which updates monthly.
+
+.. zuul:rolevar:: docker_version
+   :default: undefined
+
+   Declare this with the version of the docker package to install.
+   Undefined will install the latest.  This will look something like
+   ``18.06.1~ce~3-0~ubuntu``.  Only supported when using upstream
+   docker repos.

@@ -27,6 +27,6 @@
 - name: Install docker
   become: yes
   apt:
-    name: docker-ce
+    name: "docker-ce{% if docker_version is defined %}={{ docker_version }}{% endif %}"
     state: present
     update_cache: yes
