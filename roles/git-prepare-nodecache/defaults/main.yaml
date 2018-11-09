@@ -1,0 +1,1 @@
+git_cache_root: "{{ansible_user_dir }}/git-cache"

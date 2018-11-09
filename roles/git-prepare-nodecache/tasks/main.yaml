@@ -1,0 +1,42 @@
+- name: Create git parent dirs
+  file:
+    path: "{{ git_cache_root }}/{{ item.canonical_name | dirname }}"
+    state: directory
+  with_items: "{{ zuul.projects.values() | list }}"
+
+- name: Copy git repos to {{ git_cache_root }}
+  command: cp -r "{{ ansible_user_dir }}/{{ item.src_dir }}/.git"
+    "{{ git_cache_root }}/{{ item.canonical_name }}"
+  with_items: "{{ zuul.projects.values() | list }}"
+
+- name: Mark repos as bare
+  command: git config --bool core.bare true
+  args:
+    chdir: "{{ git_cache_root }}/{{ item.canonical_name }}"
+  with_items: "{{ zuul.projects.values() | list }}"
+  # We don't want git module foo, just set a config value.
+  tags:
+    - skip_ansible_lint
+
+- name: Run git garbage collection
+  command: git gc
+  args:
+    chdir: "{{ git_cache_root }}/{{ item.canonical_name }}"
+  with_items: "{{ zuul.projects.values() | list }}"
+  # The ansible git module doesn't support garbage collection.
+  tags:
+    - skip_ansible_lint
+
+- name: Set git_cache_file variable
+  set_fact:
+    git_cache_file: "{{ git_cache_root }}/repos.tar.gz"
+
+- name: Create repos tarball
+  shell: |
+    tar -czf "{{ git_cache_file }}" *
+  args:
+    chdir: "{{ git_cache_root }}"
+  # Ansible lint wants we should use the unarchive module but we want the other
+  # way round.
+  tags:
+    - skip_ansible_lint
