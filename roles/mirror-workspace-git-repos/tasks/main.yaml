@@ -7,7 +7,7 @@
   with_dict: "{{ zuul.projects }}"
 
 - name: Synchronize src repos to workspace directory
-  command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host }}/{{ ansible_user_dir }}/{{ item.value.src_dir}}"
+  command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host | ipwrap }}:{{ ansible_port }}/{{ ansible_user_dir }}/{{ item.value.src_dir}}"
   args:
     chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
   with_dict: "{{ zuul.projects }}"
