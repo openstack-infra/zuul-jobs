@@ -23,15 +23,8 @@
   zuul_debug_info:
     image_manifest: "{{ zuul_site_image_manifest|default(omit) }}"
     image_manifest_files: "{{ zuul_site_image_manifest_files|default(omit) }}"
-  register: zdi
-
-- name: Collect network information from zuul worker
-  zuul_network_validate:
     traceroute_host: "{{ zuul_site_traceroute_host|default(omit) }}"
-  register: znetinfo
-  retries: 3
-  delay: 5
-  until: znetinfo.failed == False
+  register: zdi
 
 - name: Write out all zuul information for each host
   delegate_to: localhost
