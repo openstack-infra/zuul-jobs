@@ -362,10 +362,7 @@ class Indexer():
                                                         filename)
             output += '<td>%s</td>' % time.asctime(
                 file_details.last_modified)
-            if file_details.mimetype == 'folder':
-                size = str(file_details.size)
-            else:
-                size = sizeof_fmt(file_details.size, suffix='')
+            size = sizeof_fmt(file_details.size, suffix='')
             output += '<td style="text-align: right">%s</td>' % size
             output += '</tr>\n'
 
