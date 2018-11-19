@@ -18,15 +18,10 @@
 import os
 import shlex
 import subprocess
-import traceback
 
 
 command_map = {
     'uname': 'uname -a',
-    'network_interfaces': 'ip address show',
-    'network_routing_v4': 'ip route show',
-    'network_routing_v6': 'ip -6 route show',
-    'network_neighbors': 'ip neighbor show',
 }
 
 
@@ -44,16 +39,14 @@ def main():
         argument_spec=dict(
             image_manifest=dict(required=False, type='str'),
             image_manifest_files=dict(required=False, type='list'),
-            traceroute_host=dict(required=False, type='str'),
         )
     )
 
     image_manifest = module.params['image_manifest']
-    traceroute_host = module.params['traceroute_host']
     image_manifest_files = module.params['image_manifest_files']
     if not image_manifest_files and image_manifest:
         image_manifest_files = [image_manifest]
-    ret = {'image_manifest_files': [], 'traceroute': None}
+    ret = {'image_manifest_files': []}
 
     for image_manifest in image_manifest_files:
         if image_manifest and os.path.exists(image_manifest):
@@ -63,31 +56,6 @@ def main():
                 'underline': len(image_manifest) * '-',
                 'content': open(image_manifest, 'r').read(),
             })
-    if traceroute_host:
-        passed = False
-        try:
-            ret['traceroute_v6'] = run_command(
-                'traceroute6 -n {host}'.format(host=traceroute_host))
-            passed = True
-        except (subprocess.CalledProcessError, OSError) as e:
-            ret['traceroute_v6_exception'] = traceback.format_exc(e)
-            ret['traceroute_v6_output'] = e.output
-            ret['traceroute_v6_return'] = e.returncode
-            pass
-        try:
-            ret['traceroute_v4'] = run_command(
-                'traceroute -n {host}'.format(host=traceroute_host))
-            passed = True
-        except (subprocess.CalledProcessError, OSError) as e:
-            ret['traceroute_v4_exception'] = traceback.format_exc(e)
-            ret['traceroute_v4_output'] = e.output
-            ret['traceroute_v4_return'] = e.returncode
-            pass
-        if not passed:
-            module.fail_json(
-                msg="No viable v4 or v6 route found to {traceroute_host}."
-                    " The build node is assumed to be invalid.".format(
-                        traceroute_host=traceroute_host), **ret)
 
     for key, command in command_map.items():
         try:

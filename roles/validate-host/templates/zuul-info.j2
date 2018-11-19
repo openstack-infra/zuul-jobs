@@ -15,40 +15,40 @@ Host & kernel
 {{ zdi.uname }}
 
 {% endif %}
-{% if 'network_interfaces' in zdi %}
+{% if 'network_interfaces' in znetinfo %}
 Network interface addresses
 ===========================
-{{ zdi.network_interfaces }}
+{{ znetinfo.network_interfaces }}
 
 {% endif %}
-{% if 'network_routing_v4' in zdi %}
+{% if 'network_routing_v4' in znetinfo %}
 Network routing tables v4
 =========================
-{{ zdi.network_routing_v4 }}
+{{ znetinfo.network_routing_v4 }}
 
 {% endif %}
-{% if 'network_routing_v6' in zdi %}
+{% if 'network_routing_v6' in znetinfo %}
 Network routing tables v6
 =========================
-{{ zdi.network_routing_v6 }}
+{{ znetinfo.network_routing_v6 }}
 
 {% endif %}
-{% if 'network_neighbors' in zdi %}
+{% if 'network_neighbors' in znetinfo %}
 Network neighbors
 =================
-{{ zdi.network_neighbors }}
+{{ znetinfo.network_neighbors }}
 
 {% endif %}
-{% if 'traceroute_v4' in zdi %}
+{% if 'traceroute_v4' in znetinfo %}
 Route to Known Host v4
 ======================
 Known Host: {{ zuul_site_traceroute_host }}
-{{ zdi.traceroute_v4 }}
+{{ znetinfo.traceroute_v4 }}
 
 {% endif %}
-{% if 'traceroute_v6' in zdi %}
+{% if 'traceroute_v6' in znetinfo %}
 Route to Known Host v6
 ======================
 Known Host: {{ zuul_site_traceroute_host }}
-{{ zdi.traceroute_v6 }}
+{{ znetinfo.traceroute_v6 }}
 {% endif %}
