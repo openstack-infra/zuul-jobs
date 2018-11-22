@@ -271,27 +271,32 @@ class FileList(Sequence):
 class Indexer():
     """generates index.html files if requested."""
 
-    def __init__(self, create_parent_links=True,
+    def __init__(self, file_list, create_parent_links=True,
                  create_topdir_parent_link=False,
                  append_footer='index_footer.html'):
+        '''
+        Args:
+            file_list (FileList): A FileList object to be updated
+             with index files for each directory.
+            create_parent_links (bool):
+            create_topdir_parent_link (bool):
+            append_footer (str):
+        '''
+        assert isinstance(file_list, FileList)
+        self.file_list = file_list
         self.create_parent_links = create_parent_links
         self.create_topdir_parent_link = create_topdir_parent_link
         self.append_footer = append_footer
         self.index_filename = 'index.html'
 
-    def make_indexes(self, file_list):
+    def make_indexes(self):
         '''Make index files
 
-        Args:
-            file_list (FileList): A FileList object to be updated
-             with index files for each directory.
         Return:
-            No value, the file_list will be updated
+            No value, the self.file_list will be updated
         '''
-        assert isinstance(file_list, FileList)
-
         folders = collections.OrderedDict()
-        for f in file_list:
+        for f in self.file_list:
             if f.folder:
                 folders[f.relative_path] = []
                 folder = os.path.dirname(os.path.dirname(
@@ -325,7 +330,7 @@ class Indexer():
         # for each directory.
         new_list = []
         last_dirname = None
-        for f in reversed(list(file_list)):
+        for f in reversed(list(self.file_list)):
             if f.folder:
                 relative_path = f.relative_path + '/'
             else:
@@ -340,7 +345,7 @@ class Indexer():
                     last_dirname = dirname
             new_list.append(f)
         new_list.reverse()
-        file_list.file_list = new_list
+        self.file_list.file_list = new_list
 
     def make_index_file(self, folder_links, title):
         """Writes an index into a file for pushing"""
@@ -566,7 +571,8 @@ def run(cloud, container, files,
 
     # Create the objects to make sure the arguments are sound.
     with FileList() as file_list:
-        indexer = Indexer(create_parent_links=parent_links,
+        indexer = Indexer(file_list,
+                          create_parent_links=parent_links,
                           create_topdir_parent_link=topdir_parent_link,
                           append_footer=footer)
 
@@ -576,7 +582,7 @@ def run(cloud, container, files,
 
         # (Possibly) make indexes.
         if indexes:
-            indexer.make_indexes(file_list)
+            indexer.make_indexes()
 
         logging.debug("List of files prepared to upload:")
         for x in file_list:
