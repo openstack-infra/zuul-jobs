@@ -1,1 +1,2 @@
 zuul_work_dir: "{{ zuul.project.src_dir }}"
+yarn_lock_file_path: "{{ zuul_work_dir }}/yarn.lock"

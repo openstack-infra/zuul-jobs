@@ -1,6 +1,6 @@
 - name: Check for yarn.lock file
   stat:
-    path: "{{ zuul_work_dir }}/yarn.lock"
+    path: "{{ yarn_lock_file_path }}"
     get_checksum: false
     get_mime: false
     get_md5: false
