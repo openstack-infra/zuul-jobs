@@ -257,10 +257,10 @@ class TestFileList(testtools.TestCase):
         '''Test index generation creates topdir parent link'''
         with FileList() as fl:
             fl.add(os.path.join(FIXTURE_DIR, 'logs/'))
-            ix = Indexer(fl,
-                         create_parent_links=True,
-                         create_topdir_parent_link=True)
-            ix.make_indexes()
+            ix = Indexer(fl)
+            ix.make_indexes(
+                create_parent_links=True,
+                create_topdir_parent_link=True)
 
             self.assert_files(fl, [
                 ('', 'application/directory', None),
@@ -312,10 +312,10 @@ class TestFileList(testtools.TestCase):
         '''Test index generation creates topdir parent link'''
         with FileList() as fl:
             fl.add(os.path.join(FIXTURE_DIR, 'logs/'))
-            ix = Indexer(fl,
-                         create_parent_links=False,
-                         create_topdir_parent_link=False)
-            ix.make_indexes()
+            ix = Indexer(fl)
+            ix.make_indexes(
+                create_parent_links=False,
+                create_topdir_parent_link=False)
 
             self.assert_files(fl, [
                 ('', 'application/directory', None),
