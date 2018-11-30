@@ -32,6 +32,7 @@ try:
     import queue as queuelib
 except ImportError:
     import Queue as queuelib
+import shutil
 import stat
 import sys
 import tempfile
@@ -193,18 +194,30 @@ class FileList(Sequence):
     def __init__(self):
         self.file_list = []
         self.file_list.append(FileDetail(None, '', ''))
+        self.tempdirs = []
 
     def __enter__(self):
         return self
 
     def __exit__(self, type, value, traceback):
-        pass
+        for tempdir in self.tempdirs:
+            shutil.rmtree(tempdir)
 
     def __getitem__(self, item):
         return self.file_list.__getitem__(item)
 
     def __len__(self):
         return self.file_list.__len__()
+
+    def get_tempdir(self):
+        '''Get a temporary directory
+
+        Returns path to a private temporary directory which will be
+        cleaned on exit
+        '''
+        tempdir = tempfile.mkdtemp(prefix='s-u-l-tmp')
+        self.tempdirs.append(tempdir)
+        return tempdir
 
     @staticmethod
     def _path_in_tree(root, path):
@@ -274,6 +287,7 @@ class Indexer():
     def __init__(self, file_list, create_parent_links=True,
                  create_topdir_parent_link=False,
                  append_footer='index_footer.html'):
+
         '''
         Args:
             file_list (FileList): A FileList object to be updated
@@ -319,7 +333,8 @@ class Indexer():
                 files = [parent_file_detail] + files
 
             # Do generate a link to the parent directory
-            full_path = self.make_index_file(files, 'Index of %s' % (folder,))
+            full_path = self.make_index_file(files, 'Index of %s' % (folder,),
+                                             self.file_list.get_tempdir())
 
             if full_path:
                 filename = os.path.basename(full_path)
@@ -347,7 +362,7 @@ class Indexer():
         new_list.reverse()
         self.file_list.file_list = new_list
 
-    def make_index_file(self, folder_links, title):
+    def make_index_file(self, folder_links, title, tempdir):
         """Writes an index into a file for pushing"""
         for file_details in folder_links:
             # Do not generate an index file if one exists already.
@@ -356,7 +371,6 @@ class Indexer():
             if self.index_filename == file_details.filename:
                 return
         index_content = self.generate_log_index(folder_links, title)
-        tempdir = tempfile.mkdtemp()
         fd = open(os.path.join(tempdir, self.index_filename), 'w')
         fd.write(index_content)
         return os.path.join(tempdir, self.index_filename)
