@@ -5,17 +5,23 @@
     - "{{ ansible_os_family }}.yaml"
     - "default.yaml"
 
-# CentOS requires repositories provided by centos in order to install
-# openvswitch, set them up.
-- name: Enable centos-release-openstack-queens
-  become: yes
-  package:
-    name: centos-release-openstack-queens
-    state: installed
-  when:
+# openvswitch for CentOS is available from the RDO repositories.
+# We're setting it up manually to prevent centos-release-openstack or rdo-release
+# from installing repositories we don't need.
+- when:
     - ansible_os_family == "RedHat"
     - ansible_distribution != "Fedora"
-  register: centos_ovs
+  become: yes
+  block:
+    - name: Set up RDO GPG key
+      copy:
+        src: RPM-GPG-KEY-CentOS-SIG-Cloud
+        dest: /tmp/RPM-GPG-KEY-CentOS-SIG-Cloud
+
+    - name: Set up RDO repository
+      template:
+        src: zuul-multi-node-bridge-ovs.repo.j2
+        dest: /etc/yum.repos.d/zuul-multi-node-bridge-ovs.repo
 
 - name: Set package.use values for OVS on Gentoo
   become: yes
@@ -42,13 +48,17 @@
     state: started
     enabled: yes
 
-# If we've installed repositories for openvswitch earlier, remove them
-- name: Ensure centos-release-openstack-queens is removed
+- name: Remove RDO repository files
   become: yes
-  package:
-    name: "centos-release-openstack-queens"
+  file:
+    path: "{{ item }}"
     state: absent
-  when: centos_ovs | changed
+  with_items:
+    - /tmp/RPM-GPG-KEY-CentOS-SIG-Cloud
+    - /etc/yum.repos.d/zuul-multi-node-bridge-ovs.repo
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution != "Fedora"
 
 - name: Authorize the multi-node-bridge network
   become: yes
