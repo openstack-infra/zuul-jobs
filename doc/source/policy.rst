@@ -70,6 +70,42 @@ as ``example_role_variable``; e.g.
       vars:
         example_role_variable: 'something'
 
+Testing
+-------
+
+`zuul-jobs` is often consumed from the master branch and many parts of
+`zuul-jobs` are involved in base setup.  Thus bad changes have a
+larger than usual potential to quickly produce global problems.
+Demonstrated testing of changes is very important and is requested of
+all proposed changes.
+
+Since many roles in `zuul-jobs` are run from trusted jobs that run
+directly on the executor, often changes are not self-testing.  In such
+cases, it may be possible to demonstrate sufficient testing via
+external methods.  This should be noted carefully in the review.
+
+To use the OpenStack gate, you should develop your change as usual
+with as much testing as possible.  Once you have pushed the main
+review, you should clone the changes to the role being tested to a
+``test-<rolename>`` role in a new change (there may already be a
+``test-<rolename>`` if someone has done this before you; in this case,
+update it with your change).  Then rebase this testing change *before*
+your main change (the commit message should say something along the
+lines of "This change is for pre-testing of change I...").
+
+Reviewers can commit this change without affecting production jobs.
+You then need to look at the ``playbooks/base-test/`` files in
+``project-config`` and make sure they are using the
+``test-<rolename>`` role, which should now be committed (in some
+cases, if it has been done before, it may already be; otherwise
+propose a change to swap the role in ``base-test`` that Depends-On
+your ``test-<rolename>`` addition).  You can then reparent a
+do-not-merge job to ``base-test`` and your changes will be executed.
+
+After this, the actual change can be merged.  Note that after this,
+the ``test-<rolename>`` and ``<rolename>`` roles will be identical,
+which is how it should remain until the next proposed change.
+
 .. _zuul-announce: http://lists.zuul-ci.org/cgi-bin/mailman/listinfo/zuul-announce
 .. _zuul-discuss: http://lists.zuul-ci.org/cgi-bin/mailman/listinfo/zuul-discuss
 
