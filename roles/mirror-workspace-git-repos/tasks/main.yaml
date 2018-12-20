@@ -33,6 +33,9 @@
     git config --local --unset receive.denyCurrentBranch
     # checkout the branch matching the branch set up by the executor
     git checkout {{ item.value.checkout }}
+    # put out a status line with the current HEAD
+    echo "{{ item.value.canonical_name }} checked out to:"
+    git log --pretty=oneline  -1
   args:
     chdir: "{{ ansible_user_dir }}/{{ item.value.src_dir }}"
   with_dict: "{{ zuul.projects }}"
