@@ -1,0 +1,3 @@
+---
+puppet_module_dir: "{{ zuul.project.src_dir }}"
+blacksmith_forge_url: "https://forgeapi.puppetlabs.com"

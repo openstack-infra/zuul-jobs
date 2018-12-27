@@ -1,0 +1,21 @@
+- name: Install required gems
+  gem:
+    name: "{{ item }}"
+  with_items:
+    - rake
+    - puppetlabs_spec_helper
+    - puppet-blacksmith
+
+- name: Install new Rakefile
+  copy:
+    content: "require 'puppet_blacksmith/rake_tasks'"
+    dest: "{{ puppet_module_dir }}/Rakefile"
+
+- name: Publish puppet module
+  command: "rake module:push"
+  args:
+    chdir: "{{ puppet_module_dir }}"
+  environment:
+    BLACKSMITH_FORGE_URL: "{{ blacksmith_forge_url }}"
+    BLACKSMITH_FORGE_USERNAME: "{{ blacksmith_forge_username }}"
+    BLACKSMITH_FORGE_PASSWORD: "{{ blacksmith_forge_password }}"
