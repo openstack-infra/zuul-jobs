@@ -12,7 +12,8 @@ zuul
 # dependency solver and the uncapped ansible requirement from
 # ansible-lint pull in the latest version.
 ansible>=2.5.1,<2.6 # https://review.openstack.org/567007
-ansible-lint
+# We need to pin ansible-lint to before 4.0 which blows up all over the place
+ansible-lint<4
 bashate>=0.2
 zuul-sphinx>=0.1.1
 stestr>=1.0.0 # Apache-2.0
