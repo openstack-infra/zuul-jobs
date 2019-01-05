@@ -9,6 +9,7 @@
   when: log_path is not defined
 
 - name: Ensure local output dirs
+  delegate_to: localhost
   file:
     path: "{{ item }}"
     state: directory
