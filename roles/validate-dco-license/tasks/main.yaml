@@ -1,0 +1,25 @@
+- name: Developer Certificate of Origin (DCO) license check
+  shell:
+    cmd: |
+      set -e
+      result=0
+      for commit in $(git cherry -v origin/{{ zuul.branch }} HEAD | cut -d " " -f2)
+      do
+        if ! git show -s $commit | grep -q "Signed-off-by:"; then
+          echo "---"
+          git show -s $commit
+          echo "---"
+          echo "does not have a Signed-off-by header"
+          result=1
+        fi
+      done
+      exit $result
+    chdir: "{{ zuul_work_dir }}"
+    executable: /bin/bash
+  register: _dco
+  failed_when: _dco.rc > 1
+
+- name: License check failed
+  fail:
+    msg: "{{ dco_license_failure }}"
+  when: _dco.rc != 0
