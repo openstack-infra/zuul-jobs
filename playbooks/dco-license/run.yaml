@@ -1,0 +1,7 @@
+- hosts: localhost
+  tasks:
+    - name: Run validate-dco-license role
+      include_role:
+        name: validate-dco-license
+      vars:
+        zuul_work_dir: "{{ zuul.executor.work_root }}/{{ zuul.project.src_dir }}"

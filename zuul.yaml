@@ -2,6 +2,14 @@
 # Assumes a 'base' job defined elsewhere
 
 - job:
+    name: dco-license
+    description: |
+      A job to validate all new commits have been signed using --signoff.
+    run: playbooks/dco-license/run.yaml
+    nodeset:
+      nodes: []
+
+- job:
     name: unittests
     abstract: true
     description: |
