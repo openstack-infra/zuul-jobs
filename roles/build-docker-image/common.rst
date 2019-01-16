@@ -52,7 +52,7 @@ using this role.
 
       The Docker Hub username.
 
-   .. zuul:rolevar:: username
+   .. zuul:rolevar:: password
 
       The Docker Hub password
 
