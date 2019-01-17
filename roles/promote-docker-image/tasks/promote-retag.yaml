@@ -2,8 +2,8 @@
   no_log: true
   uri:
     url: "https://auth.docker.io/token?service=registry.docker.io&scope=repository:{{ image.repository }}:pull,push"
-    user: "{{ credentials.username }}"
-    password: "{{ credentials.password }}"
+    user: "{{ docker_credentials.username }}"
+    password: "{{ docker_credentials.password }}"
     force_basic_auth: true
   register: token
 - name: Get manifest

@@ -10,4 +10,4 @@
     --tag {{ item.repository }}:change_{{ zuul.change }}
   args:
     chdir: "{{ zuul_work_dir }}/{{ item.context }}"
-  loop: "{{ images }}"
+  loop: "{{ docker_images }}"

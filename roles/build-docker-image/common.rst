@@ -42,7 +42,7 @@ using this role.
    The project directory.  Serves as the base for
    :zuul:rolevar:`build-docker-image.docker_images.context`.
 
-.. zuul:rolevar:: credentials
+.. zuul:rolevar:: docker_credentials
    :type: dict
 
    This is only required for the upload and promote roles.  This is

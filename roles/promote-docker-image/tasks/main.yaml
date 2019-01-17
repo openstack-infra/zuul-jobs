@@ -5,16 +5,16 @@
     url: "https://hub.docker.com/v2/users/login/"
     body_format: json
     body:
-      username: "{{ credentials.username }}"
-      password: "{{ credentials.password }}"
+      username: "{{ docker_credentials.username }}"
+      password: "{{ docker_credentials.password }}"
   register: jwt_token
 - name: Promote image
-  loop: "{{ images }}"
+  loop: "{{ docker_images }}"
   loop_control:
     loop_var: image
   include_tasks: promote-retag.yaml
 - name: Delete obsolete tags
-  loop: "{{ images }}"
+  loop: "{{ docker_images }}"
   loop_control:
     loop_var: image
   include_tasks: promote-cleanup.yaml
