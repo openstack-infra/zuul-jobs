@@ -1,14 +1,42 @@
+- name: Install ruby dependencies on RedHat/Suse based
+  package:
+    name:
+      - ruby-devel
+      - gcc-c++
+      - make
+    state: present
+  when: ansible_os_family == "RedHat" or ansible_os_family == "Suse"
+
+- name: Install ruby dependencies on Debian based
+  package:
+    name:
+      - ruby-dev
+      - g++
+      - make
+    state: present
+  when: ansible_os_family == "Debian"
+
 - name: Install required gems
   gem:
     name: "{{ item }}"
+    user_install: no
   with_items:
     - rake
     - puppetlabs_spec_helper
     - puppet-blacksmith
 
+# NOTE(tobias.urdin): The build task is needed because puppet-blacksmith
+# doesn't provide a build task so it fails, we don't need one anyway since
+# we have already built the module before this role is called.
 - name: Install new Rakefile
   copy:
-    content: "require 'puppet_blacksmith/rake_tasks'"
+    content: |
+      namespace 'module' do
+        task 'build' do
+        end
+      end
+
+      require 'puppet_blacksmith/rake_tasks'
     dest: "{{ puppet_module_dir }}/Rakefile"
 
 - name: Publish puppet module
