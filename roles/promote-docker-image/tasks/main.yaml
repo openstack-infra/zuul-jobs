@@ -1,3 +1,10 @@
+- name: Verify repository names
+  when: |
+    docker_credentials.repository is defined
+    and not item.repository | regex_search(docker_credentials.repository)
+  loop: "{{ docker_images }}"
+  fail:
+    msg: "{{ item.repository }} not permitted by {{ docker_credentials.repository }}"
 # This is used by the delete tasks
 - name: Get dockerhub JWT token
   no_log: true
