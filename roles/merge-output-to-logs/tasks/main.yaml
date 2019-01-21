@@ -2,7 +2,7 @@
   when: zuul.change is defined
   delegate_to: localhost
   shell: |
-    if ! $(ls {{ zuul.executor.work_root }}/{{ item }}) ; then
+    if [ -n $(ls {{ zuul.executor.work_root }}/{{ item }}) ] ; then
       # Only create target directory if it is needed.
       # Do not fail if it is already there.
       mkdir -p {{ zuul.executor.log_root }}/{{ item }}
@@ -13,3 +13,4 @@
   loop:
     - artifacts
     - docs
+  run_once: true
