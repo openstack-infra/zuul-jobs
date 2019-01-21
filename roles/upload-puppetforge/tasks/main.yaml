@@ -5,6 +5,7 @@
       - gcc-c++
       - make
     state: present
+  become: yes
   when: ansible_os_family == "RedHat" or ansible_os_family == "Suse"
 
 - name: Install ruby dependencies on Debian based
@@ -14,6 +15,7 @@
       - g++
       - make
     state: present
+  become: yes
   when: ansible_os_family == "Debian"
 
 - name: Install required gems
@@ -24,6 +26,7 @@
     - rake
     - puppetlabs_spec_helper
     - puppet-blacksmith
+  become: yes
 
 # NOTE(tobias.urdin): The build task is needed because puppet-blacksmith
 # doesn't provide a build task so it fails, we don't need one anyway since
