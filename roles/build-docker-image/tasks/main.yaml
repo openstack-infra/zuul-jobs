@@ -8,6 +8,9 @@
       --build-arg {{ build_arg }}
     {% endfor -%}
     --tag {{ item.repository }}:change_{{ zuul.change }}
+    {% for tag in item.tags | default(['latest']) -%}
+    --tag {{ item.repository }}:{{ tag }}
+    {% endfor -%}
   args:
     chdir: "{{ zuul_work_dir }}/{{ item.context }}"
   loop: "{{ docker_images }}"
