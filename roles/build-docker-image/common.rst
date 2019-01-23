@@ -20,8 +20,8 @@ production if the change is successful.
 The :zuul:role:`promote-docker-image` role is designed to be used in a
 `promote` pipeline.  It requires no nodes and runs very quickly on the
 Zuul executor.  It simply re-tags a previously uploaded image for a
-change with whatever tags are supplied by the
-:zuul:rolevar:`build-docker-image.docker_images.context`.  It also
+change with whatever tags are supplied by
+:zuul:rolevar:`build-docker-image.docker_images.tags`.  It also
 removes the change ID tag from the repository in Docker Hub, and
 removes any similar change ID tags more than 24 hours old.  This keeps
 the repository tidy in the case that gated changes fail to merge after
@@ -88,7 +88,7 @@ using this role.
       Useful for building images with a Dockerfile in the context
       directory but a source repository elsewhere.
 
-   .. zuul:jobvar:: build_args
+   .. zuul:rolevar:: build_args
       :type: list
 
       Optional: a list of values to pass to the docker ``--build-arg``
@@ -98,7 +98,7 @@ using this role.
 
       Optional: the target for a multi-stage build.
 
-   .. zuul:jobvar:: tags
+   .. zuul:rolevar:: tags
       :type: list
       :default: ['latest']
 
