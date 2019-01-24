@@ -1,6 +1,22 @@
 Upload logs to a static webserver
 
-This uploads logs to a static webserver using SSH.
+This uploads logs to a static server using SSH.  The server must have
+been previously added to the inventory; this can be done with the
+:zuul:role:`add-fileserver` role; see that role's documentation for a
+description of the site_logs secret in this example post-run playbook:
+
+.. code-block:: yaml
+
+   - hosts: localhost
+     roles:
+       - role: add-fileserver
+         fileserver: "{{ site_logs }}"
+
+   - hosts: "{{ site_logs.fqdn }}"
+     gather_facts: False
+     roles:
+       - role: upload-logs
+         zuul_log_url: "http://logs.example.org"
 
 **Role Variables**
 

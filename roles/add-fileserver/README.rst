@@ -7,7 +7,23 @@ in subsequent tasks or roles.
 
    Complex argument which contains the information about the remote
    destination as well as the authentication information needed. It is
-   expected that this argument comes from a `Secret`.
+   expected that this argument comes from a `Secret
+   <https://zuul-ci.org/docs/zuul/user/config.html#secret>`_
+
+   Example:
+
+   .. code-block:: yaml
+
+      - secret:
+          name: site_logs
+            data:
+              fqdn: logs.example.org
+              path: /srv/static/logs
+              ssh_known_hosts: |
+                logs.example.org ssh-rsa ...
+              ssh_username: zuul
+              ssh_private_key: !encrypted/pkcs1-oaep
+                - ...
 
    .. zuul:rolevar:: fqdn
 
