@@ -9,19 +9,30 @@
     vni: "{{ offset | int + bridge_vni_offset | int }}"
 
 # To make things more readable in the following tasks
+- name: Set ip address when the node private IP is not set
+  set_fact:
+    nodepool_ip: |
+      {{ nodepool.private_ipv4 | default(nodepool.public_ipv4) }}
+
+- name: Select the switch from group
+  set_fact:
+    switch: "{{ groups['switch'][0] }}"
+
 - name: Alias the primary node private IP
   set_fact:
-    switch_private_ip: "{{ hostvars[groups['switch'][0]]['nodepool']['private_ipv4'] }}"
+    switch_ip: |
+      {{ hostvars[switch].nodepool.private_ipv4 |
+          default(hostvars[switch].nodepool.public_ipv4) }}
 
 - name: Add port to bridge on switch node
   become: yes
   command: >-
     ovs-vsctl --may-exist add-port {{ bridge_name }}
-    {{ bridge_name }}_{{ nodepool['private_ipv4'] }}
-    -- set interface {{ bridge_name }}_{{ nodepool['private_ipv4'] }}
-    type=vxlan options:remote_ip={{ nodepool['private_ipv4'] }} options:key={{ vni }}
-    options:local_ip={{ switch_private_ip }}
-  delegate_to: "{{ groups['switch'][0] }}"
+    {{ bridge_name }}_{{ nodepool_ip }}
+    -- set interface {{ bridge_name }}_{{ nodepool_ip}}
+    type=vxlan options:remote_ip={{ nodepool_ip }} options:key={{ vni }}
+    options:local_ip={{ switch_ip }}
+  delegate_to: "{{ switch }}"
 
 - name: Create bridge on peer node
   become: yes
@@ -36,10 +47,10 @@
   become: yes
   command: >-
     ovs-vsctl --may-exist add-port {{ bridge_name }}
-    {{ bridge_name }}_{{ switch_private_ip }}
-    -- set interface {{ bridge_name }}_{{ switch_private_ip }}
-    type=vxlan options:remote_ip={{ switch_private_ip }} options:key={{ vni }}
-    options:local_ip={{ nodepool['private_ipv4'] }}
+    {{ bridge_name }}_{{ switch_ip }}
+    -- set interface {{ bridge_name }}_{{ switch_ip }}
+    type=vxlan options:remote_ip={{ switch_ip }} options:key={{ vni }}
+    options:local_ip={{ nodepool_ip }}
 
 - when: bridge_configure_address
   block:
