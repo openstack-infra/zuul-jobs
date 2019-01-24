@@ -42,6 +42,15 @@ using this role.
    The project directory.  Serves as the base for
    :zuul:rolevar:`build-docker-image.docker_images.context`.
 
+.. zuul:rolevar:: docker_dockerfile
+   :default: Dockerfile
+
+   The default Dockerfile name to use. Serves as the base for
+   :zuul:rolevar:`build-docker-image.docker_images.dockerfile`.
+   This allows a global overriding of Dockerfile name, for example
+   when building all images from different folders with similarily
+   named dockerfiles.
+
 .. zuul:rolevar:: docker_credentials
    :type: dict
 
@@ -74,6 +83,12 @@ using this role.
 
       The docker build context; this should be a directory underneath
       :zuul:rolevar:`build-docker-image.zuul_work_dir`.
+
+   .. zuul:rolevar:: dockerfile
+
+      The filename of the dockerfile, present in the context folder,
+      used for building the image. Provide this if you are using
+      a non-standard filename for a specific image.
 
    .. zuul:rolevar:: repository
 
