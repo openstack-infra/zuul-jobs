@@ -37,7 +37,7 @@
 
       .. include:: ../../playbooks/docker-image/README.rst
       .. include:: ../../playbooks/docker-image/credentials.rst
-    post-run: playbooks/zuul/docker-image/upload.yaml
+    post-run: playbooks/docker-image/upload.yaml
 
 - job:
     name: promote-docker-image
@@ -46,7 +46,7 @@
 
       .. include:: ../../playbooks/docker-image/README.rst
       .. include:: ../../playbooks/docker-image/credentials.rst
-    run: playbooks/zuul/build-image/promote.yaml
+    run: playbooks/docker-image/promote.yaml
     nodeset:
       nodes: []
 
