@@ -1,4 +1,5 @@
 use_upstream_docker: True
+docker_group: docker
 docker_update_channel: stable
 ubuntu_gpg_key: |
   -----BEGIN PGP PUBLIC KEY BLOCK-----

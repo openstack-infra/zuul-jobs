@@ -32,8 +32,26 @@
   user:
     name: "{{ ansible_user }}"
     groups:
-      - docker
+      - "{{ docker_group }}"
     append: yes
 
-- name: reset ssh connection to pick up docker group
+- name: Assure docker service is running
+  become: yes
+  service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Correct group ownership on docker sock
+  become: yes
+  file:
+    path: /var/run/docker.sock
+    group: "{{ docker_group }}"
+
+- name: Reset ssh connection to pick up docker group
   meta: reset_connection
+
+- name: Validate ability to talk with docker
+  command: docker ps
+  args:
+    warn: no
