@@ -23,6 +23,16 @@ intended to be used before output fetching in a base job's post-playbook.
    null overrides the will of a parent job to copy something instructing
    not to copy.
 
+   If the type is suffixed with ``_txt``, then the item will have
+   ``.txt`` appended to its name.  For example::
+
+   .. code-block:: yaml
+
+      zuul_copy_output:
+        /var/log/syslog: logs_txt
+
+   Will copy ``/var/log/syslog`` to ``logs/syslog.txt``.
+
 .. zuul:rolevar:: stage_dir
    :default: {{ ansible_user_dir }}
 

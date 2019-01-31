@@ -27,12 +27,13 @@
 # NOTE(andreaf) Files or folders that start with a '.' are renamed to starting
 # with an '_' else they would not be visible in the logs folder once uploaded.
 # Extension changes are handled later via find as we want to rename files
-# included of folders specified in `zuul_copy_output`.
+# included of folders specified in `zuul_copy_output` (except for logs_txt,
+# which is handled here).
 - name: Set source and destination for files and folders
   set_fact:
     source: "{{ item.stat.path }}"
-    dest: "{{ item.item.value }}/{{ item.stat.path|basename|regex_replace('^(\\..*)$', '_\\1') }}"
-    type: "{{ item.item.value }}"
+    dest: "{{ item.item.value.split('_')[0] }}/{{ item.stat.path|basename|regex_replace('^(\\..*)$', '_\\1') }}{% if item.item.value.endswith('_txt') %}.txt{% endif %}"
+    type: "{{ item.item.value.split('_')[0] }}"
   with_items: "{{ sources.results }}"
   when:
     - item.stat.exists
