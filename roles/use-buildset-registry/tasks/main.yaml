@@ -1,0 +1,39 @@
+- name: Ensure registry cert directory exists
+  become: true
+  file:
+    path: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/"
+    state: directory
+- name: Write registry TLS certificate
+  become: true
+  copy:
+    content: "{{ buildset_registry.cert }}"
+    dest: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/ca.crt"
+- name: Load docker daemon configuration
+  slurp:
+    path: /etc/docker/daemon.json
+  register: docker_config
+- name: Parse docker daemon configuration
+  set_fact:
+    docker_config: "{{ docker_config.content | b64decode | from_json }}"
+- name: Add registry to docker daemon configuration
+  vars:
+    new_config:
+      registry-mirrors: "['https://{{ buildset_registry.host }}:{{ buildset_registry.port}}/'] + {{ docker_config['registry-mirrors'] }}"
+  set_fact:
+    docker_config: "{{ docker_config | combine(new_config) }}"
+- name: Save docker daemon configuration
+  copy:
+    content: "{{ docker_config | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+  become: true
+- name: Restart docker daemon
+  service:
+    name: docker
+    state: restarted
+  become: true
+- name: Log in to registry
+  command: "docker login -u {{ buildset_registry.username }} -p {{ buildset_registry.password }} https://{{ buildset_registry.host }}:{{ buildset_registry.port}}/"
+  register: result
+  until: result.rc ==0
+  delay: 1
+  retries: 120
