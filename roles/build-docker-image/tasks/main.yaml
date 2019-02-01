@@ -1,6 +1,6 @@
 - name: Build a docker image
   command: >-
-    docker build {{ item.path | default('.') }} -f Dockerfile
+    docker build {{ item.path | default('.') }} -f {{ item.dockerfile | default(docker_dockerfile) }}
     {% if item.target | default(false) -%}
       --target {{ item.target }}
     {% endif -%}
