@@ -1,0 +1,91 @@
+- name: Install packages
+  become: yes
+  package:
+    name:
+      - python-docker
+      - python-openssl
+      - python-passlib
+      - python-bcrypt
+    state: present
+  when: "'python3' not in ansible_python_interpreter"
+- name: Install packages
+  become: yes
+  package:
+    name:
+      - python3-docker
+      - python3-openssl
+      - python3-passlib
+      - python3-bcrypt
+    state: present
+  when: "'python3' in ansible_python_interpreter"
+- name: Ensure Docker registry volume directories exists
+  file:
+    state: directory
+    path: "{{ buildset_registry_root}}/{{ item }}"
+  loop:
+    - certs
+    - auth
+# TODO: use password lookup after allowing access to it in Zuul
+- name: Generate registry password
+  set_fact:
+    registry_password: "{{ (ansible_date_time.iso8601_micro | password_hash('sha256'))[-20:] }}"
+- name: Write htpassword file
+  htpasswd:
+    create: true
+    crypt_scheme: bcrypt
+    path: "{{ buildset_registry_root}}/auth/htpasswd"
+    name: "zuul"
+    password: "{{ registry_password }}"
+- name: Generate a TLS key for the Docker registry
+  openssl_privatekey:
+    path: "{{ buildset_registry_root}}/certs/domain.key"
+- name: Generate a TLS CSR for the Docker registry
+  openssl_csr:
+    path: "{{ buildset_registry_root}}/certs/domain.csr"
+    privatekey_path: "{{ buildset_registry_root}}/certs/domain.key"
+    common_name: "{{ ansible_host }}"
+    subject_alt_name: "DNS:{{ ansible_host }},IP:{{ ansible_host }}"
+- name: Generate a TLS cert for the Docker registry
+  openssl_certificate:
+    path: "{{ buildset_registry_root}}/certs/domain.crt"
+    csr_path: "{{ buildset_registry_root}}/certs/domain.csr"
+    privatekey_path: "{{ buildset_registry_root}}/certs/domain.key"
+    provider: selfsigned
+  register: generated_cert
+- name: Read TLS certificate
+  slurp:
+    src: "{{ generated_cert.filename }}"
+  register: certificate
+- name: Decode TLS certificate
+  set_fact:
+    certificate: "{{ certificate.content | b64decode }}"
+- name: Start a docker registry
+  docker_container:
+    name: buildset_registry
+    image: registry:2
+    state: started
+    restart_policy: always
+    ports:
+     - "5000:5000"
+    env:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    volumes:
+      - "{{ buildset_registry_root}}/data:/var/lib/registry"
+      - "{{ buildset_registry_root}}/certs:/certs"
+      - "{{ buildset_registry_root}}/auth:/auth"
+- name: Set registry information fact
+  set_fact:
+    buildset_registry:
+      host: "{{ ansible_host }}"
+      port: 5000
+      username: zuul
+      password: "{{ registry_password }}"
+      cert: "{{ certificate }}"
+- name: Return registry information to Zuul
+  zuul_return:
+    data:
+      buildset_registry: "{{ buildset_registry }}"
