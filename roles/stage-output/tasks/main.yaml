@@ -59,7 +59,15 @@
   # remote_src copy does not work recursively, synchronise is restricted by
   # zuul, using command
   command: cp -pRL {{ item.source}} {{ stage_dir }}/{{ item.dest }}
+  become: true
   with_items: "{{ all_sources }}"
+
+- name: Make all log files readable
+  file:
+    dest: "{{ stage_dir }}/logs"
+    mode: u=rwX,g=rX,o=rX
+    recurse: yes
+  become: yes
 
 - name: Discover log files that match extension_list
   find:
