@@ -32,3 +32,10 @@ An ansible role to install docker and configure it to use mirrors if available.
    Undefined will install the latest.  This will look something like
    ``18.06.1~ce~3-0~ubuntu``.  Only supported when using upstream
    docker repos.
+
+.. zuul:rolevar:: docker_insecure_registries
+   :default: undefined
+
+   Declare this with a list of insecure registries to define the
+   registries which are allowed to communicate with HTTP only or
+   HTTPS with no valid certificate.
