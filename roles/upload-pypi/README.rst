@@ -35,3 +35,9 @@ Upload python packages to PyPI
    :default: twine
 
    Path to twine executable.
+
+.. zuul:rolevar:: pypi_register_first
+  :default: false
+
+  Whether the role should register the package before uploading it. This may
+  be required when uploading for the first time to a devPI instance.

@@ -20,6 +20,11 @@
     msg: "Found no wheels to upload: {{found_wheels.msg}}"
   when: found_wheels.files == []
 
+- name: Register packages on the PyPI server (via wheels)
+  command: "{{ pypi_twine_executable }} register --config-file {{ _pypirc_tmp.path }} --repository {{ pypi_repository }} {{ item.path }}"
+  with_items: "{{ found_wheels.files }}"
+  when: pypi_register_first
+
 - name: Upload wheel with twine before tarballs
   command: "{{ pypi_twine_executable }} upload --config-file {{ _pypirc_tmp.path }} -r {{ pypi_repository }} {{ item.path }}"
   with_items: "{{ found_wheels.files }}"
@@ -34,6 +39,13 @@
   debug:
     msg: "Found no tarballs to upload: {{found_tarballs.msg}}"
   when: found_tarballs.files == []
+
+- name: Register packages on the PyPI server (via tarballs)
+  command: "{{ pypi_twine_executable }} register --config-file {{ _pypirc_tmp.path }} --repository {{ pypi_repository }} {{ item.path }}"
+  with_items: "{{ found_tarballs.files }}"
+  when:
+    - pypi_register_first
+    - found_wheels.files == []
 
 - name: Upload tarballs with twine
   command: "{{ pypi_twine_executable }} upload --config-file {{ _pypirc_tmp.path }} -r {{ pypi_repository }} {{ item.path }}"
