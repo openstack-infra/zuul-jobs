@@ -52,8 +52,11 @@ Library code should be written to be compatible with both.  There are
 some tips on this in `Ansible and Python 3
 <https://docs.ansible.com/ansible/2.5/dev_guide/developing_python_3.html>`__.
 
+Coding guidelines
+-----------------
+
 Role Variable Naming Policy
----------------------------
+***************************
 
 Variables referenced by roles from global scope (often intended to be
 set via ``host_vars`` and ``group_vars``, but also set during role
@@ -69,6 +72,106 @@ as ``example_role_variable``; e.g.
         name: example-role
       vars:
         example_role_variable: 'something'
+
+Support for Multiple Operating Systems
+**************************************
+
+Ideally, roles should be able to run regardless of the OS or the distribution
+flavor of the host. A role can target a specific OS or distribution; in that case
+it should be mentioned in the role's documentation and start with a `fail` task
+if the host does not match the intended environment:
+
+.. code-block:: YAML
+
+  tasks:
+    - name: Make sure the role is run on XXX version Y
+      fail:
+        msg: "This role supports XXX version Y only"
+        when:
+          - ansible_distribution != "XXX"
+          - ansible_distribution_major_version != "Y"
+
+Here are a few guidelines to help make roles OS-independent when possible:
+
+* Use the **package** module instead of **yum**, **apt** or other
+  distribution-specific commands.
+* If more than one specific task is needed for a specific OS, these tasks should
+  be stored in a separate YAML file in a `distros` subdirectory and named after
+  the specific flavor they target. The following boilerplate code can be used to
+  target specific flavors:
+
+.. code-block:: YAML
+
+  tasks:
+    - name: Execute distro-specific tasks
+      include_tasks: "{{ lookup('first_found', params) }}"
+      vars:
+        params:
+          files:
+            - "mytasks-{{ ansible_distribution }}.{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.yaml"
+            - "mytasks-{{ ansible_distribution }}.{{ ansible_distribution_major_version }}.yaml"
+            - "mytasks-{{ ansible_distribution }}.yaml"
+            - "mytasks-{{ ansible_os_family }}.yaml"
+            - "mytasks-default.yaml"
+          paths:
+            - distros
+
+If run on Fedora 29 x86_64, this playbook will attempt to include the first
+playbook found among
+
+* `distros/mytasks-Fedora.29.x86_64.yaml`
+* `distros/mytasks-Fedora.29.yaml`
+* `distros/mytasks-Fedora.yaml`
+* `distros/mytasks-RedHat.yaml`
+* `distros/mytasks-default.yaml`
+
+The default playbook should return a failure explaining the host's environment is
+not supported, or a skip if the tasks were optional.
+
+Handling privileges on hosts
+****************************
+
+Zuul offers great freedom in the types and configurations of hosts on which roles
+are run. Therefore roles should not assume the amount of privileges they will be
+granted on hosts. Some settings may not allow any form of privilege escalation,
+meaning that some tasks such as installing packages will fail.
+
+In order to make a role available to as many hosts as possible, it is good practice
+to avoid privilege escalations:
+
+* Do not use ``become: yes`` in tasks, unless necessary
+* If installing software is required, favor software deployments in user land,
+  like virtualenvs, if possible.
+* Check before executing a task requiring privilege escalation is actually
+  needed (e.g. is the package to install already present, or is the firewall
+  rule already set), and make the task skippable if its effects were already
+  applied to the host.
+
+If privilege escalation is unavoidable, this should be mentioned in the role's
+documentation so that operators can choose or set up their hosts accordingly.
+If relevant, the specific steps where the privilege escalation occurs should be
+documented so that they can be reproduced when configuring hosts. If possible,
+they should be grouped in a separate playbook that can be applied to hosts manually.
+
+Installing Dependencies in Roles
+********************************
+
+Roles should be self-sufficient.  This makes it sometimes necessary to pull dependencies
+within a role, in order to execute a task. Since this is usually an action
+requiring elevated privileges on the host, the guidelines in the previous
+paragraph apply. Again, ideally all the installation tasks should be grouped in
+a separate playbook.
+
+Here are the ways to install dependencies in order of preference:
+
+* Use the **package** module to install packages
+* Manage dependencies with `bindep <https://docs.openstack.org/infra/bindep/readme.html>`__
+  and the `bindep` role.
+* Use OS-specific tasks like **apt**, **yum** etc. to support as many OSes as
+  possible.
+
+In any case, the role's documentation should mention which dependencies are
+needed, allowing users to prepare their hosts accordingly.
 
 Testing
 -------
@@ -108,4 +211,3 @@ which is how it should remain until the next proposed change.
 
 .. _zuul-announce: http://lists.zuul-ci.org/cgi-bin/mailman/listinfo/zuul-announce
 .. _zuul-discuss: http://lists.zuul-ci.org/cgi-bin/mailman/listinfo/zuul-discuss
-
