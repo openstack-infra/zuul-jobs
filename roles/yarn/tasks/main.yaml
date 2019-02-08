@@ -5,7 +5,7 @@
 
 - name: Run yarn lifecycle command
   when: yarn_command in yarn_lifecycle_phases
-  command: "yarn {{ yarn_command }} --verbose"
+  command: "yarn {{ yarn_command }}"
   # Need to set DISPLAY to the value that will be set when the virtual
   # framebuffer is set up for doing browser tests.
   environment:
@@ -15,7 +15,7 @@
 
 - name: Run yarn custom command
   when: yarn_command not in yarn_lifecycle_phases
-  command: "yarn run {{ yarn_command }} --verbose"
+  command: "yarn run {{ yarn_command }}"
   # Need to set DISPLAY to the value that will be set when the virtual
   # framebuffer is set up for doing browser tests.
   environment:
