@@ -1,0 +1,13 @@
+- name: Check required variables
+  assert:
+    that:
+      - "forge_username is defined"
+      - "forge_password is defined"
+      - "forge_tarball is defined"
+
+- name: Upload module to Forge
+  forge_upload:
+    username: "{{ forge_username }}"
+    password: "{{ forge_password }}"
+    tarball: "{{ forge_tarball }}"
+    forgeapi: "{{ forge_url }}"
