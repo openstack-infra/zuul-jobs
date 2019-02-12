@@ -1,0 +1,10 @@
+- name: Pull artifact from intermediate registry
+  command: >-
+    skopeo copy
+    --src-creds={{ intermediate_registry.username }}:{{ intermediate_registry.password }}
+    --dest-creds={{ buildset_registry.username }}:{{ buildset_registry.password }}
+    {{ item.url }}
+    docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ item.metadata.repository }}:{{ item.metadata.tag }}
+  when: "item.metadata.type | default('') == 'container_image'"
+  loop: "{{ zuul.artifacts }}"
+  no_log: true
