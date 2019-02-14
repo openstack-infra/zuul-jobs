@@ -1,5 +1,5 @@
 - name: Push image to intermediate registry
   include_tasks: push.yaml
-  loop: docker_images
+  loop: "{{ docker_images }}"
   loop_control:
     loop_var: image

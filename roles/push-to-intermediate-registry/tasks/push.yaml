@@ -8,7 +8,7 @@
   loop: "{{ image.tags }}"
   loop_control:
     loop_var: image_tag
-  no_log: true
+  # no_log: true  TODO(corvus) replace
 
 - name: Return artifact to Zuul
   zuul_return:
