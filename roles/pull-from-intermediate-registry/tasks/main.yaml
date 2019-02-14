@@ -6,5 +6,5 @@
     {{ item.url }}
     docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ item.metadata.repository }}:{{ item.metadata.tag }}
   when: "item.metadata.type | default('') == 'container_image'"
-  loop: "{{ zuul.artifacts }}"
+  loop: "{{ zuul.artifacts | default([]) }}"
   # no_log: true  TODO(corvus): replace

@@ -5,7 +5,7 @@
     --dest-creds={{ intermediate_registry.username }}:{{ intermediate_registry.password }}
     docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
     docker://{{ intermediate_registry.hostname }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag}}
-  loop: "{{ image.tags }}"
+  loop: "{{ image.tags | default(['latest']) }}"
   loop_control:
     loop_var: image_tag
   # no_log: true  TODO(corvus) replace
@@ -21,6 +21,6 @@
               type: container_image
               repository: "{{ image.repository }}"
               tag: "{{ image_tag }}"
-  loop: "{{ image.tags }}"
+  loop: "{{ image.tags | default(['latest']) }}"
   loop_control:
     loop_var: image_tag
