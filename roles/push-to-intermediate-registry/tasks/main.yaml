@@ -1,3 +1,8 @@
+# This can be removed if we add this functionality to Zuul directly
+- name: Load information from zuul_return
+  when: buildset_registry is not defined
+  set_fact:
+    buildset_registry: "{{ (lookup('file', zuul.executor.work_root + '/results.json') | from_json)['buildset_registry'] }}"
 - name: Push image to intermediate registry
   include_tasks: push.yaml
   loop: "{{ docker_images }}"
