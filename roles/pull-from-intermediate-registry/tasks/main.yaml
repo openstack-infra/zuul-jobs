@@ -1,6 +1,6 @@
 - name: Pull artifact from intermediate registry
   command: >-
-    skopeo copy --insecure-policy
+    skopeo --insecure-policy copy
     --src-creds={{ intermediate_registry.username }}:{{ intermediate_registry.password }}
     --dest-creds={{ buildset_registry.username }}:{{ buildset_registry.password }}
     {{ item.url }}

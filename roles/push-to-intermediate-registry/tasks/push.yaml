@@ -1,6 +1,6 @@
 - name: Push tag to intermediate registry
   command: >-
-    skopeo copy --insecure-policy
+    skopeo --insecure-policy copy
     --src-creds={{ buildset_registry.username }}:{{ buildset_registry.password }}
     --dest-creds={{ intermediate_registry.username }}:{{ intermediate_registry.password }}
     docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
