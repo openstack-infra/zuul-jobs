@@ -4,7 +4,7 @@
     --src-creds={{ buildset_registry.username }}:{{ buildset_registry.password }}
     --dest-creds={{ intermediate_registry.username }}:{{ intermediate_registry.password }}
     docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
-    docker://{{ intermediate_registry.host }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag}}
+    docker://{{ intermediate_registry.host }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag }}
   loop: "{{ image.tags | default(['latest']) }}"
   loop_control:
     loop_var: image_tag

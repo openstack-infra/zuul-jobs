@@ -1,0 +1,7 @@
+- name: Push tag to buildset registry
+  command: >-
+    docker tag {{ image.repository }}:{{ image_tag }} {{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
+    docker push {{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
+  loop: "{{ image.tags | default(['latest']) }}"
+  loop_control:
+    loop_var: image_tag
