@@ -44,5 +44,11 @@
     MINIKUBE_HOME: "{{ ansible_user_dir }}"
     KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
 
+- name: Ensure minikube config is owned by ansible_user
+  become: yes
+  file:
+    path: "{{ ansible_user_dir }}/.minikube/client.key"
+    owner: "{{ ansible_user }}"
+
 - name: Get cluster info
   command: kubectl cluster-info
