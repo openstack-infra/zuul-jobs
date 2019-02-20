@@ -1,18 +1,3 @@
-# This can be removed if we add this functionality to Zuul directly
-- name: Load information from zuul_return
-  when: buildset_registry is not defined
-  set_fact:
-    buildset_registry: "{{ (lookup('file', zuul.executor.work_root + '/results.json') | from_json)['buildset_registry'] }}"
-- name: Ensure registry cert directory exists
-  file:
-    path: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/"
-    state: directory
-- name: Write registry TLS certificate
-  copy:
-    content: "{{ buildset_registry.cert }}"
-    dest: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/ca.crt"
-- name: Push image to intermediate registry
+- name: Push images to intermediate registry
+  when: docker_images is defined
   include_tasks: push.yaml
-  loop: "{{ docker_images }}"
-  loop_control:
-    loop_var: image
