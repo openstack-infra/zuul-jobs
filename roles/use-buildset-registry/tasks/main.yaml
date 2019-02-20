@@ -1,24 +1,52 @@
+- name: Ensure docker directory exists
+  become: yes
+  file:
+    state: directory
+    path: /etc/docker
 - name: Ensure registry cert directory exists
   become: true
   file:
     path: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/"
+    state: directory
+- name: Ensure push registry cert directory exists
+  become: true
+  file:
+    path: "/etc/docker/certs.d/{{ buildset_registry.push_host }}:{{ buildset_registry.push_port }}/"
     state: directory
 - name: Write registry TLS certificate
   become: true
   copy:
     content: "{{ buildset_registry.cert }}"
     dest: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/ca.crt"
+- name: Write push registry TLS certificate
+  become: true
+  copy:
+    content: "{{ buildset_registry.cert }}"
+    dest: "/etc/docker/certs.d/{{ buildset_registry.push_host }}:{{ buildset_registry.push_port }}/ca.crt"
+
+# Update daemon config
+- name: Check if docker daemon configuration exists
+  stat:
+    path: /etc/docker/daemon.json
+  register: docker_config_stat
 - name: Load docker daemon configuration
+  when: docker_config_stat.stat.exists
   slurp:
     path: /etc/docker/daemon.json
   register: docker_config
 - name: Parse docker daemon configuration
+  when: docker_config_stat.stat.exists
   set_fact:
     docker_config: "{{ docker_config.content | b64decode | from_json }}"
+- name: Set default docker daemon configuration
+  when: not docker_config_stat.stat.exists
+  set_fact:
+    docker_config:
+      registry-mirrors: []
 - name: Add registry to docker daemon configuration
   vars:
     new_config:
-      registry-mirrors: "['https://{{ buildset_registry.host }}:{{ buildset_registry.port}}/'] + {{ docker_config['registry-mirrors'] }}"
+      registry-mirrors: "['https://{{ buildset_registry.host }}:{{ buildset_registry.port}}/']"
   set_fact:
     docker_config: "{{ docker_config | combine(new_config) }}"
 - name: Save docker daemon configuration
@@ -26,14 +54,24 @@
     content: "{{ docker_config | to_nice_json }}"
     dest: /etc/docker/daemon.json
   become: true
+
 - name: Restart docker daemon
   service:
     name: docker
     state: restarted
   become: true
-- name: Log in to registry
-  command: "docker login -u {{ buildset_registry.username }} -p {{ buildset_registry.password }} https://{{ buildset_registry.host }}:{{ buildset_registry.port}}/"
-  register: result
-  until: result.rc ==0
-  delay: 1
-  retries: 120
+  register: docker_restart
+  failed_when: docker_restart is failed and not 'Could not find the requested service' in docker_restart.msg
+
+# We use 'block' here to cause the become to apply to all the tasks
+# (which does not automatically happen with include_tasks).
+- name: Update docker user config to use buildset registry
+  become: true
+  become_user: "{{ buildset_registry_docker_user }}"
+  when: buildset_registry_docker_user is defined
+  block:
+    - include_tasks: user-config.yaml
+- name: Update docker user config to use buildset registry
+  when: buildset_registry_docker_user is not defined
+  block:
+    - include_tasks: user-config.yaml

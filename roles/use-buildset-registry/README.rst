@@ -28,3 +28,10 @@ Use this role on any host which should use the buildset registry.
    .. zuul:rolevar:: cert
 
       The (self-signed) certificate used by the registry.
+
+.. zuul:rolevar:: buildset_registry_docker_user
+   :default: {{ ansible_user }}
+
+   The system user to configure to use the docker registry.  The
+   docker configuration file for this user will be updated.  By
+   default, the user Ansible is running as.
