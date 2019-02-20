@@ -1,0 +1,11 @@
+- name: Set mirror_fqdn fact
+  when:
+    - mirror_fqdn is not defined
+    - zuul_site_mirror_fqdn is defined
+  set_fact:
+    mirror_fqdn: "{{ zuul_site_mirror_fqdn }}"
+
+- name: Set up docker mirrors
+  include: mirror.yaml
+  when: mirror_fqdn is defined
+  static: no

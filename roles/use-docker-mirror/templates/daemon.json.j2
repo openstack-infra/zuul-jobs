@@ -1,0 +1,4 @@
+{
+  {% if docker_insecure_registries is defined -%}"insecure-registries": {{ docker_insecure_registries | to_json }},{% endif %}
+  "registry-mirrors": ["{{ docker_mirror }}"]
+}
