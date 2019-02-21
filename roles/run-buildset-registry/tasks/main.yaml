@@ -73,6 +73,9 @@
       REGISTRY_AUTH: htpasswd
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_PROXY_REMOTEURL: https://registry-1.docker.io
+      REGISTRY_PROXY_USERNAME:
+      REGISTRY_PROXY_PASSWORD:
     volumes:
       - "{{ buildset_registry_root}}/data:/var/lib/registry"
       - "{{ buildset_registry_root}}/certs:/certs"
