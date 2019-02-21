@@ -2,7 +2,10 @@ Runs a docker registry for the use of this buildset.
 
 This may be used for a single job running on a single node, or it may
 be used at the root of a job graph so that multiple jobs running for a
-single change can share the registry.
+single change can share the registry.  Two registry endpoints are
+provided -- one is a read-only endpoint which acts as a pull-through
+proxy and serves upstream images as well as those which are pushed to
+the registry.  The second is intended only for pushing images.
 
 **Role Variables**
 
@@ -24,6 +27,14 @@ single change can share the registry.
    .. zuul:rolevar:: port
 
       The port on which the registry is listening.
+
+   .. zuul:rolevar:: push_host
+
+      The host (IP address) to use when pushing images to the registry.
+
+   .. zuul:rolevar:: push_port
+
+      The port to use when pushing images to the registry.
 
    .. zuul:rolevar:: username
 
