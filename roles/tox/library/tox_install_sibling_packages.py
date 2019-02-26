@@ -106,7 +106,8 @@ def get_installed_packages(tox_python):
     frozen_pkgs = subprocess.check_output(
         [tox_python, '-m', 'pip', '-qqq', 'freeze']
     )
-    return [x.split('==')[0] for x in frozen_pkgs.split('\n') if '==' in x]
+    return [x[x.find('(') + 1:].split('==')[0]
+            for x in frozen_pkgs.split('\n') if '==' in x]
 
 
 def write_new_constraints_file(constraints, packages):
