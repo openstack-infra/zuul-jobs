@@ -8,6 +8,8 @@
 - name: Log in to dockerhub
   command: "docker login -u {{ docker_credentials.username }} -p {{ docker_credentials.password }}"
   no_log: true
-- name: Upload to dockerhub
-  command: "docker push {{ item.repository }}:change_{{ zuul.change }}"
+- name: Upload image to dockerhub
   loop: "{{ docker_images }}"
+  loop_control:
+    loop_var: image
+  include_tasks: push.yaml
