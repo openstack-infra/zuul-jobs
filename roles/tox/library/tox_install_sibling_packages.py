@@ -106,6 +106,10 @@ def get_installed_packages(tox_python):
     frozen_pkgs = subprocess.check_output(
         [tox_python, '-m', 'pip', '-qqq', 'freeze']
     )
+    # Matches strings of the form:
+    # 1. '<package_name>==<version>'
+    # 2. '# Editable Git install with no remote (<package_name>==<version>)'
+    # both results: <package_name>
     return [x[x.find('(') + 1:].split('==')[0]
             for x in frozen_pkgs.split('\n') if '==' in x]
 
