@@ -31,7 +31,7 @@
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
           "{{ buildset_registry.host }}:{{ buildset_registry.port }}":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
-          "{{ buildset_registry.push_host }}:{{ buildset_registry.push_port }}":
+          "{{ buildset_registry.host }}:{{ buildset_registry.proxy_port }}":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"}
         }
   set_fact:

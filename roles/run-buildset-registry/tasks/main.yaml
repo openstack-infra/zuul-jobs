@@ -59,9 +59,9 @@
 - name: Decode TLS certificate
   set_fact:
     certificate: "{{ certificate.content | b64decode }}"
-- name: Start a docker proxy
+- name: Start a docker registry
   docker_container:
-    name: buildset_proxy
+    name: buildset_registry
     image: registry:2
     state: started
     restart_policy: always
@@ -73,16 +73,12 @@
       REGISTRY_AUTH: htpasswd
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
-      REGISTRY_PROXY_REMOTEURL: https://registry-1.docker.io
-      REGISTRY_PROXY_USERNAME: ''
-      REGISTRY_PROXY_PASSWORD: ''
     volumes:
-      - "{{ buildset_registry_root}}/data:/var/lib/registry"
       - "{{ buildset_registry_root}}/certs:/certs"
       - "{{ buildset_registry_root}}/auth:/auth"
-- name: Start a docker registry
+- name: Start a docker proxy
   docker_container:
-    name: buildset_registry
+    name: buildset_proxy
     image: registry:2
     state: started
     restart_policy: always
@@ -94,8 +90,10 @@
       REGISTRY_AUTH: htpasswd
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_PROXY_REMOTEURL: https://registry-1.docker.io
+      REGISTRY_PROXY_USERNAME: ''
+      REGISTRY_PROXY_PASSWORD: ''
     volumes:
-      - "{{ buildset_registry_root}}/data:/var/lib/registry"
       - "{{ buildset_registry_root}}/certs:/certs"
       - "{{ buildset_registry_root}}/auth:/auth"
 - name: Set registry information fact
@@ -103,8 +101,7 @@
     buildset_registry:
       host: "{{ ansible_host }}"
       port: 5000
-      push_host: "{{ ansible_host }}"
-      push_port: 5001
+      proxy_port: 5001
       username: zuul
       password: "{{ registry_password }}"
       cert: "{{ certificate }}"

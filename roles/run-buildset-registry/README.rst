@@ -3,9 +3,7 @@ Runs a docker registry for the use of this buildset.
 This may be used for a single job running on a single node, or it may
 be used at the root of a job graph so that multiple jobs running for a
 single change can share the registry.  Two registry endpoints are
-provided -- one is a read-only endpoint which acts as a pull-through
-proxy and serves upstream images as well as those which are pushed to
-the registry.  The second is intended only for pushing images.
+provided -- one is a local registry, the second is an upstream proxy.
 
 **Role Variables**
 
@@ -28,13 +26,9 @@ the registry.  The second is intended only for pushing images.
 
       The port on which the registry is listening.
 
-   .. zuul:rolevar:: push_host
+   .. zuul:rolevar:: proxy_port
 
-      The host (IP address) to use when pushing images to the registry.
-
-   .. zuul:rolevar:: push_port
-
-      The port to use when pushing images to the registry.
+      The port on which the proxy is listening.
 
    .. zuul:rolevar:: username
 

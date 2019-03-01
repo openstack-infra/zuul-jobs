@@ -17,13 +17,9 @@ Use this role on any host which should use the buildset registry.
 
       The port on which the registry is listening.
 
-   .. zuul:rolevar:: push_host
+   .. zuul:rolevar:: proxy_port
 
-      The host (IP address) to use when pushing images to the registry.
-
-   .. zuul:rolevar:: push_port
-
-      The port to use when pushing images to the registry.
+      The port on which the registry proxy is listening.
 
    .. zuul:rolevar:: username
 
