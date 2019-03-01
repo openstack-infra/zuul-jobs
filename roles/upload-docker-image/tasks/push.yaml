@@ -1,0 +1,5 @@
+- name: Upload tag to dockerhub
+  command: "docker push {{ item.repository }}:change_{{ zuul.change }}_{{ image_tag }}"
+  loop: "{{ image.tags | default(['latest']) }}"
+  loop_control:
+    loop_var: image_tag

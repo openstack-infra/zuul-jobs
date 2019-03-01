@@ -1,0 +1,28 @@
+- name: Get manifest
+  no_log: true
+  uri:
+    url: "https://registry.hub.docker.com/v2/{{ image.repository }}/manifests/change_{{ zuul.change }}_{{ image_tag }}"
+    status_code: 200
+    headers:
+      Accept: "application/vnd.docker.distribution.manifestv2+json"
+      Authorization: "Bearer {{ token.json.token }}"
+    return_content: true
+  register: manifest
+- name: Put manifest
+  no_log: true
+  uri:
+    url: "https://registry.hub.docker.com/v2/{{ image.repository }}/manifests/{{ image_tag }}"
+    method: PUT
+    status_code: 201
+    body: "{{ manifest.content | string }}"
+    headers:
+      Content-Type: "application/vnd.docker.distribution.manifestv2+json"
+      Authorization: "Bearer {{ token.json.token }}"
+- name: Delete the current change tag
+  no_log: true
+  uri:
+    url: "https://hub.docker.com/v2/repositories/{{ image.repository }}/tags/change_{{ zuul.change }}_{{ image_tag }}/"
+    method: DELETE
+    status_code: 204
+    headers:
+      Authorization: "JWT {{ jwt_token.json.token }}"
