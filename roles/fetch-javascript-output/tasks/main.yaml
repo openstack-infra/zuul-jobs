@@ -140,3 +140,11 @@
     src: "{{ coverage_output_src }}"
     verify_host: true
   when: coverage_report_stat.stat.exists
+
+- name: Return site artifact location to Zuul
+  zuul_return:
+    data:
+      zuul:
+        artifacts:
+          - name: "site"
+            url: "npm/html/"
