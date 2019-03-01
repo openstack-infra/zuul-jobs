@@ -4,7 +4,7 @@
     url: "https://registry.hub.docker.com/v2/{{ image.repository }}/manifests/change_{{ zuul.change }}_{{ image_tag }}"
     status_code: 200
     headers:
-      Accept: "application/vnd.docker.distribution.manifestv2+json"
+      Accept: "application/vnd.docker.distribution.manifest.v2+json"
       Authorization: "Bearer {{ token.json.token }}"
     return_content: true
   register: manifest
@@ -16,7 +16,7 @@
     status_code: 201
     body: "{{ manifest.content | string }}"
     headers:
-      Content-Type: "application/vnd.docker.distribution.manifestv2+json"
+      Content-Type: "application/vnd.docker.distribution.manifest.v2+json"
       Authorization: "Bearer {{ token.json.token }}"
 - name: Delete the current change tag
   no_log: true
