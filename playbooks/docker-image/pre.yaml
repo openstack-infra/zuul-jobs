@@ -1,8 +1,3 @@
 - hosts: all
   roles:
     - install-docker
-  tasks:
-    - name: Configure buildset registry
-      when: buildset_registry is defined
-      include_role:
-        name: use-buildset-registry
