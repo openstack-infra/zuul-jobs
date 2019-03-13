@@ -7,6 +7,7 @@
    policy
    jobs
    roles
+   docker-image
 
 Indices and tables
 ==================
