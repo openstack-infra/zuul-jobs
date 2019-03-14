@@ -1,0 +1,9 @@
+---
+# git push --mirror {{ git_mirror_credentials.user }}@{{ git_mirror_credentials.host }}:{{ git_mirror_credentials.repository }}
+# git_mirror_credentials:
+#   user:
+#   host:
+#   key:
+
+# Repository to replicate to
+# git_mirror_repository:
