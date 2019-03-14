@@ -9,6 +9,12 @@
     state: present
   become: yes
 
+- name: Pin nodejs installs to nodesource
+  copy:
+    src: 00-nodesource.pref
+    dest: /etc/apt/preferences.d/00-nodesource.pref
+  become: yes
+
 - name: Add nodesource repository key
   apt_key:
     url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
