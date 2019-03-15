@@ -19,6 +19,8 @@
 extensions = [
     'sphinx.ext.autodoc',
     # 'sphinx.ext.intersphinx',
+    'sphinxcontrib.blockdiag',
+    'sphinxcontrib.seqdiag',
     'zuul_sphinx',
 ]
 

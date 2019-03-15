@@ -22,3 +22,5 @@ openstacksdk>=0.17.1
 requests
 requestsexceptions
 bs4
+sphinxcontrib-blockdiag>=1.1.0
+sphinxcontrib-seqdiag
