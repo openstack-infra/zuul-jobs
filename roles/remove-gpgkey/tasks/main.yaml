@@ -1,2 +1,2 @@
 - name: Remove GPG key
-  shell: 'find ~/.gnupg/ -type f -exec shred -u {} \\;'
+  shell: find ~/.gnupg/ -type f -exec shred -u {} \;
