@@ -43,12 +43,8 @@
         {
           "{{ intermediate_registry.host }}:{{ intermediate_registry.port }}":
             {"auth": "{{ (intermediate_registry.username + ":" + intermediate_registry.password) | b64encode }}"},
-          "{{ intermediate_registry.host }}:{{ intermediate_registry.proxy_port }}":
-            {"auth": "{{ (intermediate_registry.username + ":" + intermediate_registry.password) | b64encode }}"}
           "{{ buildset_registry.host }}:{{ buildset_registry.port }}":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
-          "{{ buildset_registry.host }}:{{ buildset_registry.proxy_port }}":
-            {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"}
         }
   set_fact:
     new_docker_config: "{{ docker_config | combine(new_config, recursive=True) }}"
