@@ -11,13 +11,69 @@
   copy:
     content: "{{ buildset_registry.cert }}"
     dest: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/ca.crt"
-- name: Pull artifact from intermediate registry
-  command: >-
-    skopeo --insecure-policy copy
-    --src-creds={{ intermediate_registry.username }}:{{ intermediate_registry.password }}
-    --dest-creds={{ buildset_registry.username }}:{{ buildset_registry.password }}
-    {{ item.url }}
-    docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ item.metadata.repository }}:{{ item.metadata.tag }}
-  when: "item.metadata.type | default('') == 'container_image'"
-  loop: "{{ zuul.artifacts | default([]) }}"
-  no_log: true
+
+
+# Update user config for intermediate and buildset registries
+- name: Ensure docker user directory exists
+  file:
+    state: directory
+    path: "~/.docker"
+    mode: 0700
+- name: Check if docker user configuration exists
+  stat:
+    path: "~/.docker/config.json"
+  register: docker_config_stat
+- name: Load docker user configuration
+  when: docker_config_stat.stat.exists
+  slurp:
+    path: "~/.docker/config.json"
+  register: docker_config
+- name: Parse docker user configuration
+  when: docker_config_stat.stat.exists
+  set_fact:
+    docker_config: "{{ docker_config.content | b64decode | from_json }}"
+- name: Set default docker user configuration
+  when: not docker_config_stat.stat.exists
+  set_fact:
+    docker_config:
+      auths: {}
+- name: Add registry to docker user configuration
+  vars:
+    new_config:
+      auths: |
+        {
+          "{{ intermediate_registry.host }}:{{ intermediate_registry.port }}":
+            {"auth": "{{ (intermediate_registry.username + ":" + intermediate_registry.password) | b64encode }}"},
+          "{{ intermediate_registry.host }}:{{ intermediate_registry.proxy_port }}":
+            {"auth": "{{ (intermediate_registry.username + ":" + intermediate_registry.password) | b64encode }}"}
+          "{{ buildset_registry.host }}:{{ buildset_registry.port }}":
+            {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
+          "{{ buildset_registry.host }}:{{ buildset_registry.proxy_port }}":
+            {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"}
+        }
+  set_fact:
+    new_docker_config: "{{ docker_config | combine(new_config, recursive=True) }}"
+- name: Save docker user configuration
+  copy:
+    content: "{{ new_docker_config | to_nice_json }}"
+    dest: "~/.docker/config.json"
+    mode: 0600
+
+# Pull the images
+- name: Pull artifacts from intermediate registry
+  block:
+    - name: Pull artifacts from intermediate registry
+      command: >-
+        skopeo --insecure-policy copy
+        {{ item.url }}
+        docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ item.metadata.repository }}:{{ item.metadata.tag }}
+      when: "item.metadata.type | default('') == 'container_image'"
+      loop: "{{ zuul.artifacts | default([]) }}"
+  always:
+    - name: Remove docker user config
+      command: "shred ~/.docker/config.json"
+    - name: Replace docker user configuration
+      copy:
+        content: "{{ docker_config | to_nice_json }}"
+        dest: "~/.docker/config.json"
+        mode: 0600
