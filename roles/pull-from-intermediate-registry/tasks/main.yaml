@@ -63,7 +63,7 @@
         skopeo --insecure-policy copy
         {{ item.url }}
         docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ item.metadata.repository }}:{{ item.metadata.tag }}
-      when: "item.metadata.type | default('') == 'container_image'"
+      when: "metadata in item and item.metadata.type | default('') == 'container_image'"
       loop: "{{ zuul.artifacts | default([]) }}"
   always:
     - name: Remove docker user config
