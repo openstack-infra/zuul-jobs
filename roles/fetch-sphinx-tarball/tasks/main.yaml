@@ -1,0 +1,15 @@
+- name: Inspect sphinx build directory
+  find:
+    file_type: any
+    paths: "{{ zuul_work_dir }}/{{ sphinx_build_dir }}"
+  register: sphinx_dir
+
+- name: Parse sphinx build directory
+  set_fact:
+    sphinx_dir: "{{sphinx_dir.files | map(attribute='path') | map('regex_replace', '^.*/(.*)$', '\\1') | list}}"
+
+- name: Process sphinx HTML
+  when: "'html' in sphinx_dir"
+  include_tasks: html.yaml
+
+# Other sphinx output processing can be added here.
