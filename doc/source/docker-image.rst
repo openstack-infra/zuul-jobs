@@ -12,6 +12,9 @@ registry, and define local versions of the jobs to use it.  The
 following sections describe how to define those jobs and how the
 system is intended to work once the jobs are defined.
 
+.. contents::
+   :local:
+
 Run an Intermediate Container Registry
 --------------------------------------
 
@@ -51,6 +54,9 @@ as the htpassword file with a user and password already present.
 
 Once that service is running, create the following four jobs in a
 Zuul config-project:
+
+Create Parent Jobs
+------------------
 
 .. _yoursite-buildset-registry:
 
@@ -273,10 +279,13 @@ is started by a job running on a change.  The "Image Build" and
 change.  Essentially, these are image producer or consumer jobs
 respectively.
 
+Using the Jobs
+--------------
+
 There are two ways to use the jobs described above:
 
 A Repository with Producers and Consumers
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first is in a repository where images are both produced and
 consumed.  In this case, we can expect that there will be at least one
@@ -323,7 +332,7 @@ registry so that it will use the newly built version of any required
 images.
 
 A Repository with Only Producers
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The second way to use these jobs is in a repository where an image is
 merely built, but not deployed.  In this case, there are no consumers
@@ -333,7 +342,7 @@ registry can be run on the job itself.  In this case, you may omit the
 :ref:`yoursite-build-docker-image` job.
 
 Publishing an Image
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 So far we've covered the image building process.  This system also
 provides two more jobs that are used in publishing images to Docker
