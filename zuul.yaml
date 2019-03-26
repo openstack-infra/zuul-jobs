@@ -525,7 +525,9 @@
     description: |
       Run simple command as test.
 
-      To use this, set the ``test_command`` variable.
+      To use this, set the ``test_command`` variable to a single command or
+      a list of commands. For complex list of commands, it is recommended to
+      use a single command that run a proper script.
     run: playbooks/run-test-command/run.yaml
     vars:
       test_command: "exit 1"
