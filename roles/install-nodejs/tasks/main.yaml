@@ -33,6 +33,17 @@
     update_cache: yes
   become: yes
 
+# Use template so that we can easily update this in the future to be able to
+# use a mirror location.
+- name: Pin NodeJS to nodesource apt repository
+  become: yes
+  template:
+    dest: /etc/apt/preferences.d/nodejs.pref
+    group: root
+    mode: 0644
+    owner: root
+    src: nodejs.pref.j2
+
 - name: Install NodeJS from nodesource
   package:
     name: nodejs
