@@ -7,7 +7,7 @@
   with_dict: "{{ zuul.projects }}"
 
 - name: Synchronize src repos to workspace directory
-  command: "git push --mirror git+ssh://{{ ansible_user }}@{{ ansible_host | ipwrap }}:{{ ansible_port }}/{{ ansible_user_dir }}/{{ item.value.src_dir}}"
+  command: "git push {% if mirror_workspace_quiet %}--quiet{% endif %} --mirror git+ssh://{{ ansible_user }}@{{ ansible_host | ipwrap }}:{{ ansible_port }}/{{ ansible_user_dir }}/{{ item.value.src_dir}}"
   args:
     chdir: "{{ zuul.executor.work_root }}/{{ item.value.src_dir }}"
   with_dict: "{{ zuul.projects }}"
@@ -32,7 +32,7 @@
     # Undo the config setting we did above
     git config --local --unset receive.denyCurrentBranch
     # checkout the branch matching the branch set up by the executor
-    git checkout {{ item.value.checkout }}
+    git checkout {% if mirror_workspace_quiet %}--quiet{% endif %} {{ item.value.checkout }}
     # put out a status line with the current HEAD
     echo "{{ item.value.canonical_name }} checked out to:"
     git log --pretty=oneline  -1
