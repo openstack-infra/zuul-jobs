@@ -1,5 +1,11 @@
 - hosts: all
-  roles:
-    - role: bindep
-      bindep_dir: "{{ zuul_work_dir }}"
-    - test-setup
+  tasks:
+    - name: Install binary dependencies
+      include_role:
+        name: bindep
+      vars:
+        bindep_dir: "{{ zuul_work_dir }}"
+      when: tox_install_bindep | default(true)
+    - name: Run test-setup role
+      include_role:
+        name: test-setup
