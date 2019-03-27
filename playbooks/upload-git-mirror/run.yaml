@@ -1,0 +1,4 @@
+- name: Mirror git repository to a remote git server
+  hosts: all
+  roles:
+    - upload-git-mirror

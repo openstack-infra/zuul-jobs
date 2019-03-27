@@ -5,3 +5,4 @@ General Purpose Jobs
 .. zuul:autojob:: unittests
 .. zuul:autojob:: multinode
 .. zuul:autojob:: run-test-command
+.. zuul:autojob:: upload-git-mirror
