@@ -25,6 +25,6 @@ superuser privileges to run.
      Literal private key contents.
      Should start with something like ``-----BEGIN RSA PRIVATE KEY-----``.
 
-.. zuul:rolevar:: repository
+.. zuul:rolevar:: git_mirror_repository
 
    Path of the remote git repository
