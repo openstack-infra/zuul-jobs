@@ -88,18 +88,25 @@
   tags:
    - skip_ansible_lint
 
-# NOTE(andreaf) The ansible module does not support recursive archive, so
-# using gzip is the only option here. The good bit is that gzip itself is
-# almost idempotent, as it will not compress again files with .gz extension.
-# gzip will however return 1 if any compressed file is encountered, so we
-# must ignore that (there's no specific error code).
-- name: Archive everything from docs sources
-  shell: gzip --recursive --best {{ item.dest }} || true
-  args:
-    chdir: "{{ stage_dir }}"
-  with_items: "{{ all_sources }}"
+- block:
+    - name: Discover log files for compression
+      find:
+        paths: "{{ stage_dir }}/logs"
+        recurse: true
+        file_type: 'file'
+      register: log_files_to_compress
+
+    # NOTE(andreaf) The ansible module does not support recursive archive, so
+    # using gzip is the only option here. The good bit is that gzip itself is
+    # almost idempotent, as it will not compress again files with .gz extension.
+    # gzip will however return 1 if any compressed file is encountered, so we
+    # must ignore that (there's no specific error code).
+    - name: Archive everything from logs
+      shell: gzip --recursive --best {{ item.path }} || true
+      args:
+        chdir: "{{ stage_dir }}/logs"
+      with_items: "{{ log_files_to_compress.files }}"
+      tags:
+       - skip_ansible_lint
   when:
     - stage_compress_logs
-    - item.type == 'logs'
-  tags:
-   - skip_ansible_lint
