@@ -30,6 +30,7 @@ General Purpose Roles
 .. zuul:autorole:: start-zuul-console
 .. zuul:autorole:: test-setup
 .. zuul:autorole:: trigger-readthedocs
+.. zuul:autorole:: upload-git-mirror
 .. zuul:autorole:: validate-dco-license
 .. zuul:autorole:: validate-host
 .. zuul:autorole:: version-from-git
