@@ -6,7 +6,9 @@
   when: bindep_file is defined
 
 - include: install.yaml
-  when: bindep_command is not defined
+  when:
+    - bindep_file is defined
+    - bindep_command is not defined
 
 - name: Define bindep_run fact
   set_fact:
