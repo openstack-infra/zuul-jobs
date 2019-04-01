@@ -68,10 +68,15 @@
 
           SSH host for the remote git repository
 
-        .. zuul:jobvar:: key
+        .. zuul:jobvar:: ssh_key
 
           Literal private key contents.
           Should start with something like ``-----BEGIN RSA PRIVATE KEY-----``.
+
+        .. zuul:jobvar:: host_key
+
+          SSH host key of the remote git server.
+          Can be obtained with ``ssh-keyscan -H <host>``.
 
       .. zuul:jobvar:: git_mirror_repository
 
