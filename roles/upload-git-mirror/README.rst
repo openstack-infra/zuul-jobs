@@ -20,10 +20,15 @@ superuser privileges to run.
 
      SSH host for the remote git repository
 
-  .. zuul:rolevar:: key
+  .. zuul:rolevar:: ssh_key
 
      Literal private key contents.
      Should start with something like ``-----BEGIN RSA PRIVATE KEY-----``.
+
+  .. zuul:rolevar:: host_key
+
+     SSH host key of the remote git server.
+     Can be obtained with ``ssh-keyscan -H <host>``.
 
 .. zuul:rolevar:: git_mirror_repository
 

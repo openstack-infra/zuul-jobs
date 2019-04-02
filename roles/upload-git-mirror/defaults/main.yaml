@@ -3,7 +3,8 @@
 # git_mirror_credentials:
 #   user:
 #   host:
-#   key:
+#   ssh_key:
+#   host_key:
 
 # Repository to replicate to
 # git_mirror_repository:

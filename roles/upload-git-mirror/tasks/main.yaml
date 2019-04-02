@@ -6,7 +6,7 @@
 
     - name: Set up private key
       copy:
-        content: "{{ git_mirror_credentials.key }}"
+        content: "{{ git_mirror_credentials.ssh_key }}"
         dest: "{{ ssh_private_key_tmp.path }}"
         mode: 0600
 
@@ -25,6 +25,12 @@
         create: yes
         mode: 0600
         block: "{{ ssh_config }}"
+
+    - name: Add host key to known hosts
+      known_hosts:
+        state: present
+        name: "{{ git_mirror_credentials.host }}"
+        key: "{{ git_mirror_credentials.host_key }}"
 
     - name: Mirror the git repository
       command: git push --mirror {{ git_mirror_credentials.user }}@{{ git_mirror_credentials.host }}:{{ git_mirror_repository }}
@@ -45,3 +51,10 @@
         mode: 0600
         block: "{{ ssh_config }}"
       register: git_mirror_ssh_config_removed
+
+    - name: Remove host key from known hosts
+      known_hosts:
+        state: absent
+        name: "{{ git_mirror_credentials.host }}"
+        key: "{{ git_mirror_credentials.host_key }}"
+      register: git_mirror_host_key_removed
