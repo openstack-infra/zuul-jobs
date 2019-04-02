@@ -13,6 +13,7 @@
   find:
     paths: "{{ pypi_path }}"
     patterns: "*.whl"
+    excludes: "*-linux_x86_64.whl"
   register: found_wheels
 
 - name: Report no wheels to be uploaded
