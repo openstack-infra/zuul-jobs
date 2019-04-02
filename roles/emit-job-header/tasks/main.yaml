@@ -17,7 +17,7 @@
           Triggered by: {{ zuul.change_url }}
           {% endif %}
           {% if zuul_log_url is defined and zuul_log_path is defined %}
-          Log URL (when completed): {{ zuul_log_url }}/{{ zuul_log_path }}
+          Log URL (when completed): {{ zuul_log_url }}/{{ zuul_log_path }}/
           {% endif %}
 
     - name: Print node information
