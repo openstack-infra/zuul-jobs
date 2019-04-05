@@ -1,8 +1,8 @@
 - name: Push tag to intermediate registry
   command: >-
     skopeo --insecure-policy copy
-    docker://{{ buildset_registry.host }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
-    docker://{{ intermediate_registry.host }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag }}
+    docker://{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
+    docker://{{ intermediate_registry.host | ipwrap }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag }}
   loop: "{{ image.tags | default(['latest']) }}"
   loop_control:
     loop_var: image_tag
@@ -13,7 +13,7 @@
       zuul:
         artifacts:
           - name: "image_{{ image.repository }}:{{ image_tag }}"
-            url: "docker://{{ intermediate_registry.host }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag}}"
+            url: "docker://{{ intermediate_registry.host | ipwrap }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag}}"
             metadata:
               type: container_image
               repository: "{{ image.repository }}"

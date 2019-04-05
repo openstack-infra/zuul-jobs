@@ -5,12 +5,12 @@
     buildset_registry: "{{ (lookup('file', zuul.executor.work_root + '/results.json') | from_json)['buildset_registry'] }}"
 - name: Ensure registry cert directory exists
   file:
-    path: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/"
+    path: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/"
     state: directory
 - name: Write registry TLS certificate
   copy:
     content: "{{ buildset_registry.cert }}"
-    dest: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/ca.crt"
+    dest: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/ca.crt"
 
 # Update user config for intermediate and buildset registries
 - name: Ensure docker user directory exists
@@ -41,9 +41,9 @@
     new_config:
       auths: |
         {
-          "{{ intermediate_registry.host }}:{{ intermediate_registry.port }}":
+          "{{ intermediate_registry.host | ipwrap }}:{{ intermediate_registry.port }}":
             {"auth": "{{ (intermediate_registry.username + ":" + intermediate_registry.password) | b64encode }}"},
-          "{{ buildset_registry.host }}:{{ buildset_registry.port }}":
+          "{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
         }
   set_fact:

@@ -6,23 +6,23 @@
 - name: Ensure buildset registry cert directory exists
   become: true
   file:
-    path: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/"
+    path: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/"
     state: directory
 - name: Ensure proxy registry cert directory exists
   become: true
   file:
-    path: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.proxy_port }}/"
+    path: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.proxy_port }}/"
     state: directory
 - name: Write buildset registry TLS certificate
   become: true
   copy:
     content: "{{ buildset_registry.cert }}"
-    dest: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.port }}/ca.crt"
+    dest: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/ca.crt"
 - name: Write proxy registry TLS certificate
   become: true
   copy:
     content: "{{ buildset_registry.cert }}"
-    dest: "/etc/docker/certs.d/{{ buildset_registry.host }}:{{ buildset_registry.proxy_port }}/ca.crt"
+    dest: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.proxy_port }}/ca.crt"
 
 # Update daemon config
 - name: Check if docker daemon configuration exists
@@ -46,7 +46,7 @@
 - name: Add registry to docker daemon configuration
   vars:
     new_config:
-      registry-mirrors: "['https://{{ buildset_registry.host }}:{{ buildset_registry.port}}/', 'https://{{ buildset_registry.host }}:{{ buildset_registry.proxy_port}}/']"
+      registry-mirrors: "['https://{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port}}/', 'https://{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.proxy_port}}/']"
   set_fact:
     docker_config: "{{ docker_config | combine(new_config) }}"
 - name: Save docker daemon configuration
