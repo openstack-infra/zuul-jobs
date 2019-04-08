@@ -1,8 +1,45 @@
+# Docker doesn't understand docker push [1234:5678::]:5000/image/path:tag
+# so we set up /etc/hosts with a registry alias name to support ipv6 and 4.
+- name: Configure /etc/hosts for buildset_registry to workaround docker not understanding ipv6 addresses
+  become: yes
+  lineinfile:
+    path: /etc/hosts
+    state: present
+    regex: "^{{ buildset_registry.host }}\tzuul-jobs.buildset_registry$"
+    line: "{{ buildset_registry.host }}\tzuul-jobs.buildset_registry"
+    insertafter: EOF
+  when: buildset_registry.host | ipaddr
+- name: Set buildset_registry alias variable when using ip
+  set_fact:
+    buildset_registry_alias: zuul-jobs.buildset_registry
+  when: buildset_registry.host | ipaddr
+- name: Set buildset_registry alias variable when using name
+  set_fact:
+    buildset_registry_alias: "{{ buildset_registry.host }}"
+  when: not ( buildset_registry.host | ipaddr )
+- name: Configure /etc/hosts for intermediate_registry to workaround docker not understanding ipv6 addresses
+  become: yes
+  lineinfile:
+    path: /etc/hosts
+    state: present
+    regex: "^{{ intermediate_registry.host }}\tzuul-jobs.intermediate_registry$"
+    line: "{{ intermediate_registry.host }}\tzuul-jobs.intermediate_registry"
+    insertafter: EOF
+  when: intermediate_registry.host | ipaddr
+- name: Set intermediate_registry alias variable when using ip
+  set_fact:
+    intermediate_registry_alias: zuul-jobs.intermediate_registry
+  when: intermediate_registry.host | ipaddr
+- name: Set intermediate_registry alias variable when using name
+  set_fact:
+    intermediate_registry_alias: "{{ intermediate_registry.host }}"
+  when: not ( intermediate_registry.host | ipaddr )
+
 - name: Push tag to intermediate registry
   command: >-
     skopeo --insecure-policy copy
-    docker://{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
-    docker://{{ intermediate_registry.host | ipwrap }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag }}
+    docker://{{ buildset_registry_alias }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
+    docker://{{ intermediate_registry_alias }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag }}
   loop: "{{ image.tags | default(['latest']) }}"
   loop_control:
     loop_var: image_tag
@@ -13,7 +50,7 @@
       zuul:
         artifacts:
           - name: "image_{{ image.repository }}:{{ image_tag }}"
-            url: "docker://{{ intermediate_registry.host | ipwrap }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag}}"
+            url: "docker://{{ intermediate_registry_alias }}:{{ intermediate_registry.port}}/{{ image.repository }}:{{ zuul.build }}_{{ image_tag}}"
             metadata:
               type: container_image
               repository: "{{ image.repository }}"
