@@ -15,6 +15,9 @@
       username: "{{ docker_credentials.username }}"
       password: "{{ docker_credentials.password }}"
   register: jwt_token
+  delay: 5
+  retries: 3
+  until: jwt_token and jwt_token.status==200
 - name: Promote image
   loop: "{{ docker_images }}"
   loop_control:
