@@ -1,40 +1,3 @@
-# Docker doesn't understand docker push [1234:5678::]:5000/image/path:tag
-# so we set up /etc/hosts with a registry alias name to support ipv6 and 4.
-- name: Configure /etc/hosts for buildset_registry to workaround docker not understanding ipv6 addresses
-  become: yes
-  lineinfile:
-    path: /etc/hosts
-    state: present
-    regex: "^{{ buildset_registry.host }}\tzuul-jobs.buildset_registry$"
-    line: "{{ buildset_registry.host }}\tzuul-jobs.buildset_registry"
-    insertafter: EOF
-  when: buildset_registry.host | ipaddr
-- name: Set buildset_registry alias variable when using ip
-  set_fact:
-    buildset_registry_alias: zuul-jobs.buildset_registry
-  when: buildset_registry.host | ipaddr
-- name: Set buildset_registry alias variable when using name
-  set_fact:
-    buildset_registry_alias: "{{ buildset_registry.host }}"
-  when: not ( buildset_registry.host | ipaddr )
-- name: Configure /etc/hosts for intermediate_registry to workaround docker not understanding ipv6 addresses
-  become: yes
-  lineinfile:
-    path: /etc/hosts
-    state: present
-    regex: "^{{ intermediate_registry.host }}\tzuul-jobs.intermediate_registry$"
-    line: "{{ intermediate_registry.host }}\tzuul-jobs.intermediate_registry"
-    insertafter: EOF
-  when: intermediate_registry.host | ipaddr
-- name: Set intermediate_registry alias variable when using ip
-  set_fact:
-    intermediate_registry_alias: zuul-jobs.intermediate_registry
-  when: intermediate_registry.host | ipaddr
-- name: Set intermediate_registry alias variable when using name
-  set_fact:
-    intermediate_registry_alias: "{{ intermediate_registry.host }}"
-  when: not ( intermediate_registry.host | ipaddr )
-
 # This can be removed if we add this functionality to Zuul directly
 - name: Load information from zuul_return
   when: buildset_registry is not defined
@@ -42,12 +5,12 @@
     buildset_registry: "{{ (lookup('file', zuul.executor.work_root + '/results.json') | from_json)['buildset_registry'] }}"
 - name: Ensure registry cert directory exists
   file:
-    path: "/etc/docker/certs.d/{{ buildset_registry_alias }}:{{ buildset_registry.port }}/"
+    path: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/"
     state: directory
 - name: Write registry TLS certificate
   copy:
     content: "{{ buildset_registry.cert }}"
-    dest: "/etc/docker/certs.d/{{ buildset_registry_alias }}:{{ buildset_registry.port }}/ca.crt"
+    dest: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/ca.crt"
 
 
 # Update user config for intermediate and buildset registries
@@ -79,9 +42,9 @@
     new_config:
       auths: |
         {
-          "{{ intermediate_registry_alias }}:{{ intermediate_registry.port }}":
+          "{{ intermediate_registry.host | ipwrap }}:{{ intermediate_registry.port }}":
             {"auth": "{{ (intermediate_registry.username + ":" + intermediate_registry.password) | b64encode }}"},
-          "{{ buildset_registry_alias }}:{{ buildset_registry.port }}":
+          "{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
         }
   set_fact:
@@ -99,7 +62,7 @@
       command: >-
         skopeo --insecure-policy copy
         {{ item.url }}
-        docker://{{ buildset_registry_alias }}:{{ buildset_registry.port }}/{{ item.metadata.repository }}:{{ item.metadata.tag }}
+        docker://{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/{{ item.metadata.repository }}:{{ item.metadata.tag }}
       when: "'metadata' in item and item.metadata.type | default('') == 'container_image'"
       loop: "{{ zuul.artifacts | default([]) }}"
   always:
