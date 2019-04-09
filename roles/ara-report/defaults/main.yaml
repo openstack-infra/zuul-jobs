@@ -24,3 +24,5 @@ ara_report_path: 'ara'
 
 # When report_type is 'html', whether to compress the ARA HTML output or not
 ara_compress_html: true
+
+ara_report_executable: ara

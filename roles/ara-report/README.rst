@@ -57,3 +57,8 @@ If ARA is enabled, generates a report or saves a copy of the ARA database.
 
    When report_type is 'html' directory where the HTML report will be generated.
    When report_type is 'database', directory where the database is saved.
+
+.. zuul:rolevar:: ara_report_executable
+   :default: ``ara``
+
+   Path to ara executable.
