@@ -29,9 +29,9 @@
         {
           "https://index.docker.io/v1/":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
-          "{{ buildset_registry_alias }}:{{ buildset_registry.port }}":
+          "{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"},
-          "{{ buildset_registry_alias }}:{{ buildset_registry.proxy_port }}":
+          "{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.proxy_port }}":
             {"auth": "{{ (buildset_registry.username + ":" + buildset_registry.password) | b64encode }}"}
         }
   set_fact:

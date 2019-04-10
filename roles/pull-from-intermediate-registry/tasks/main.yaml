@@ -3,7 +3,6 @@
   when: buildset_registry is not defined
   set_fact:
     buildset_registry: "{{ (lookup('file', zuul.executor.work_root + '/results.json') | from_json)['buildset_registry'] }}"
-
 - name: Ensure registry cert directory exists
   file:
     path: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/"
@@ -12,6 +11,7 @@
   copy:
     content: "{{ buildset_registry.cert }}"
     dest: "/etc/docker/certs.d/{{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/ca.crt"
+
 
 # Update user config for intermediate and buildset registries
 - name: Ensure docker user directory exists

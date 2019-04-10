@@ -1,32 +1,12 @@
-# Docker doesn't understand docker push [1234:5678::]:5000/image/path:tag
-# so we set up /etc/hosts with a registry alias name to support ipv6 and 4.
-- name: Configure /etc/hosts for buildset_registry to workaround docker not understanding ipv6 addresses
-  become: yes
-  lineinfile:
-    path: /etc/hosts
-    state: present
-    regex: "^{{ buildset_registry.host }}\tzuul-jobs.buildset_registry$"
-    line: "{{ buildset_registry.host }}\tzuul-jobs.buildset_registry"
-    insertafter: EOF
-  when: buildset_registry.host | ipaddr
-- name: Set buildset_registry alias variable when using ip
-  set_fact:
-    buildset_registry_alias: zuul-jobs.buildset_registry
-  when: buildset_registry.host | ipaddr
-- name: Set buildset_registry alias variable when using name
-  set_fact:
-    buildset_registry_alias: "{{ buildset_registry.host }}"
-  when: not ( buildset_registry.host | ipaddr )
-
 - name: Tag image for buildset registry
   command: >-
-    docker tag {{ image.repository }}:{{ image_tag }} {{ buildset_registry_alias }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
+    docker tag {{ image.repository }}:{{ image_tag }} {{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
   loop: "{{ image.tags | default(['latest']) }}"
   loop_control:
     loop_var: image_tag
 - name: Push tag to buildset registry
   command: >-
-    docker push {{ buildset_registry_alias }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
+    docker push {{ buildset_registry.host | ipwrap }}:{{ buildset_registry.port }}/{{ image.repository }}:{{ image_tag }}
   loop: "{{ image.tags | default(['latest']) }}"
   loop_control:
     loop_var: image_tag
