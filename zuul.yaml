@@ -173,6 +173,16 @@
       tox_envlist: py36
 
 - job:
+    name: tox-py37
+    parent: tox
+    description: |
+      Run unit tests for a Python project under cPython version 3.7.
+
+      Uses tox with the ``py37`` environment.
+    vars:
+      tox_envlist: py37
+
+- job:
     name: tox-docs
     # This is not parented to tox since we do not need
     # the roles from its parent unittests.
