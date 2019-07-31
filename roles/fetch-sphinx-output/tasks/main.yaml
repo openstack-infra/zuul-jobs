@@ -1,6 +1,0 @@
-- name: Collect sphinx build html
-  synchronize:
-    dest: "{{ zuul_executor_dest }}"
-    mode: pull
-    src: "{{ sphinx_output_src }}"
-    verify_host: true

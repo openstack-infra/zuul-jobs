@@ -1,2 +1,0 @@
----
-zuul_info_dir: "{{ zuul.executor.log_root }}/zuul-info"

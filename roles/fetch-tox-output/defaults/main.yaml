@@ -1,7 +1,0 @@
----
-# TODO(mordred) This needs to switch back to not being venv - venv is OpenStack
-# specific.
-tox_envlist: venv
-tox_executable: tox
-
-zuul_work_dir: "{{ zuul.project.src_dir }}"

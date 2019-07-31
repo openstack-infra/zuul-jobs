@@ -1,6 +1,0 @@
-- hosts: all
-  roles:
-    - role: install-if-python
-      # Releasenotes do not need the package itself to be installed
-      install_package: false
-    - build-releasenotes

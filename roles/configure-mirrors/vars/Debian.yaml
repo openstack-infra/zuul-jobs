@@ -1,2 +1,0 @@
-package_mirror: "http://{{ mirror_fqdn }}/{{ ansible_distribution | lower }}"
-security_mirror: "http://{{ mirror_fqdn }}/{{ ansible_distribution | lower }}-security"

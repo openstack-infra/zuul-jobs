@@ -1,3 +1,0 @@
-- name: Push images to intermediate registry
-  when: docker_images is defined
-  include_tasks: push.yaml

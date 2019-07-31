@@ -1,4 +1,0 @@
-- name: remove bindep temp dir
-  file:
-    path: "{{ bindep_temp_dir }}"
-    state: absent

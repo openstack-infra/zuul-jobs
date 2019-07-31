@@ -1,5 +1,0 @@
-- name: Destroy AFS tokens
-  command: unlog
-
-- name: Destroy Kerberos tokens
-  command: kdestroy

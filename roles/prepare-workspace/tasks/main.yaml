@@ -1,9 +1,0 @@
-# TODO(pabelanger): Handle cleanup on static nodes
-- name: Start zuul_console daemon.
-  zuul_console:
-
-- name: Synchronize src repos to workspace directory.
-  synchronize:
-    dest: "{{ zuul_workspace_root }}"
-    src: "{{ zuul.executor.src_root }}"
-  no_log: true

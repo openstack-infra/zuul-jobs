@@ -1,8 +1,0 @@
-- name: Ensure Zuul Output directories exist
-  file:
-    path: "{{ zuul_output_dir }}/{{ item }}"
-    state: directory
-  with_items:
-    - logs
-    - artifacts
-    - docs

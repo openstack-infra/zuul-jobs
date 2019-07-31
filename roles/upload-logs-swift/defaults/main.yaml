@@ -1,3 +1,0 @@
-zuul_log_partition: false
-zuul_log_container: logs
-zuul_log_container_public: true

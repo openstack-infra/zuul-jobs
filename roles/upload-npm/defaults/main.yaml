@@ -1,1 +1,0 @@
-npm_registry_url: "{{ npm_credentials.registry_url|default('//registry.npmjs.org') }}"

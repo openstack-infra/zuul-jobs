@@ -1,2 +1,0 @@
----
-rtd_project_name: "{{ zuul.project.short_name }}"

@@ -1,1 +1,0 @@
-buildset_registry_root: "{{ ansible_user_dir }}/buildset_registry"

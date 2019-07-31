@@ -1,4 +1,0 @@
-- name: Synchronize files to AFS
-  zuul_afs:
-    source: "{{ afs_source }}"
-    target: "{{ afs_target }}"

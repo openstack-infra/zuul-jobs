@@ -1,4 +1,0 @@
-zuul_work_dir: "{{ zuul.project.src_dir }}"
-javascript_content_dir: dist
-javascript_copy_links: true
-coverage_output_src: "{{ zuul_work_dir }}/cover/"

@@ -1,2 +1,0 @@
-zuul_executor_dest: "{{ zuul.executor.log_root }}"
-coverage_output_src: "{{ zuul.project.src_dir }}/cover"

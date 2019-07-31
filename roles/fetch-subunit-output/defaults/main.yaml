@@ -1,3 +1,0 @@
----
-tox_envlist: ""
-zuul_work_dir: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}"

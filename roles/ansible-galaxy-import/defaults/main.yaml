@@ -1,4 +1,0 @@
----
-ansible_galaxy_branch: "{{ zuul.branch }}"
-ansible_galaxy_executable: ansible-galaxy
-ansible_galaxy_server: "{{ ansible_galaxy_info.server|default('https://galaxy.ansible.com') }}"

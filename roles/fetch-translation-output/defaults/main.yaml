@@ -1,3 +1,0 @@
----
-zuul_executor_dest: "{{ zuul.executor.work_root }}/artifacts"
-translation_output_src: "src/{{ zuul.project.canonical_name }}/translation-source/"
